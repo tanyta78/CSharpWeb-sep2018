@@ -1,8 +1,10 @@
 ﻿namespace SIS.HTTP.Requests.Contacts
 {
     using System.Collections.Generic;
+    using Cookies.Contracts;
     using Enums;
     using Headers.Contracts;
+    using Sessions.Contracts;
 
     public interface IHttpRequest
     {
@@ -14,9 +16,13 @@
 
         Dictionary<string, object> QueryData { get; }
 
+        IHttpCookieCollection Cookies { get; }
+
         IHttpHeaderCollection Headers { get; }
 
         HttpRequestMethod RequestMethod { get; }
+
+        IHttpSession Session { get; set; }
 
     }
 }

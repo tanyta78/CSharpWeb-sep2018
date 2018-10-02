@@ -2,6 +2,8 @@
 {
     using Common;
     using Contacts;
+    using Cookies;
+    using Cookies.Contracts;
     using Enums;
     using Exceptions;
     using Headers;
@@ -10,6 +12,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using Sessions.Contracts;
 
 
     public class HttpRequest : IHttpRequest
@@ -19,6 +22,7 @@
             this.FormData = new Dictionary<string, object>();
             this.QueryData = new Dictionary<string, object>();
             this.Headers = new HttpHeaderCollection();
+            this.Cookies = new HttpCookieCollection();
 
             this.ParseRequest(requestString);
         }
@@ -31,9 +35,13 @@
 
         public Dictionary<string, object> QueryData { get; }
 
+        public IHttpCookieCollection Cookies { get; }
+
         public IHttpHeaderCollection Headers { get; }
 
         public HttpRequestMethod RequestMethod { get; private set; }
+
+        public IHttpSession Session { get; set; }
 
         private void ParseRequest(string requestString)
         {
@@ -51,9 +59,42 @@
             this.ParseRequestPath();
 
             this.ParseHeaders(reqContent.Skip(1).ToArray());
+            this.ParseCookies();
 
             //bool hasBody = reqContent.Length > 1; always true ?!?
             this.ParseRequestParameters(reqContent[reqContent.Length - 1]);
+        }
+
+        private void ParseCookies()
+        {
+            if (!this.Headers.ContainsHeader(GlobalConstants.CookieRequestHeaderName))
+            {
+                return;
+            }
+
+            var cookiesData = this.Headers.GetHeader(GlobalConstants.CookieRequestHeaderName).Value;
+          
+            if (string.IsNullOrEmpty(cookiesData))
+            {
+                return;
+            }
+            var cookies = cookiesData.Split(GlobalConstants.CookieSplitDelimiter, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var cookiePair in cookies)
+            {
+                var cookieInfo = cookiePair.Split(GlobalConstants.PairSplitDelimiter, 2);
+
+                if (cookieInfo.Length != 2)
+                {
+                    throw new BadRequestException();
+                }
+
+                var cookieKey = cookieInfo[0];
+                var cookieValue = cookieInfo[1];
+                
+                this.Cookies.Add(new HttpCookie(cookieKey, cookieValue));
+            }
+
         }
 
         private bool IsValidRequestQueryString(string queryString, string[] queryParams)
@@ -73,7 +114,7 @@
 
         private void ParseRequestMethod(string[] reqLine)
         {
-            var parseResult = Enum.TryParse(reqLine[0],true, out HttpRequestMethod httpRequestMethod);
+            var parseResult = Enum.TryParse(reqLine[0], true, out HttpRequestMethod httpRequestMethod);
 
             if (!parseResult)
             {
@@ -158,7 +199,7 @@
         {
             foreach (var paramPair in paramsPairs)
             {
-                var paramInfo = paramPair.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                var paramInfo = paramPair.Split(GlobalConstants.PairSplitDelimiter, StringSplitOptions.RemoveEmptyEntries);
 
                 if (paramInfo.Length != 2)
                 {
@@ -219,11 +260,10 @@
 
             this.ParseQueryParameters();
 
-           this.ParseFormDataParameters(reqBody);
-            
-          
+            this.ParseFormDataParameters(reqBody);
+
         }
 
-      
+
     }
 }
