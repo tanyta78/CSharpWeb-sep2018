@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using HTTP.Enums;
-    using HTTP.Requests.Contacts;
+    using HTTP.Requests.Contracts;
     using HTTP.Responses.Contracts;
 
     public class ServerRoutingTable

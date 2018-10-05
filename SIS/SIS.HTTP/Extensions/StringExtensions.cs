@@ -2,15 +2,19 @@
 {
    public static class StringExtensions
     {
-        public static string Capitalize(this string str)
+        public static string Capitalize(this string text)
         {
-            if (str == null)
-                return null;
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
 
-            if (str.Length > 1)
-                return char.ToUpper(str[0]) + str.Substring(1).ToLower();
+            if (text.Length == 1)
+            {
+                return text.ToUpper();
+            }
 
-            return str.ToUpper();
+            return char.ToUpper(text[0]) + text.Substring(1).ToLower();
         }
     }
 }

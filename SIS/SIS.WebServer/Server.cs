@@ -32,19 +32,22 @@
 
             Console.WriteLine($"Server started at http://{LocalhostIpAddress}:{this.port}");
 
-            var task = Task.Run(this.ListenLoop);
-            task.Wait();
-        }
-
-        public async Task ListenLoop()
-        {
             while (this.isRunning)
             {
-                var client = await this.listener.AcceptSocketAsync();
-                var connectionHandler = new ConnectionHandler(client,this.serverRoutingTable);
-                var responseTask = connectionHandler.ProcessRequestAsync();
-                responseTask.Wait();
+                Console.WriteLine("Waiting for client...");
+
+                var client = listener.AcceptSocketAsync().GetAwaiter().GetResult();
+
+                Task.Run(() => Listen(client));
             }
         }
+
+        public async void Listen(Socket client)
+        {
+            var connectionHandler = new ConnectionHandler(client,this.serverRoutingTable);
+            await connectionHandler.ProcessRequestAsync();
+        }
+
+       
     }
 }

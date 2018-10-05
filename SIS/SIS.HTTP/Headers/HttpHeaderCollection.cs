@@ -1,9 +1,10 @@
 ﻿namespace SIS.HTTP.Headers
 {
+    using Common;
+    using Contracts;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Contracts;
 
     public class HttpHeaderCollection : IHttpHeaderCollection
     {
@@ -16,44 +17,27 @@
 
         public void Add(HttpHeader header)
         {
-            if (header == null ||
-                string.IsNullOrEmpty(header.Key) ||
-                string.IsNullOrEmpty(header.Value) ||
-                this.ContainsHeader(header.Key))
-            {
-                //TO DO: add custom exceptions
-                throw new Exception();
-            }
-
+            CoreValidator.ThrowIfNull(header, nameof(header));
             this.headers.Add(header.Key, header);
         }
 
         public bool ContainsHeader(string key)
         {
-            if (string.IsNullOrEmpty(key))
-            {
-                throw new ArgumentNullException($"{nameof(key)} can not be null!");
-            }
+           CoreValidator.ThrowIfNull(key,nameof(key));
 
             return this.headers.ContainsKey(key);
         }
 
         public HttpHeader GetHeader(string key)
         {
-            if (this.ContainsHeader(key))
-            {
-                return this.headers[key];
-            }
-            else
-            {
-                return null;
-            }
+            CoreValidator.ThrowIfNull(key, nameof(key));
+            return this.headers.GetValueOrDefault(key, null);
 
         }
 
         public override string ToString()
         {
-            return string.Join(Environment.NewLine, this.headers.Values.Select(e => e.ToString()).ToArray());
+            return string.Join(Environment.NewLine, this.headers.Values);
         }
     }
 }

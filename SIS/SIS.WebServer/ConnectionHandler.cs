@@ -1,17 +1,21 @@
 ﻿namespace SIS.WebServer
 {
     using System;
-    using HTTP.Requests.Contacts;
-    using HTTP.Responses.Contracts;
-    using Routing;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
+    using HTTP.Common;
+    using Routing;
+   
     using HTTP.Cookies;
     using HTTP.Enums;
+    using HTTP.Exceptions;
     using HTTP.Requests;
+    using HTTP.Requests.Contracts;
     using HTTP.Responses;
+    using HTTP.Responses.Contracts;
     using HTTP.Sessions;
+    using Results;
 
     public class ConnectionHandler
     {
@@ -21,6 +25,9 @@
 
         public ConnectionHandler(Socket client, ServerRoutingTable serverRoutingTable)
         {
+            CoreValidator.ThrowIfNull(client, nameof(client));
+            CoreValidator.ThrowIfNull(serverRoutingTable, nameof(serverRoutingTable));
+            
             this.client = client;
             this.serverRoutingTable = serverRoutingTable;
         }
@@ -78,17 +85,30 @@
 
         public async Task ProcessRequestAsync()
         {
-            var httpRequest = await this.ReadRequest();
-
-            if (httpRequest != null)
+            try
             {
-                string sessionId = this.SetRequestSession(httpRequest);
+                var httpRequest = await this.ReadRequest();
 
-                var httpResponse = this.HandleRequest(httpRequest);
+                if (httpRequest != null)
+                {
+                    string sessionId = this.SetRequestSession(httpRequest);
 
-                this.SetResponseSession(httpResponse, sessionId);
+                    var httpResponse = this.HandleRequest(httpRequest);
 
-                await this.PrepareResponse(httpResponse);
+                    this.SetResponseSession(httpResponse, sessionId);
+
+                    await this.PrepareResponse(httpResponse);
+                }
+
+              
+            }
+            catch (BadRequestException e)
+            {
+                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
+            }
+            catch (Exception e)
+            {
+                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
             }
 
             this.client.Shutdown(SocketShutdown.Both);
@@ -117,7 +137,7 @@
         {
             if (sessionId!=null)
             {
-                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey,$"{sessionId};HttpOnly=true"));
+                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey,$"{sessionId}; HttpOnly"));
             }
         }
     }

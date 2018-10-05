@@ -14,5 +14,15 @@
 
         public const string PairSplitDelimiter = "=";
 
+        public const char HttpRequestUrlQuerySeparator = '?';
+
+        public const char HttpRequestUrlFragmentSeparator = '#';
+
+        public const string HttpRequestHeaderNameValueSeparator = ": ";
+
+        public const char HttpRequestParameterSeparator = '&';
+
+        public const string NotSupportedStatusCodeExceptionMessage = "Status Code {0} not supported.";
+
     }
 }

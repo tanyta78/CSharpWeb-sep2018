@@ -9,9 +9,9 @@
 
         public const HttpResponseStatusCode StatusCode = HttpResponseStatusCode.InternalServerError;
 
-        public InternalServerErrorException():base(ExceptionMessage)
-        {
-            
-        }
+        public InternalServerErrorException():base(ExceptionMessage){}
+
+        public InternalServerErrorException(string message):base(message){}
+
     }
 }

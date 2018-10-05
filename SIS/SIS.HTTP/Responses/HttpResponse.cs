@@ -17,6 +17,8 @@
 
         public HttpResponse(HttpResponseStatusCode statusCode)
         {
+            CoreValidator.ThrowIfNull(statusCode,nameof(statusCode));
+
             this.StatusCode = statusCode;
             this.Headers = new HttpHeaderCollection();
             this.Cookies=new HttpCookieCollection();
@@ -34,11 +36,13 @@
 
         public void AddHeader(HttpHeader header)
         {
+            CoreValidator.ThrowIfNull(header,nameof(header));
            this.Headers.Add(header);
         }
 
         public void AddCookie(HttpCookie cookie)
         {
+            CoreValidator.ThrowIfNull(cookie,nameof(cookie));
             this.Cookies.Add(cookie);
         }
 
@@ -60,7 +64,11 @@
 
             if (this.Cookies.HasCookies())
             {
-                response.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {this.Cookies}");
+                foreach (var cookie in this.Cookies)
+                {
+                    response.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {cookie}");
+                }
+               
             }
 
             response.AppendLine();

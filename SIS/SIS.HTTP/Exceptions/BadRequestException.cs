@@ -9,10 +9,10 @@
 
         public const HttpResponseStatusCode StatusCode = HttpResponseStatusCode.BadRequest;
 
-        public BadRequestException():base(ExceptionMessage)
-        {
-            
-        }
+        public BadRequestException():base(ExceptionMessage){}
+
+        public BadRequestException(string message):base(message){}
+
 
     }
 }

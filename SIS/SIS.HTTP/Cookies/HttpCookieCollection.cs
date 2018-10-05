@@ -1,44 +1,33 @@
 ﻿namespace SIS.HTTP.Cookies
 {
-    using System;
+    using Common;
+    using Contracts;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using Contracts;
 
-    public class HttpCookieCollection:IHttpCookieCollection
+    public class HttpCookieCollection : IHttpCookieCollection
     {
-        private readonly IDictionary<string, HttpCookie> cookies= new Dictionary<string, HttpCookie>();
+
+        private readonly Dictionary<string, HttpCookie> cookies = new Dictionary<string, HttpCookie>();
 
         public void Add(HttpCookie cookie)
         {
-            if (cookie==null )
-            {
-                throw new ArgumentNullException();
-            }
+            CoreValidator.ThrowIfNull(cookie, nameof(cookie));
+            this.cookies.Add(cookie.Key, cookie);
 
-            if (!this.ContainsCookie(cookie.Key))
-            {
-                this.cookies.Add(cookie.Key,cookie);
-            }
-            else
-            {
-                this.cookies[cookie.Key] = cookie;
-            }
         }
 
         public bool ContainsCookie(string key)
         {
+            CoreValidator.ThrowIfNull(key,nameof(key));
             return this.cookies.ContainsKey(key);
         }
 
         public HttpCookie GetCookie(string key)
         {
-            if (!this.ContainsCookie(key))
-            {
-                return null;
-            }
-
-            return this.cookies[key];
+            CoreValidator.ThrowIfNull(key,nameof(key));
+            return this.cookies.GetValueOrDefault(key, null);
         }
 
         public bool HasCookies()
@@ -47,9 +36,22 @@
             return this.cookies.Any();
         }
 
+        public IEnumerator<HttpCookie> GetEnumerator()
+        {
+            foreach (var cookie in this.cookies)
+            {
+                yield return cookie.Value;
+            }
+        }
+
         public override string ToString()
         {
-            return string.Join("; ", this.cookies.Values);
+            return string.Join(GlobalConstants.CookieSplitDelimiter, this.cookies.Values);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
