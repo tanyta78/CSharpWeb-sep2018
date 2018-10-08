@@ -58,7 +58,7 @@
 
         private bool IsValidRequestQueryString(string queryString, string[] queryParams)
         {
-            return !string.IsNullOrEmpty(queryString) && queryString.Contains('=') && queryParams.Length >= 1;
+            return (!string.IsNullOrEmpty(queryString)) && queryString.Contains('=') && queryParams.Length >= 1;
         }
 
         private void ParseRequestMethod(string[] reqLine)
@@ -167,7 +167,7 @@
             // username=pesho&pass=133
 
             //Does nothing if the Request’s Url contains NO Query string.
-            if (!string.IsNullOrWhiteSpace(queryParams))
+            if (string.IsNullOrWhiteSpace(queryParams))
             {
                 return;
             }
@@ -176,7 +176,7 @@
             var queryPairs = queryParams.Split(new[] { GlobalConstants.HttpRequestParameterSeparator });
 
             //Validates the Query string and parameters by calling the IsValidRequestQueryString() method.Throws a BadRequestException if the Query string is invalid.
-            if (this.IsValidRequestQueryString(queryParams, queryPairs))
+            if (!this.IsValidRequestQueryString(queryParams, queryPairs))
             {
                 throw new BadRequestException();
             };
