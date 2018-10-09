@@ -35,9 +35,13 @@
             return username;
         }
 
-        protected IHttpResponse View(string viewName)
+        protected IHttpResponse View(string viewName,IDictionary<string,string>viewBag=null)
         {
-            var allContent = this.GetViewContent(viewName,new Dictionary<string, string>());
+            if (viewBag == null)
+            {
+                viewBag = new Dictionary<string, string>();
+            }
+            var allContent = this.GetViewContent(viewName,viewBag);
             return new HtmlResult(allContent, HttpResponseStatusCode.Ok);
         }
 

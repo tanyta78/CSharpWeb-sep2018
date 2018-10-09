@@ -1,0 +1,23 @@
+﻿<h1>Add cake</h1>
+<form action="/cakes/add" method="post">
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Name:</label>
+        <div class="col-sm-8">
+            <input class="form-control" type="text" name="name" placeholder="Name" required/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Price:</label>
+        <div class="col-sm-8">
+            <input class="form-control" type="number" name="price" placeholder="Price" min="0.01" step="0.01" required/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="form-control-label col-sm-2">Picture URL:</label>
+        <div class="col-sm-8">
+            <input class="form-control" type="url" name="imageUrl" placeholder="Image URL" required/>
+        </div>
+    </div>
+    <input class="btn btn-primary" type="submit" value="Add Cake">
+
+</form>
