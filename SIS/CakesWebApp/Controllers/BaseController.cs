@@ -1,5 +1,6 @@
 ﻿namespace CakesWebApp.Controllers
 {
+    using System.Collections.Generic;
     using Data;
     using Services;
     using SIS.HTTP.Enums;
@@ -36,18 +37,40 @@
 
         protected IHttpResponse View(string viewName)
         {
+            var allContent = this.GetViewContent(viewName,new Dictionary<string, string>());
+            return new HtmlResult(allContent, HttpResponseStatusCode.Ok);
+        }
+
+        private string GetViewContent(string viewName, IDictionary<string,string> viewBag)
+        {
+            var layoutContent = File.ReadAllText("Views/_Layout.html");
             var content = File.ReadAllText("Views/" + viewName + ".html");
-            return new HtmlResult(content, HttpResponseStatusCode.Ok);
+            foreach (var item in viewBag)
+            {
+                content = content.Replace("@Model." + item.Key, item.Value);
+            }
+            var allContent = layoutContent.Replace(" @RenderBody()", content);
+            return allContent;
         }
 
         protected IHttpResponse BadRequestError(string errorMessage)
         {
-            return new HtmlResult($"<h1>{errorMessage}</h1>", HttpResponseStatusCode.BadRequest);
+            var viewBag = new Dictionary<string, string>();
+            viewBag.Add("Error", errorMessage);
+            var allContent = this.GetViewContent("Error", viewBag);
+            return new HtmlResult(allContent, HttpResponseStatusCode.BadRequest);
         }
 
         protected IHttpResponse ServerError(string errorMessage)
         {
-            return new HtmlResult($"<h1>{errorMessage}</h1>", HttpResponseStatusCode.InternalServerError);
+            var viewBag = new Dictionary<string, string>
+            {
+                {
+                    "Error", errorMessage
+                }
+            };
+            var allContent = this.GetViewContent("Error", viewBag);
+            return new HtmlResult(allContent, HttpResponseStatusCode.InternalServerError);
         }
     }
 }
