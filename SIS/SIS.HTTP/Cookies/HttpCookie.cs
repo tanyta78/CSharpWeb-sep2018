@@ -2,12 +2,14 @@
 {
     using Common;
     using System;
+    using System.Text;
 
     public class HttpCookie
     {
         private const int HttpCookieDefaultExpirationDays = 3;
+        private const string HttpCookieDefaultPath = "/";
 
-        public HttpCookie(string key, string value, int expires = HttpCookieDefaultExpirationDays)
+        public HttpCookie(string key, string value, int expires = HttpCookieDefaultExpirationDays, string path = HttpCookieDefaultPath)
         {
             CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
             CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
@@ -16,9 +18,10 @@
             this.Value = value;
             this.Expires = DateTime.UtcNow.AddDays(expires);
             this.IsNew = true;
+            this.Path=path;
         }
 
-        public HttpCookie(string key, string value, bool isNew, int expires = HttpCookieDefaultExpirationDays) : this(key, value, expires)
+        public HttpCookie(string key, string value, bool isNew, int expires = HttpCookieDefaultExpirationDays, string path = HttpCookieDefaultPath) : this(key, value, expires)
         {
             this.IsNew = isNew;
         }
@@ -31,6 +34,8 @@
 
         public bool IsNew { get; }
 
+        public string Path { get; set; }
+
         public bool HttpOnly { get; set; } = true;
 
         public void Delete()
@@ -40,13 +45,15 @@
 
         public override string ToString()
         {
-            var str = $"{this.Key}={this.Value}; Expires={this.Expires:R}";
+           var sb = new StringBuilder();
+            sb.Append($"{this.Key}={this.Value}; Expires={this.Expires:R}");
             if (this.HttpOnly)
             {
-                str += "; HttpOnly";
+                sb.Append("; HttpOnly");
             }
 
-            return str;
+            sb.Append($"; Path={this.Path}");
+            return sb.ToString();
         }
     }
 }

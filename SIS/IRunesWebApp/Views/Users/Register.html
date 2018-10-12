@@ -1,38 +1,28 @@
-﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
-<h1>IRunes</h1>
-<ul>
-    <li><a href="/Home/Index">Home</a></li>
-    <li><a href="/Users/Login">Login</a></li>
-    <li><a href="/Users/Register">Register</a></li>
-</ul>
-<hr />
-<h1>Register</h1>
-<form method="post" action="/Users/Register">
-    <div>
-        Username
-        <input type="text" name="username" placeholder="Username" />
-    </div>
-    <div>
-        Password
-        <input type="password" name="password" placeholder="Password" />
-    </div>
-    <div>
-        Confirm Password
-        <input type="password" name="confirmPassword" placeholder="Confirm Password" />
-    </div>
-    <div>
-        Email
-        <input type="email" name="email" placeholder="Email" />
-    </div>
-    <input type="submit" value="Register">
-</form>
-<hr/>
-<footer>CopyRight &copy; Sanity Design Studios. All rights reserved.</footer>
-</body>
-</html>
+﻿<hr class="bg-success" />
+<h1 class="text-center text-success">Register</h1>
+<div class="container col-md-6 align-self-center">
+    <hr class="bg-success border-success border-5" />
+    <form action="/Users/Register" method="post">
+        <div class="form-group ">
+            <label for="username">Username</label>
+            <input type="text" class="form-control " name="username" placeholder="Username...">
+        </div>
+        <div class="form-group ">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Password...">
+        </div>
+        <div class="form-group ">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password...">
+        </div>
+        <div class="form-group ">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="email" placeholder="Email...">
+        </div>
+        <div class="form-group row text-center">
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Register</button>
+            </div>
+        </div>
+    </form>
+</div>

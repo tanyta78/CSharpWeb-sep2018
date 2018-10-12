@@ -18,8 +18,10 @@
                 return new RedirectResult("/Users/Login");
             }
             var albumId = request.QueryData["albumId"].ToString().ToUpper();
-            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\">Back To Album</a>";
+            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success\" >Back To Album</a>";
             this.ViewBag["formAction"] = $"action=\"/Tracks/Create?albumId={albumId}\"";
+            this.ViewBag["hrefAlbum"] = $"/Albums/Details?id={albumId}";
+
             return this.View("Tracks/Create");
         }
 
@@ -34,8 +36,7 @@
            // src="https://www.youtube.com/watch?v=_avb2ikX-rQ<iframe width="640" height="480" src="https://www.youtube.com/embed/_avb2ikX-rQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>"
             var price = decimal.Parse(request.FormData["price"].ToString());
             var albumId = request.QueryData["albumId"].ToString().ToUpper();
-            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\">Back To Album</a>";
-            this.ViewBag["albumId"] = albumId;
+            
             var track = new Track
             {
                 Name = name,
@@ -88,11 +89,16 @@
             }
             else
             {
-                var trackDetailsAsString = $"<iframe height=\"200\" width=\"200\"src=\"{track.Link}\" name=\"{track.Name}\"></iframe><p>Name: {track.Name}</p><br/><p>Price: ${track.Price}</p>";
+                var trackDetailsAsString = $"<h4 class=\"text-center\">Track Name: {track.Name}</h4>" +
+                    $"<h4 class=\"text-center\">Track Price: ${track.Price}</h4>"+
+                    "<hr class=\"bg-success\" />"+
+                    "<div class=\"row text-center\"><div class=\"col-12\">"+
+                    $"<iframe  src=\"{track.Link}\" name=\"{track.Name}\"></iframe>"+
+                    "</div></div>";
                 this.ViewBag["trackDetails"] = trackDetailsAsString;
             }
 
-            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\">Back To Album</a>";
+            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success text-center\">Back To Album</a>";
 
             return this.View("Tracks/Details");
         }

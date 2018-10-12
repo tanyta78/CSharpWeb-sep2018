@@ -22,7 +22,7 @@
            // Login (guest, logged-out) (route=”/Users/Login”)
             serverRoutingTable.Routes[HttpRequestMethod.Get]["/Users/Login"] = request => new AccountController().Login(request);
             serverRoutingTable.Routes[HttpRequestMethod.Post]["/Users/Login"] = request => new AccountController().DoLogin(request);
-            serverRoutingTable.Routes[HttpRequestMethod.Get]["/Users/Users/Logout"] = request => new AccountController().Logout(request);
+            serverRoutingTable.Routes[HttpRequestMethod.Get]["/Users/Logout"] = request => new AccountController().Logout(request);
             //All Albums (user, logged-in) (route=”/Albums/All”)
             serverRoutingTable.Routes[HttpRequestMethod.Get]["/Albums/All"] = request => new AlbumController().All(request);
             //Album Create (user, logged-in) (route=”/Albums/Create”)

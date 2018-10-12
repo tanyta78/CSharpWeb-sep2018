@@ -1,12 +1,12 @@
 ﻿namespace IRunesWebApp.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
     using SIS.WebServer.Results;
     using System;
     using System.Linq;
-    using Microsoft.EntityFrameworkCore;
 
     public class AlbumController : BaseController
     {
@@ -20,6 +20,7 @@
 
             var allAlbums = this.Db.Albums.Select(a => $"<a href=\"/Albums/Details?id={a.Id.ToString().ToUpper()}\"/>{a.Name}</a> </br>");
             var allAlbumsString = String.Join(Environment.NewLine, allAlbums);
+
             this.ViewBag["allAlbums"] = string.IsNullOrWhiteSpace(allAlbumsString)
                 ? "There are currently no albums."
                 : allAlbumsString;
@@ -33,6 +34,8 @@
             {
                 return new RedirectResult("/Users/Login");
             }
+
+
             return this.View("Albums/Create");
         }
 
@@ -73,8 +76,9 @@
                 return new RedirectResult("/Users/Login");
             }
 
+
             var id = request.QueryData["id"].ToString().ToUpper();
-            var album = this.Db.Albums.Include(x=>x.Tracks).ThenInclude(x=>x.Track).FirstOrDefault(a => a.Id.ToString() == id);
+            var album = this.Db.Albums.Include(x => x.Tracks).ThenInclude(x => x.Track).FirstOrDefault(a => a.Id.ToString() == id);
 
             if (album == null)
             {
@@ -82,25 +86,23 @@
             }
             else
             {
-                var albumDetailsAsString = $"<img src={album.Cover} alt={album.Name} height= 200 width= 200 > </br>" +
-                                           $"Name:{album.Name} </br>" +
-                                           $"Price: {album.Price:f2}</br>" + 
-                                           "<h3>Tracks</h3><hr/>" +
-                                           $"<a href=\"/Tracks/Create?albumId={id}\">Create Track</a><hr/>";
+                var albumDetailsAsString = $"<img src={album.Cover} alt={album.Name} class=\"img-fluid\" > " +
+                                           $"<h4 class=\"text-center\">Album Name:{album.Name} </h4>" +
+                                           $"<h4 class=\"text-center\">Album Price:$ {album.Price:f2}</h4>";
+                var createTrack = $"<a href=\"/Tracks/Create?albumId={id}\" class=\"btn btn-success\">Create Track</a>" ;
                 this.ViewBag["albumDetails"] = albumDetailsAsString;
-                
-                
-                var albumTracksAsString = album.Tracks.Select(t=>$"<li><a href=\"/Tracks/Details?albumId={id}&trackId={t.Track.Id.ToString().ToUpper()}\"/>{t.Track.Name}</a></li>");
-                
-                this.ViewBag["albumTracks"] = album.Tracks.Count==0
+                this.ViewBag["createTrack"] = createTrack;
+
+
+                var albumTracksAsString = album.Tracks.Select(t => $"<li><a href=\"/Tracks/Details?albumId={id}&trackId={t.Track.Id.ToString().ToUpper()}\"/>{t.Track.Name}</a></li>");
+
+                this.ViewBag["albumTracks"] = album.Tracks.Count == 0
                     ? "There are no tracks in album"
-                    : $"<ol>{string.Join(Environment.NewLine,albumTracksAsString)}</ol>";
+                    : $"<ol>{string.Join(Environment.NewLine, albumTracksAsString)}</ol>";
 
             }
 
             return this.View("Albums/Details");
         }
-
-
     }
 }

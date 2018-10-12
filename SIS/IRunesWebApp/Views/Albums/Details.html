@@ -1,28 +1,22 @@
-﻿<!DOCTYPE html>
+﻿<hr class="bg-success"/>
+<div class="row">
+    <div class="col-md-6">
+        <div class="col-md-8">
+            {{albumDetails}}
+        </div>     
+        <div class="row">
+            <div class="col-md-6">
+                {{createTrack}}
+            </div>
+            <div class="col-md-6">
+                <a href="/Albums/All" class="btn btn-success">Back To All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4>Tracks</h4>
+        {{albumTracks}}
+    </div>
+</div>
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
-    <title></title>
-</head>
-<body>
-<h1>IRunes</h1>
-<ul>
-    <li><a href="/Home/Index">Home</a></li>
-    <li><a href="/Albums/All">Albums</a></li>
-    <li><a href="/Users/Logout">Logout</a></li>
-</ul>
-<hr />
-<h1>Album Details</h1>
-<hr />
-{{albumDetails}}
-<hr />
 
-<hr />
-{{albumTracks}}
-<hr />
-<a href="/Albums/All">Back To All</a>
-<hr />
-<footer>CopyRight &copy; Sanity Design Studios. All rights reserved.</footer>
-</body>
-</html>

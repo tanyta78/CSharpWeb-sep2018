@@ -1,12 +1,6 @@
 ﻿namespace SIS.WebServer
 {
-    using System;
-    using System.Net.Sockets;
-    using System.Text;
-    using System.Threading.Tasks;
     using HTTP.Common;
-    using Routing;
-   
     using HTTP.Cookies;
     using HTTP.Enums;
     using HTTP.Exceptions;
@@ -16,6 +10,13 @@
     using HTTP.Responses.Contracts;
     using HTTP.Sessions;
     using Results;
+    using Routing;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Net.Sockets;
+    using System.Text;
+    using System.Threading.Tasks;
 
     public class ConnectionHandler
     {
@@ -27,7 +28,7 @@
         {
             CoreValidator.ThrowIfNull(client, nameof(client));
             CoreValidator.ThrowIfNull(serverRoutingTable, nameof(serverRoutingTable));
-            
+
             this.client = client;
             this.serverRoutingTable = serverRoutingTable;
         }
@@ -39,8 +40,8 @@
 
             while (true)
             {
-               
-               int numberOfBytesRead = await this.client.ReceiveAsync(data.Array, SocketFlags.None);
+
+                int numberOfBytesRead = await this.client.ReceiveAsync(data.Array, SocketFlags.None);
 
                 if (numberOfBytesRead == 0)
                 {
@@ -67,12 +68,51 @@
 
         private IHttpResponse HandleRequest(IHttpRequest httpRequest)
         {
-            if (!this.serverRoutingTable.Routes.ContainsKey(httpRequest.RequestMethod)|| !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
+            var isResourceRequest = this.IsResourceRequest(httpRequest.Path);
+
+            if (isResourceRequest)
+            {
+                return this.HandleResourceResponce(httpRequest.Path);
+            }
+
+            if (!this.serverRoutingTable.Routes.ContainsKey(httpRequest.RequestMethod) || !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
             {
                 return new HttpResponse(HttpResponseStatusCode.NotFound);
             }
 
             return this.serverRoutingTable.Routes[httpRequest.RequestMethod][httpRequest.Path].Invoke(httpRequest);
+        }
+
+        private IHttpResponse HandleResourceResponce(string httpPath)
+        {
+            var indexOfExtensionStart = httpPath.LastIndexOf('.');
+            var indexOfNameStart = httpPath.LastIndexOf('/');
+            var reqPathExtension = httpPath.Substring(indexOfExtensionStart);
+            var resourceNameWithExt = httpPath.Substring(indexOfNameStart);
+            //var executionAssembly = Assembly.GetExecutingAssembly().Location;
+            var resourcePath = "../../../Resources/" + $"{reqPathExtension.Substring(1)}" + resourceNameWithExt ;
+
+            if (!File.Exists(resourcePath))
+            {
+                 return new HttpResponse(HttpResponseStatusCode.NotFound);
+            }
+
+            var fileContent = File.ReadAllBytes(resourcePath);
+
+            return new InlineResourceResult(fileContent,HttpResponseStatusCode.Ok);
+        }
+
+        private bool IsResourceRequest(string reqPath)
+        {
+            
+            if (reqPath.Contains('.'))
+            {
+                var reqPathExtension = reqPath.Substring(reqPath.LastIndexOf('.'));
+                var result = GlobalConstants.ResourceExtensions.Contains(reqPathExtension);
+                return result;
+            }
+
+            return false;
         }
 
         private async Task PrepareResponse(IHttpResponse httpResponse)
@@ -100,7 +140,7 @@
                     await this.PrepareResponse(httpResponse);
                 }
 
-              
+
             }
             catch (BadRequestException e)
             {
@@ -129,15 +169,15 @@
                 sessionId = Guid.NewGuid().ToString();
                 httpRequest.Session = HttpSessionStorage.GetSession(sessionId);
             }
-            
+
             return sessionId;
         }
 
         private void SetResponseSession(IHttpResponse httpResponse, string sessionId)
         {
-            if (sessionId!=null)
+            if (sessionId != null)
             {
-                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey,$"{sessionId}; HttpOnly"));
+                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey, sessionId));
             }
         }
     }
