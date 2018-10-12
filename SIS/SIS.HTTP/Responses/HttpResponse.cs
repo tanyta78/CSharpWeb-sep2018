@@ -61,8 +61,10 @@
             var response = new StringBuilder();
 
             response
-                .AppendLine($"{GlobalConstants.HttpOneProtocolFragment} {this.StatusCode.GetResponseLine()}")
-                .AppendLine($"{this.Headers}");
+                .Append($"{GlobalConstants.HttpOneProtocolFragment} {(int)this.StatusCode} {this.StatusCode.ToString()}")
+                .Append(GlobalConstants.HttpNewLine)
+                .Append($"{this.Headers}")
+                .Append(GlobalConstants.HttpNewLine);
 
             if (this.Cookies.HasCookies())
             {

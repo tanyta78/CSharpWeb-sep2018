@@ -21,10 +21,9 @@
         public const string HttpRequestHeaderNameValueSeparator = ": ";
 
         public const char HttpRequestParameterSeparator = '&';
-
-        public const string NotSupportedStatusCodeExceptionMessage = "Status Code {0} not supported.";
-
+        
         public static string[] ResourceExtensions = new string[]{".js",".css"};
 
+        public static string HttpNewLine = "\r\n";
     }
 }
