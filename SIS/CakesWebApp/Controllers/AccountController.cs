@@ -1,13 +1,12 @@
 ﻿namespace CakesWebApp.Controllers
 {
     using Models;
-    using SIS.HTTP.Requests.Contracts;
+    using SIS.HTTP.Cookies;
     using SIS.HTTP.Responses.Contracts;
+    using SIS.MvcFramework.Services;
     using SIS.WebServer.Results;
     using System;
     using System.Linq;
-    using SIS.HTTP.Cookies;
-    using SIS.MvcFramework.Services;
 
     public class AccountController : BaseController
     {
@@ -75,7 +74,7 @@
             //TODO: LOGIN
 
             //4. REDIRECT TO HOME PAGE
-            return new RedirectResult("/");
+            return this.Redirect("/");
         }
 
         public IHttpResponse Login()
@@ -92,28 +91,30 @@
             //1.Validate user exist and pass is correct
             var user = this.Db.Users.FirstOrDefault(u => u.Username == username && u.Password == hashedPassword);
 
-            if (user==null)
+            if (user == null)
             {
                 return this.BadRequestError("Invalid username or password");
             }
 
             //2.Save cookie/session with the user
             var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
-            var response = new RedirectResult("/");
-            response.Cookies.Add(new HttpCookie(".auth-cakes",cookieContent,7));
+            this.Response.Cookies.Add(new HttpCookie(".auth-cakes", cookieContent, 7));
 
             //4. REDIRECT TO HOME PAGE
-            return response;
+            return this.Redirect("/");
         }
 
         public IHttpResponse Logout()
         {
-            var response =new RedirectResult("/");
-            if (!this.Request.Cookies.ContainsCookie(".auth-cakes")) return null;
+            if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+            {
+                return this.Redirect("/");
+            }
+
             var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
             cookie.Delete();
-            response.Cookies.Add(cookie);
-            return response;
+            this.Response.Cookies.Add(cookie);
+            return this.Redirect("/");;
         }
 
     }

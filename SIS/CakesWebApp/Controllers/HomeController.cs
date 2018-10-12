@@ -1,9 +1,7 @@
 ﻿namespace CakesWebApp.Controllers
 {
-    using SIS.HTTP.Enums;
-    using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
+    using System.Collections.Generic;
 
     public class HomeController : BaseController
     {
@@ -14,7 +12,11 @@
 
         public IHttpResponse WelcomeUser()
         {
-            return new HtmlResult($"<h1>Hello, {this.GetUsername()}</h1",HttpResponseStatusCode.Ok);
+            var viewBag = new Dictionary<string, string>
+            {
+                {"Username", this.GetUsername()}
+            };
+            return this.View("WelcomeUser", viewBag);
         }
     }
 }

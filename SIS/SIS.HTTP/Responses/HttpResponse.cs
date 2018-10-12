@@ -1,7 +1,5 @@
 ﻿namespace SIS.HTTP.Responses
 {
-    using System.Linq;
-    using System.Text;
     using Common;
     using Contracts;
     using Cookies;
@@ -10,19 +8,23 @@
     using Extensions;
     using Headers;
     using Headers.Contracts;
+    using System.Linq;
+    using System.Text;
 
-    public class HttpResponse:IHttpResponse
+    public class HttpResponse : IHttpResponse
     {
-        public HttpResponse(){}
-
-        public HttpResponse(HttpResponseStatusCode statusCode)
+        public HttpResponse()
         {
-            CoreValidator.ThrowIfNull(statusCode,nameof(statusCode));
-
-            this.StatusCode = statusCode;
             this.Headers = new HttpHeaderCollection();
-            this.Cookies=new HttpCookieCollection();
+            this.Cookies = new HttpCookieCollection();
             this.Content = new byte[0];
+        }
+
+        public HttpResponse(HttpResponseStatusCode statusCode) : this()
+        {
+            CoreValidator.ThrowIfNull(statusCode, nameof(statusCode));
+            this.StatusCode = statusCode;
+
         }
 
 
@@ -36,13 +38,13 @@
 
         public void AddHeader(HttpHeader header)
         {
-            CoreValidator.ThrowIfNull(header,nameof(header));
-           this.Headers.Add(header);
+            CoreValidator.ThrowIfNull(header, nameof(header));
+            this.Headers.Add(header);
         }
 
         public void AddCookie(HttpCookie cookie)
         {
-            CoreValidator.ThrowIfNull(cookie,nameof(cookie));
+            CoreValidator.ThrowIfNull(cookie, nameof(cookie));
             this.Cookies.Add(cookie);
         }
 
@@ -68,7 +70,7 @@
                 {
                     response.AppendLine($"{GlobalConstants.CookieResponseHeaderName}: {cookie}");
                 }
-               
+
             }
 
             response.AppendLine();

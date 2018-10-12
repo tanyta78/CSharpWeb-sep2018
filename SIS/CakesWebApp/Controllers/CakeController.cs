@@ -66,7 +66,7 @@
 
            
             //REDIRECT TO HOME PAGE
-            return new RedirectResult("/");
+            return this.Redirect("/");
         }
 
         public IHttpResponse Details()
