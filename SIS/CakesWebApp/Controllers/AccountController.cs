@@ -4,9 +4,9 @@
     using SIS.HTTP.Cookies;
     using SIS.HTTP.Responses.Contracts;
     using SIS.MvcFramework.Services;
-    using SIS.WebServer.Results;
     using System;
     using System.Linq;
+    using SIS.MvcFramework;
 
     public class AccountController : BaseController
     {
@@ -17,11 +17,13 @@
             this.hashService = new HashService();
         }
 
+        [HttpGet("/register")]
         public IHttpResponse Register()
         {
             return this.View("Register");
         }
 
+        [HttpPost("/register")]
         public IHttpResponse DoRegister()
         {
             var username = this.Request.FormData["username"].ToString().Trim();
@@ -77,11 +79,13 @@
             return this.Redirect("/");
         }
 
+        [HttpGet("/login")]
         public IHttpResponse Login()
         {
             return this.View("Login");
         }
 
+        [HttpPost("/login")]
         public IHttpResponse DoLogin()
         {
             var username = this.Request.FormData["username"].ToString().Trim();
@@ -104,6 +108,7 @@
             return this.Redirect("/");
         }
 
+        [HttpGet("/logout")]
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
@@ -114,7 +119,7 @@
             var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
             cookie.Delete();
             this.Response.Cookies.Add(cookie);
-            return this.Redirect("/");;
+            return this.Redirect("/"); ;
         }
 
     }

@@ -9,9 +9,9 @@
     using System.Text;
     using HTTP.Headers;
 
-    public class Controller
+    public abstract class Controller
     {
-        public Controller()
+        protected Controller()
         {
             this.UserCookieService = new UserCookieService();
             this.Response = new HttpResponse(HttpResponseStatusCode.Ok);
@@ -21,20 +21,23 @@
 
         public IHttpResponse Response { get; set; }
 
-        protected IUserCookieService UserCookieService { get; }
-
-        protected string GetUsername()
+        protected string User
         {
-            if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+            get
             {
-                return null;
-            }
+                if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+                {
+                    return null;
+                }
 
-            var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
-            var cookieContent = cookie.Value;
-            var username = this.UserCookieService.GetUserData(cookieContent);
-            return username;
+                var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
+                var cookieContent = cookie.Value;
+                var username = this.UserCookieService.GetUserData(cookieContent);
+                return username;
+            }
         }
+
+        protected IUserCookieService UserCookieService { get; }
 
         protected IHttpResponse View(string viewName, IDictionary<string, string> viewBag = null)
         {

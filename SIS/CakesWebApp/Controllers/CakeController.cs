@@ -1,22 +1,23 @@
 ﻿namespace CakesWebApp.Controllers
 {
+    using Extensions;
+    using Models;
+    using SIS.HTTP.Responses.Contracts;
+    using SIS.MvcFramework;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using Extensions;
-    using Models;
-    using SIS.HTTP.Requests.Contracts;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
 
-    public class CakeController:BaseController
+    public class CakeController : BaseController
     {
+        [HttpGet("/cakes/add")]
         public IHttpResponse AddCake()
         {
             return this.View("AddCake");
         }
 
+        [HttpPost("/cakes/add")]
         public IHttpResponse DoAddCake()
         {
             var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
@@ -44,7 +45,7 @@
             //    return this.BadRequestError("Passwords do not match!");
             //}
 
-  
+
             //CREATE PRODUCT
             var product = new Product
             {
@@ -64,11 +65,12 @@
                 return this.ServerError(e.Message);
             }
 
-           
+
             //REDIRECT TO HOME PAGE
             return this.Redirect("/");
         }
 
+        [HttpGet("/cakes/details")]
         public IHttpResponse Details()
         {
             var id = int.Parse(this.Request.QueryData["id"].ToString());
@@ -80,10 +82,10 @@
             }
 
             var viewBag = new Dictionary<string, string>();
-            viewBag.Add("Name",product.Name);
-            viewBag.Add("Price",product.Price.ToString(CultureInfo.InvariantCulture));
-            viewBag.Add("ImageUrl",product.ImageUrl);
-            return this.View("CakeDetails",viewBag);
+            viewBag.Add("Name", product.Name);
+            viewBag.Add("Price", product.Price.ToString(CultureInfo.InvariantCulture));
+            viewBag.Add("ImageUrl", product.ImageUrl);
+            return this.View("CakeDetails", viewBag);
         }
     }
 }
