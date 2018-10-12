@@ -1,8 +1,7 @@
-﻿namespace CakesWebApp.Services
+﻿namespace SIS.MvcFramework.Services
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Security.Cryptography;
     using System.Text;
 
@@ -84,12 +83,5 @@
                 }
             }
         }
-    }
-
-    public interface IUserCookieService
-    {
-        string GetUserCookie(string username);
-
-        string GetUserData(string cookieContent);
     }
 }

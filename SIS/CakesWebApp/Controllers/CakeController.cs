@@ -12,16 +12,16 @@
 
     public class CakeController:BaseController
     {
-        public IHttpResponse AddCake(IHttpRequest request)
+        public IHttpResponse AddCake()
         {
             return this.View("AddCake");
         }
 
-        public IHttpResponse DoAddCake(IHttpRequest request)
+        public IHttpResponse DoAddCake()
         {
-            var name = request.FormData["name"].ToString().Trim().UrlDecode();
-            var price = decimal.Parse(request.FormData["price"].ToString().UrlDecode());
-            var imageUrl = request.FormData["imageUrl"].ToString().Trim().UrlDecode();
+            var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
+            var price = decimal.Parse(this.Request.FormData["price"].ToString().UrlDecode());
+            var imageUrl = this.Request.FormData["imageUrl"].ToString().Trim().UrlDecode();
 
             // TODO: VALIDATE INPUT 
             //if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
@@ -69,9 +69,9 @@
             return new RedirectResult("/");
         }
 
-        public IHttpResponse Details(IHttpRequest request)
+        public IHttpResponse Details()
         {
-            var id = int.Parse(request.QueryData["id"].ToString());
+            var id = int.Parse(this.Request.QueryData["id"].ToString());
             var product = Db.Products.FirstOrDefault(x => x.Id == id);
 
             if (product == null)

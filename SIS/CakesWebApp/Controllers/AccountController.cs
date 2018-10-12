@@ -1,13 +1,13 @@
 ﻿namespace CakesWebApp.Controllers
 {
     using Models;
-    using Services;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
     using SIS.WebServer.Results;
     using System;
     using System.Linq;
     using SIS.HTTP.Cookies;
+    using SIS.MvcFramework.Services;
 
     public class AccountController : BaseController
     {
@@ -18,16 +18,16 @@
             this.hashService = new HashService();
         }
 
-        public IHttpResponse Register(IHttpRequest request)
+        public IHttpResponse Register()
         {
             return this.View("Register");
         }
 
-        public IHttpResponse DoRegister(IHttpRequest request)
+        public IHttpResponse DoRegister()
         {
-            var username = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
-            var confirmPassword = request.FormData["confirmPassword"].ToString();
+            var username = this.Request.FormData["username"].ToString().Trim();
+            var password = this.Request.FormData["password"].ToString();
+            var confirmPassword = this.Request.FormData["confirmPassword"].ToString();
 
             //1.VALIDATE INPUT
             if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
@@ -78,15 +78,15 @@
             return new RedirectResult("/");
         }
 
-        public IHttpResponse Login(IHttpRequest request)
+        public IHttpResponse Login()
         {
             return this.View("Login");
         }
 
-        public IHttpResponse DoLogin(IHttpRequest request)
+        public IHttpResponse DoLogin()
         {
-            var username = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
+            var username = this.Request.FormData["username"].ToString().Trim();
+            var password = this.Request.FormData["password"].ToString();
 
             var hashedPassword = this.hashService.Hash(password);
             //1.Validate user exist and pass is correct
@@ -106,11 +106,11 @@
             return response;
         }
 
-        public IHttpResponse Logout(IHttpRequest request)
+        public IHttpResponse Logout()
         {
             var response =new RedirectResult("/");
-            if (!request.Cookies.ContainsCookie(".auth-cakes")) return null;
-            var cookie = request.Cookies.GetCookie(".auth-cakes");
+            if (!this.Request.Cookies.ContainsCookie(".auth-cakes")) return null;
+            var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
             cookie.Delete();
             response.Cookies.Add(cookie);
             return response;

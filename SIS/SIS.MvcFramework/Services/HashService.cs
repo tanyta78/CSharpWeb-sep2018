@@ -1,4 +1,4 @@
-﻿namespace CakesWebApp.Services
+﻿namespace SIS.MvcFramework.Services
 {
     using System;
     using System.Security.Cryptography;
@@ -21,10 +21,5 @@
             }
 
         }
-    }
-
-    public interface IHashService
-    {
-        string Hash(string stringToHash);
     }
 }

@@ -7,14 +7,14 @@
 
     public class HomeController : BaseController
     {
-        public IHttpResponse Index(IHttpRequest request)
+        public IHttpResponse Index()
         {
             return this.View("Index");
         }
 
-        public IHttpResponse WelcomeUser(IHttpRequest request)
+        public IHttpResponse WelcomeUser()
         {
-            return new HtmlResult($"<h1>Hello, {this.GetUsername(request)}</h1",HttpResponseStatusCode.Ok);
+            return new HtmlResult($"<h1>Hello, {this.GetUsername()}</h1",HttpResponseStatusCode.Ok);
         }
     }
 }
