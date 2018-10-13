@@ -83,14 +83,12 @@
         }
 
         [HttpPost("/login")]
-        public IHttpResponse DoLogin()
+        public IHttpResponse DoLogin(DoLoginInputModel model)
         {
-            var username = this.Request.FormData["username"].ToString().Trim();
-            var password = this.Request.FormData["password"].ToString();
+            var hashedPassword = this.hashService.Hash(model.Password);
 
-            var hashedPassword = this.hashService.Hash(password);
             //1.Validate user exist and pass is correct
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == username && u.Password == hashedPassword);
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == model.Username.Trim() && u.Password == hashedPassword);
 
             if (user == null)
             {

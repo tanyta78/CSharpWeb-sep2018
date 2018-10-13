@@ -84,11 +84,11 @@
 
                     if (request.FormData.Any(x => x.Key.ToLower() == key))
                     {
-                        value = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString();
+                        value = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
                     }
                     else if (request.QueryData.Any(x => x.Key.ToLower() == key))
                     {
-                        value = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString();
+                        value = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
 
                     }
 

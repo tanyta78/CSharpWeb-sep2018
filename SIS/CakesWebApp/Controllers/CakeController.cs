@@ -1,6 +1,5 @@
 ﻿namespace CakesWebApp.Controllers
 {
-    using Extensions;
     using Models;
     using SIS.HTTP.Responses.Contracts;
     using SIS.MvcFramework;
@@ -8,6 +7,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using ViewModels.Cake;
 
     public class CakeController : BaseController
     {
@@ -18,11 +18,9 @@
         }
 
         [HttpPost("/cakes/add")]
-        public IHttpResponse DoAddCake()
+        public IHttpResponse DoAddCake(DoAddCakesInputModel model)
         {
-            var name = this.Request.FormData["name"].ToString().Trim().UrlDecode();
-            var price = decimal.Parse(this.Request.FormData["price"].ToString().UrlDecode());
-            var imageUrl = this.Request.FormData["imageUrl"].ToString().Trim().UrlDecode();
+            
 
             // TODO: VALIDATE INPUT 
             //if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
@@ -49,9 +47,9 @@
             //CREATE PRODUCT
             var product = new Product
             {
-                Name = name,
-                Price = price,
-                ImageUrl = imageUrl
+                Name = model.Name,
+                Price = model.Price.ToDecimalOrDefault(),
+                ImageUrl = model.ImageUrl
             };
 
             this.Db.Products.Add(product);
@@ -80,7 +78,7 @@
             {
                 return this.BadRequestError("Cake not found.");
             }
-
+            //TODO: view model
             var viewBag = new Dictionary<string, string>();
             viewBag.Add("Name", product.Name);
             viewBag.Add("Price", product.Price.ToString(CultureInfo.InvariantCulture));
