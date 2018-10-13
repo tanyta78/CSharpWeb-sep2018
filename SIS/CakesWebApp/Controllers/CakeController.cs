@@ -7,10 +7,18 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using SIS.MvcFramework.Logger;
     using ViewModels.Cake;
 
     public class CakeController : BaseController
     {
+        private readonly ILogger logger;
+
+        public CakeController(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         [HttpGet("/cakes/add")]
         public IHttpResponse AddCake()
         {
@@ -21,7 +29,6 @@
         public IHttpResponse DoAddCake(DoAddCakesInputModel model)
         {
             
-
             // TODO: VALIDATE INPUT 
             //if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
             //{
