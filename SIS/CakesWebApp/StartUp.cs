@@ -1,20 +1,21 @@
 ﻿namespace CakesWebApp
 {
-    using Controllers;
-    using SIS.HTTP.Enums;
     using SIS.MvcFramework;
-    using SIS.WebServer.Routing;
+    using SIS.MvcFramework.Logger;
+    using SIS.MvcFramework.Services;
 
-    public class StartUp:IMvcApplication
+    public class StartUp : IMvcApplication
     {
         public void Configure()
         {
-            
+
         }
 
-        public void ConfigureServices()
+        public void ConfigureServices(IServiceCollection collection)
         {
-            //TODO: Implement IoC/DI
+            collection.AddService<IHashService, HashService>();
+            collection.AddService<IUserCookieService,UserCookieService>();
+           collection.AddService<ILogger,FileLogger>();
         }
     }
 }

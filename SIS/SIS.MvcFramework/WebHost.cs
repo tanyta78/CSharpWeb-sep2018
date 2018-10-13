@@ -3,6 +3,7 @@
     using HTTP.Enums;
     using HTTP.Requests.Contracts;
     using HTTP.Responses.Contracts;
+    using Services;
     using System;
     using System.Linq;
     using System.Reflection;
@@ -14,10 +15,11 @@
     {
         public static void Start(IMvcApplication application)
         {
-            application.ConfigureServices();
+            var dependencyContainer = new ServiceCollection();
+            application.ConfigureServices(dependencyContainer);
 
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
-            AutoRegisterRoutes(serverRoutingTable, application);
+            AutoRegisterRoutes(serverRoutingTable, application, dependencyContainer);
 
             application.Configure();
             Server server = new Server(80, serverRoutingTable);
@@ -25,7 +27,7 @@
             server.Run();
         }
 
-        private static void AutoRegisterRoutes(ServerRoutingTable routingTable, IMvcApplication application)
+        private static void AutoRegisterRoutes(ServerRoutingTable routingTable, IMvcApplication application, IServiceCollection serviceCollection)
         {
             var controllers = application.GetType().Assembly.GetTypes()
                  .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Controller)));
@@ -45,7 +47,7 @@
                         continue;
                     }
 
-                    routingTable.Add(httpAttribute.Method, httpAttribute.Path, (request) => ExecuteAction(controller, methodInfo, request));
+                    routingTable.Add(httpAttribute.Method, httpAttribute.Path, (request) => ExecuteAction(controller, methodInfo, request, serviceCollection));
 
                     Console.WriteLine($"Route registered:{controller.Name} {methodInfo.Name} ");
 
@@ -53,16 +55,17 @@
             }
         }
 
-        private static IHttpResponse ExecuteAction(Type controllerType, MethodInfo methodInfo, IHttpRequest request)
+        private static IHttpResponse ExecuteAction(Type controllerType, MethodInfo methodInfo, IHttpRequest request, IServiceCollection serviceCollection)
         {
             //1.Create instance of controllerName
-            var controllerInstance = Activator.CreateInstance(controllerType) as Controller;
+            var controllerInstance = serviceCollection.CreateInstance(controllerType) as Controller;
             //2.Set request
             if (controllerInstance == null)
             {
                 return new TextResult("Controller not found", HttpResponseStatusCode.InternalServerError);
             }
             controllerInstance.Request = request;
+            controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
             //3.Invoke actionName
             //4. Return action result

@@ -7,14 +7,15 @@
     using System;
     using System.Linq;
     using SIS.MvcFramework;
+    using SIS.MvcFramework.Logger;
 
     public class AccountController : BaseController
     {
-        private IHashService hashService;
+        private readonly IHashService hashService;
 
-        public AccountController()
+        public AccountController(IHashService hashService)
         {
-            this.hashService = new HashService();
+            this.hashService = hashService;
         }
 
         [HttpGet("/register")]

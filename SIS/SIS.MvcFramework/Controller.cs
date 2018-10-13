@@ -9,18 +9,19 @@
     using System.Text;
     using HTTP.Headers;
 
-    public abstract class Controller
+    public abstract class Controller 
     {
         protected Controller()
         {
-            this.UserCookieService = new UserCookieService();
-            this.Response = new HttpResponse(HttpResponseStatusCode.Ok);
+           this.Response = new HttpResponse(HttpResponseStatusCode.Ok);
         }
 
         public IHttpRequest Request { get; set; }
 
         public IHttpResponse Response { get; set; }
 
+        public IUserCookieService UserCookieService { get; internal set; }
+        
         protected string User
         {
             get
@@ -37,7 +38,6 @@
             }
         }
 
-        protected IUserCookieService UserCookieService { get; }
 
         protected IHttpResponse View(string viewName, IDictionary<string, string> viewBag = null)
         {

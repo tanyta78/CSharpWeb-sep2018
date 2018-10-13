@@ -4,9 +4,17 @@
     using System.IO;
     using System.Security.Cryptography;
     using System.Text;
+    using Logger;
 
     public class UserCookieService : IUserCookieService
     {
+        private readonly ILogger logger;
+
+        public UserCookieService(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         public const string EncryptKey = "E546C8DF278CD5931069B522E695D4F2";
 
         public string GetUserCookie(string username)
@@ -17,6 +25,7 @@
 
         public string GetUserData(string cookieContent)
         {
+            this.logger.Log("GetUserData" + cookieContent);
             var username = DecryptString(cookieContent, EncryptKey);
             return username;
         }
