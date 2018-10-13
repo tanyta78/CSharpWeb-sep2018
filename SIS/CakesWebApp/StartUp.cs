@@ -14,8 +14,8 @@
         public void ConfigureServices(IServiceCollection collection)
         {
             collection.AddService<IHashService, HashService>();
-            collection.AddService<IUserCookieService,UserCookieService>();
-           collection.AddService<ILogger,FileLogger>();
+            collection.AddService<IUserCookieService, UserCookieService>();
+            collection.AddService<ILogger, FileLogger>();
         }
     }
 }

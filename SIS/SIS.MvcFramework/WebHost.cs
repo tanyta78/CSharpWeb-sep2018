@@ -5,6 +5,7 @@
     using HTTP.Responses.Contracts;
     using Services;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using WebServer;
@@ -67,9 +68,39 @@
             controllerInstance.Request = request;
             controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
+            var actionParameters = methodInfo.GetParameters();
+            var actionParametersObject = new List<object>();
+            foreach (var actionParameter in actionParameters)
+            {
+                var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
+
+                // populate from request instance properties
+                var properties = actionParameter.ParameterType.GetProperties();
+                foreach (var propertyInfo in properties)
+                {
+                    //TODO: Support IEnumerable
+                    var key = propertyInfo.Name.ToLower();
+                    object value = null;
+
+                    if (request.FormData.Any(x => x.Key.ToLower() == key))
+                    {
+                        value = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString();
+                    }
+                    else if (request.QueryData.Any(x => x.Key.ToLower() == key))
+                    {
+                        value = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString();
+
+                    }
+
+                    propertyInfo.SetMethod.Invoke(instance, new object[] { value });
+
+                }
+
+                actionParametersObject.Add(instance);
+            }
             //3.Invoke actionName
             //4. Return action result
-            var httpResponse = methodInfo.Invoke(controllerInstance, new object[0]) as IHttpResponse;
+            var httpResponse = methodInfo.Invoke(controllerInstance, actionParametersObject.ToArray()) as IHttpResponse;
 
             return httpResponse;
         }

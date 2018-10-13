@@ -45,6 +45,8 @@
 
   <ItemGroup>
     <Folder Include="Services\" />
+    <Folder Include="ViewModels\Cake\" />
+    <Folder Include="ViewModels\Home\" />
   </ItemGroup>
 
 </Project>
