@@ -89,45 +89,61 @@
             var actionParametersObject = new List<object>();
             foreach (var actionParameter in actionParameters)
             {
-                var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
-
-                // populate from request instance properties
-                var properties = actionParameter.ParameterType.GetProperties();
-                foreach (var propertyInfo in properties)
+                //TODO: improve this check
+                if (actionParameter.ParameterType.IsValueType 
+                    || Type.GetTypeCode(actionParameter.ParameterType) == TypeCode.String)
                 {
-                    //TODO: Support IEnumerable
-                    var key = propertyInfo.Name.ToLower();
-                    string strValue = null;
-
-                    if (request.FormData.Any(x => x.Key.ToLower() == key))
-                    {
-                        strValue = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
-                    }
-                    else if (request.QueryData.Any(x => x.Key.ToLower() == key))
-                    {
-                        strValue = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
-
-                    }
-
-                    //-> check type of propertyInfo and set it correctly
-                    //-> int, double, long, decimal, DateTime
-
-                    var typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
-                    object value = TryParse(strValue, typeCode);
-
-                    propertyInfo.SetMethod.Invoke(instance, new object[] { value });
-
+                    var stringValue = GetRequestData(request, actionParameter.Name);
+                    actionParametersObject.Add(TryParse(stringValue, actionParameter.ParameterType));
                 }
+                else
+                {
+                    var instance = serviceCollection.CreateInstance(actionParameter.ParameterType);
 
-                actionParametersObject.Add(instance);
+                    // populate from request instance properties
+                    var properties = actionParameter.ParameterType.GetProperties();
+                    foreach (var propertyInfo in properties)
+                    {
+                        //TODO: Support IEnumerable
+                        string strValue = GetRequestData(request, propertyInfo.Name);
+
+                        //-> check type of propertyInfo and set it correctly
+                        //-> int, double, long, decimal, DateTime
+
+
+                        object value = TryParse(strValue, propertyInfo.PropertyType);
+
+                        propertyInfo.SetMethod.Invoke(instance, new object[] { value });
+
+                    }
+                    actionParametersObject.Add(instance);
+                }
             }
-
             return actionParametersObject;
         }
 
-        private static object TryParse(string strValue, TypeCode typeCode)
+        private static string GetRequestData(IHttpRequest request, string key)
         {
-            object value = strValue;
+            key = key.ToLower();
+            string strValue = null;
+
+            if (request.FormData.Any(x => x.Key.ToLower() == key))
+            {
+                strValue = request.FormData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
+            }
+            else if (request.QueryData.Any(x => x.Key.ToLower() == key))
+            {
+                strValue = request.QueryData.First(x => x.Key.ToLower() == key).Value.ToString().UrlDecode();
+
+            }
+
+            return strValue;
+        }
+
+        private static object TryParse(string strValue, Type type)
+        {
+            var typeCode = Type.GetTypeCode(type);
+            object value = null;
             switch (typeCode)
             {
                 case TypeCode.Int32:
@@ -166,7 +182,9 @@
                         value = dateResult;
                     }
                     break;
-                default: break;
+                case TypeCode.String:
+                    value = strValue;
+                    break;
             }
 
             return value;

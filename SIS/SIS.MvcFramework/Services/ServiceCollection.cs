@@ -6,7 +6,7 @@
 
     public class ServiceCollection : IServiceCollection
     {
-        private IDictionary<Type, Type> dependencyContainer;
+        private readonly IDictionary<Type, Type> dependencyContainer;
 
         public ServiceCollection()
         {
@@ -20,7 +20,7 @@
 
         public T CreateInstance<T>()
         {
-            return (T)CreateInstance(typeof(T));
+            return (T) this.CreateInstance(typeof(T));
         }
 
         public object CreateInstance(Type type)
@@ -37,8 +37,8 @@
             }
             //2.Create instance of type
 
-            //if empty-> use it
-            var constructorInfo = type.GetConstructors().First();
+            // if empty-> use it
+            var constructorInfo = type.GetConstructors().OrderBy(x=>x.GetParameters().Length).First();
             var constructorParameters = constructorInfo.GetParameters();
             var constructorParameterObjects = new List<object>();
 
