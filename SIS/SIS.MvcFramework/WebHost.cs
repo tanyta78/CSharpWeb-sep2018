@@ -9,7 +9,6 @@
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
-    using System.Threading;
     using WebServer;
     using WebServer.Results;
     using WebServer.Routing;
@@ -18,7 +17,7 @@
     {
         public static void Start(IMvcApplication application)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
             var dependencyContainer = new ServiceCollection();
             application.ConfigureServices(dependencyContainer);
@@ -90,7 +89,7 @@
             foreach (var actionParameter in actionParameters)
             {
                 //TODO: improve this check
-                if (actionParameter.ParameterType.IsValueType 
+                if (actionParameter.ParameterType.IsValueType
                     || Type.GetTypeCode(actionParameter.ParameterType) == TypeCode.String)
                 {
                     var stringValue = GetRequestData(request, actionParameter.Name);
