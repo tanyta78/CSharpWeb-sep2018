@@ -1,10 +1,10 @@
 ﻿namespace SIS.WebServer.Routing
 {
-    using System;
-    using System.Collections.Generic;
     using HTTP.Enums;
     using HTTP.Requests.Contracts;
     using HTTP.Responses.Contracts;
+    using System;
+    using System.Collections.Generic;
 
     public class ServerRoutingTable
     {
@@ -20,5 +20,7 @@
         }
 
         public Dictionary<HttpRequestMethod, Dictionary<string, Func<IHttpRequest, IHttpResponse>>> Routes { get; }
+
+
     }
 }

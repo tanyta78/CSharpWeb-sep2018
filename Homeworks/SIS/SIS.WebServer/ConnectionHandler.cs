@@ -17,20 +17,21 @@
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
+    using Api;
 
     public class ConnectionHandler
     {
         private readonly Socket client;
 
-        private readonly ServerRoutingTable serverRoutingTable;
+        private readonly IHttpHandler handler;
 
-        public ConnectionHandler(Socket client, ServerRoutingTable serverRoutingTable)
+        public ConnectionHandler(Socket client, IHttpHandler handler)
         {
             CoreValidator.ThrowIfNull(client, nameof(client));
-            CoreValidator.ThrowIfNull(serverRoutingTable, nameof(serverRoutingTable));
+            CoreValidator.ThrowIfNull(handler, nameof(handler));
 
             this.client = client;
-            this.serverRoutingTable = serverRoutingTable;
+            this.handler = handler;
         }
 
         private async Task<IHttpRequest> ReadRequest()
@@ -66,55 +67,7 @@
             return new HttpRequest(result.ToString());
         }
 
-        private IHttpResponse HandleRequest(IHttpRequest httpRequest)
-        {
-            var isResourceRequest = this.IsResourceRequest(httpRequest.Path);
-
-            if (isResourceRequest)
-            {
-                return this.HandleResourceResponce(httpRequest.Path);
-            }
-
-            if (!this.serverRoutingTable.Routes.ContainsKey(httpRequest.RequestMethod) || !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
-            {
-                return new HttpResponse(HttpResponseStatusCode.NotFound);
-            }
-
-            return this.serverRoutingTable.Routes[httpRequest.RequestMethod][httpRequest.Path].Invoke(httpRequest);
-        }
-
-        private IHttpResponse HandleResourceResponce(string httpPath)
-        {
-            var indexOfExtensionStart = httpPath.LastIndexOf('.');
-            var indexOfNameStart = httpPath.LastIndexOf('/');
-            var reqPathExtension = httpPath.Substring(indexOfExtensionStart);
-            var resourceNameWithExt = httpPath.Substring(indexOfNameStart);
-            //var executionAssembly = Assembly.GetExecutingAssembly().Location;
-            var resourcePath = "../../../Resources/" + $"{reqPathExtension.Substring(1)}" + resourceNameWithExt ;
-
-            if (!File.Exists(resourcePath))
-            {
-                 return new HttpResponse(HttpResponseStatusCode.NotFound);
-            }
-
-            var fileContent = File.ReadAllBytes(resourcePath);
-
-            return new InlineResourceResult(fileContent,HttpResponseStatusCode.Ok);
-        }
-
-        private bool IsResourceRequest(string reqPath)
-        {
-            
-            if (reqPath.Contains('.'))
-            {
-                var reqPathExtension = reqPath.Substring(reqPath.LastIndexOf('.'));
-                var result = GlobalConstants.ResourceExtensions.Contains(reqPathExtension);
-                return result;
-            }
-
-            return false;
-        }
-
+        
         private async Task PrepareResponse(IHttpResponse httpResponse)
         {
             byte[] byteSegments = httpResponse.GetBytes();
@@ -133,7 +86,7 @@
                 {
                     string sessionId = this.SetRequestSession(httpRequest);
 
-                    var httpResponse = this.HandleRequest(httpRequest);
+                    var httpResponse = this.handler.Handle(httpRequest);
 
                     this.SetResponseSession(httpResponse, sessionId);
 
