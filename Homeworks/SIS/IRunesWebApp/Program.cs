@@ -3,6 +3,7 @@
     using Controllers;
     using SIS.HTTP.Enums;
     using SIS.WebServer;
+    using SIS.WebServer.Api;
     using SIS.WebServer.Results;
     using SIS.WebServer.Routing;
 
@@ -11,6 +12,8 @@
         static void Main(string[] args)
         {
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
+            var handler = new HttpHandler(serverRoutingTable);
+
 
             //Index (guest, logged-out) (route=”/Home/Index”, route=”/”)
             serverRoutingTable.Routes[HttpRequestMethod.Get]["/"] = request => new HomeController().Index(request);
@@ -36,7 +39,7 @@
             //Track Details (user, logged-in) (route=”/Tracks/Details?albumId={albumId}&trackId={trackId}”)
             serverRoutingTable.Routes[HttpRequestMethod.Get]["/Tracks/Details"] = request => new TrackController().Details(request);
 
-            Server server = new Server(80, serverRoutingTable);
+            Server server = new Server(80, handler);
 
             server.Run();
         }
