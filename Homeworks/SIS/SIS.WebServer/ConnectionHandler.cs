@@ -1,23 +1,19 @@
 ﻿namespace SIS.WebServer
 {
+    using Api;
     using HTTP.Common;
     using HTTP.Cookies;
     using HTTP.Enums;
     using HTTP.Exceptions;
     using HTTP.Requests;
     using HTTP.Requests.Contracts;
-    using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using HTTP.Sessions;
     using Results;
-    using Routing;
     using System;
-    using System.IO;
-    using System.Linq;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
-    using Api;
 
     public class ConnectionHandler
     {
@@ -67,7 +63,7 @@
             return new HttpRequest(result.ToString());
         }
 
-        
+
         private async Task PrepareResponse(IHttpResponse httpResponse)
         {
             byte[] byteSegments = httpResponse.GetBytes();

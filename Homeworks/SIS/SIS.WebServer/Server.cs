@@ -18,14 +18,7 @@
 
         private bool isRunning;
 
-        //public Server(int port, ServerRoutingTable serverRoutingTable)
-        //{
-        //    this.port = port;
-        //    this.listener = new TcpListener(IPAddress.Parse(LocalhostIpAddress), port);
-        //    this.handler = new HttpHandler(serverRoutingTable);
-        //}
-
-        public Server(int port, IHttpHandler handler)
+       public Server(int port, IHttpHandler handler)
         {
             this.port = port;
             this.listener = new TcpListener(IPAddress.Parse(LocalhostIpAddress), port);
