@@ -10,8 +10,9 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.CompilerServices;
+    using SIS.Framework.Controllers;
 
-    public abstract class BaseController
+    public abstract class BaseController:Controller
     {
         protected BaseController()
         {
