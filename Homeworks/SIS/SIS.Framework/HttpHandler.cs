@@ -1,4 +1,4 @@
-﻿namespace SIS.WebServer.Api
+﻿namespace SIS.Framework
 {
     using System.IO;
     using System.Linq;
@@ -7,8 +7,9 @@
     using HTTP.Requests.Contracts;
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
-    using Results;
-    using Routing;
+    using WebServer.Api;
+    using WebServer.Results;
+    using WebServer.Routing;
 
     public class HttpHandler : IHttpHandler
     {
