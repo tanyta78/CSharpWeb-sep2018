@@ -8,8 +8,4 @@
     <ProjectReference Include="..\SIS.WebServer\SIS.WebServer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Routers\" />
-  </ItemGroup>
-
 </Project>

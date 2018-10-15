@@ -6,7 +6,9 @@
     {
         public static string GetControllerName(object controller)
         {
-            return controller.GetType().Name.Replace(MvcContext.Get.ControllersSuffix, String.Empty);
+            return controller.GetType()
+                .Name
+                .Replace(MvcContext.Get.ControllersSuffix, string.Empty);
         }
 
         public static string GetViewFullQualifiedName(string controller, string action) =>

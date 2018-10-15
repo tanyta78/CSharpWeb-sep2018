@@ -10,13 +10,15 @@
     {
         public IHttpRequest Request { get; set; }
 
-        protected IViewable View([CallerMemberName] string caller = "")
+        protected IViewable View([CallerMemberName] string viewName = "")
         {
             var controllerName = ControllerUtilities.GetControllerName(this);
 
-            var fullyQualifiedName = ControllerUtilities.GetViewFullQualifiedName(controllerName, caller);
+            var fullyQualifiedName = ControllerUtilities
+                .GetViewFullQualifiedName(controllerName, viewName);
 
             var view = new View(fullyQualifiedName);
+
             return new ViewResult(view);
         }
 
