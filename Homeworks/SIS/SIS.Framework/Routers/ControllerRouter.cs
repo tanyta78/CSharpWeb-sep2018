@@ -57,7 +57,7 @@
             }
             //3.Prepare the response :
             //-Invoke the Action and extract it's result - using the extracted MethodInfo and the controller object; format the IActionResult to a proper result - if it's an IViewable => HtmlResult, if it's IRedirectable=>RedirectResult
-            object[] actionParameters = this.MapActionParameters(action, request);
+            object[] actionParameters = this.MapActionParameters(action, request,controller);
             IActionResult actionResult = this.InvokeAction(controller, action, actionParameters);
 
             return this.PrepareResponse(actionResult);
@@ -86,7 +86,7 @@
             return (IActionResult) action.Invoke(controller, actionParameters);
         }
 
-        private object[] MapActionParameters(MethodInfo action, IHttpRequest request)
+        private object[] MapActionParameters(MethodInfo action, IHttpRequest request, Controller controller)
         {
             ParameterInfo[] actionParametersInfo = action.GetParameters();
             object[] mappedActionParameters = new object[actionParametersInfo.Length];
@@ -101,11 +101,23 @@
                 }
                 else
                 {
-                    mappedActionParameters[index] = this.ProcessBindingModelParameter(currentParameterInfo, request);
+                   object bindingModel = this.ProcessBindingModelParameter(currentParameterInfo, request);
+                    controller.ModelState.IsValid = this.isValidModel(bindingModel);
+                    mappedActionParameters[index] = bindingModel;
                 }
             }
 
             return mappedActionParameters;
+        }
+
+        private bool? isValidModel(object bindingModel)
+        {
+          //TODO: Traverse all of the bindingModel's properties.
+          //TODO: Extract all ValidationAttributes from the current Property(if any).
+          //TODO: Call isValid() method on the property's value, for each ValidationAttribute.
+          //TODO: If even one return false, this method should return false.
+          //TODO: If everything is valid, this method should return true.
+            return true;
         }
 
         private object ProcessBindingModelParameter(ParameterInfo param, IHttpRequest request)
