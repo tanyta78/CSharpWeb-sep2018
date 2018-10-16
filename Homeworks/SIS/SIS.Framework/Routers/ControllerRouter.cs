@@ -57,16 +57,97 @@
             }
             //3.Prepare the response :
             //-Invoke the Action and extract it's result - using the extracted MethodInfo and the controller object; format the IActionResult to a proper result - if it's an IViewable => HtmlResult, if it's IRedirectable=>RedirectResult
+            object[] actionParameters = this.MapActionParameters(action, request);
+            IActionResult actionResult = this.InvokeAction(controller, action, actionParameters);
 
-
-            return this.PrepareResponse(controller, action);
+            return this.PrepareResponse(actionResult);
         }
 
+        private IHttpResponse PrepareResponse(IActionResult actionResult)
+        {
+            string invocationResult = actionResult.Invoke();
+
+            if (actionResult is IViewable)
+            {
+                return new HtmlResult(invocationResult, HttpResponseStatusCode.Ok);
+            }
+            else if (actionResult is IRedirectable)
+            {
+                return new WebServer.Results.RedirectResult(invocationResult);
+            }
+            else
+            {
+                throw new InvalidOperationException("The view result is not supported");
+            }
+        }
+
+        private IActionResult InvokeAction(Controller controller, MethodInfo action, object[] actionParameters)
+        {
+            return (IActionResult) action.Invoke(controller, actionParameters);
+        }
+
+        private object[] MapActionParameters(MethodInfo action, IHttpRequest request)
+        {
+            ParameterInfo[] actionParametersInfo = action.GetParameters();
+            object[] mappedActionParameters = new object[actionParametersInfo.Length];
+
+            for (int index = 0; index < actionParametersInfo.Length; index++)
+            {
+                ParameterInfo currentParameterInfo = actionParametersInfo[index];
+                var currentParameterType = currentParameterInfo.ParameterType;
+                if (currentParameterType.IsPrimitive || currentParameterType == typeof(string))
+                {
+                    mappedActionParameters[index] = this.ProcessPrimitiveParameter(currentParameterInfo, request);
+                }
+                else
+                {
+                    mappedActionParameters[index] = this.ProcessBindingModelParameter(currentParameterInfo, request);
+                }
+            }
+
+            return mappedActionParameters;
+        }
+
+        private object ProcessBindingModelParameter(ParameterInfo param, IHttpRequest request)
+        {
+            Type bindingModelType = param.ParameterType;
+
+            var bindingModelInstance = Activator.CreateInstance(bindingModelType);
+            var bindingModelProperties = bindingModelType.GetProperties();
+
+            foreach (var property in bindingModelProperties)
+            {
+                try
+                {
+                    object value = this.GetParameterFromRequest(request, property.Name);
+                    property.SetValue(bindingModelInstance,Convert.ChangeType(value,property.PropertyType));
+
+                }
+                catch 
+                {
+                    Console.WriteLine($"The {property.Name} field could not be mapped.");
+                   
+                }
+            }
+
+            return Convert.ChangeType(bindingModelInstance, bindingModelType);
+        }
+
+        private object ProcessPrimitiveParameter(ParameterInfo param, IHttpRequest request)
+        {
+            object value = this.GetParameterFromRequest(request, param.Name);
+            return Convert.ChangeType(value, param.ParameterType);
+        }
+
+        private object GetParameterFromRequest(IHttpRequest request, string paramName)
+        {
+            if (request.QueryData.ContainsKey(paramName)) return request.QueryData[paramName];
+            if (request.FormData.ContainsKey(paramName)) return request.FormData[paramName];
+            return null;
+        }
 
         private Controller GetController(string controllerName, IHttpRequest request)
         {
-
-
             //IRunesWebApp.Controllers.AccountController,IRunesWebApp
             if (!string.IsNullOrWhiteSpace(controllerName))
             {
@@ -134,7 +215,7 @@
 
         }
 
-        private IHttpResponse PrepareResponse(Controller controller, MethodInfo action)
+        private IHttpResponse PrepareResponseOld(Controller controller, MethodInfo action)
         {
             Console.WriteLine(controller.ToString());
             Console.WriteLine(action.ToString());
