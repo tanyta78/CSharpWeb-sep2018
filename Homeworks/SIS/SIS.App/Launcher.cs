@@ -9,7 +9,7 @@
         static void Main(string[] args)
         {
 
-            Server server = new Server(80, new ControllerRouter());
+            Server server = new Server(80, new HttpHandler());
 
             MvcEngine.Run(server);
         }

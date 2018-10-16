@@ -112,7 +112,7 @@
             return mappedActionParameters;
         }
 
-        private bool? isValidModel(object bindingModel)
+        private bool isValidModel(object bindingModel)
         {
             // Traverse all of the bindingModel's properties.
             var properties = bindingModel.GetType().GetProperties();

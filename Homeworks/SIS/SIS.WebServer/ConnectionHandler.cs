@@ -11,6 +11,7 @@
     using HTTP.Sessions;
     using Results;
     using System;
+    using System.Linq;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading.Tasks;
@@ -62,8 +63,7 @@
 
             return new HttpRequest(result.ToString());
         }
-
-
+        
         private async Task PrepareResponse(IHttpResponse httpResponse)
         {
             byte[] byteSegments = httpResponse.GetBytes();
@@ -128,6 +128,19 @@
             {
                 httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId}; HttpOnly"));
             }
+        }
+
+        private bool IsResourceRequest(string reqPath)
+        {
+            
+            if (reqPath.Contains('.'))
+            {
+                var reqPathExtension = reqPath.Substring(reqPath.LastIndexOf('.'));
+                var result = GlobalConstants.ResourceExtensions.Contains(reqPathExtension);
+                return result;
+            }
+
+            return false;
         }
     }
 }
