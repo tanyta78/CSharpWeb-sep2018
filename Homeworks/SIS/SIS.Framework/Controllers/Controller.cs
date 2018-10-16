@@ -3,12 +3,20 @@
     using ActionResults;
     using HTTP.Requests.Contracts;
     using System.Runtime.CompilerServices;
+    using Models;
     using Utilities;
     using Views;
 
     public abstract class Controller
     {
+        protected Controller()
+        {
+            this.Model = new ViewModel();
+        }
+
         public IHttpRequest Request { get; set; }
+
+        public ViewModel Model { get; }
 
         protected IViewable View([CallerMemberName] string viewName = "")
         {

@@ -1,15 +1,18 @@
 ﻿namespace SIS.Framework.Views
 {
+    using System.Collections.Generic;
     using System.IO;
     using ActionResults;
 
     public class View : IRenderable 
     {
         private readonly string fullyQualifiedTemplateName;
+        private readonly IDictionary<string, object> viewData;
 
-        public View(string fullyQualifiedTemplateName)
+        public View(string fullyQualifiedTemplateName, IDictionary<string,object> viewData)
         {
             this.fullyQualifiedTemplateName = fullyQualifiedTemplateName;
+            this.viewData = viewData;
         }
 
         private string ReadFile()
