@@ -4,6 +4,7 @@
     using Attributes.Methods;
     using Controllers;
     using HTTP.Enums;
+    using HTTP.Extensions;
     using HTTP.Responses;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
@@ -29,17 +30,17 @@
             var actionName = string.Empty;
             var reqMethod = request.RequestMethod.ToString();
 
-            if (request.Url == "/")
+            if (request.Path == "/")
             {
                 controllerName = "Home";
                 actionName = "Index";
             }
             else
             {
-                var requestUrlSplit = request.Url.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                var requestUrlSplit = request.Path.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
-                controllerName = requestUrlSplit[0];
-                actionName = requestUrlSplit[1];
+                controllerName = requestUrlSplit[0].Capitalize();
+                actionName = requestUrlSplit[1].Capitalize();
             }
             //TODO: /users
 
@@ -57,7 +58,7 @@
             }
             //3.Prepare the response :
             //-Invoke the Action and extract it's result - using the extracted MethodInfo and the controller object; format the IActionResult to a proper result - if it's an IViewable => HtmlResult, if it's IRedirectable=>RedirectResult
-            object[] actionParameters = this.MapActionParameters(action, request,controller);
+            object[] actionParameters = this.MapActionParameters(action, request, controller);
             IActionResult actionResult = this.InvokeAction(controller, action, actionParameters);
 
             return this.PrepareResponse(actionResult);
@@ -83,7 +84,7 @@
 
         private IActionResult InvokeAction(Controller controller, MethodInfo action, object[] actionParameters)
         {
-            return (IActionResult) action.Invoke(controller, actionParameters);
+            return (IActionResult)action.Invoke(controller, actionParameters);
         }
 
         private object[] MapActionParameters(MethodInfo action, IHttpRequest request, Controller controller)
@@ -95,16 +96,24 @@
             {
                 ParameterInfo currentParameterInfo = actionParametersInfo[index];
                 var currentParameterType = currentParameterInfo.ParameterType;
+                var mappedActionParameter = new object();
                 if (currentParameterType.IsPrimitive || currentParameterType == typeof(string))
                 {
-                    mappedActionParameters[index] = this.ProcessPrimitiveParameter(currentParameterInfo, request);
+                    mappedActionParameter = this.ProcessPrimitiveParameter(currentParameterInfo, request);
                 }
                 else
                 {
-                   object bindingModel = this.ProcessBindingModelParameter(currentParameterInfo, request);
-                    controller.ModelState.IsValid = this.isValidModel(bindingModel);
-                    mappedActionParameters[index] = bindingModel;
+                    mappedActionParameter = this.ProcessBindingModelParameter(currentParameterInfo, request);
+                   // controller.ModelState.IsValid = this.isValidModel(mappedActionParameter);
+
                 }
+
+                if (mappedActionParameter == null)
+                {
+                    break;
+                }
+
+                mappedActionParameters[index] = mappedActionParameter;
             }
 
             return mappedActionParameters;
@@ -112,11 +121,11 @@
 
         private bool? isValidModel(object bindingModel)
         {
-          //TODO: Traverse all of the bindingModel's properties.
-          //TODO: Extract all ValidationAttributes from the current Property(if any).
-          //TODO: Call isValid() method on the property's value, for each ValidationAttribute.
-          //TODO: If even one return false, this method should return false.
-          //TODO: If everything is valid, this method should return true.
+            //TODO: Traverse all of the bindingModel's properties.
+            //TODO: Extract all ValidationAttributes from the current Property(if any).
+            //TODO: Call isValid() method on the property's value, for each ValidationAttribute.
+            //TODO: If even one return false, this method should return false.
+            //TODO: If everything is valid, this method should return true.
             return true;
         }
 
@@ -124,6 +133,7 @@
         {
             Type bindingModelType = param.ParameterType;
 
+            //TODO: viewModels should be with empty constructors!!!
             var bindingModelInstance = Activator.CreateInstance(bindingModelType);
             var bindingModelProperties = bindingModelType.GetProperties();
 
@@ -131,14 +141,15 @@
             {
                 try
                 {
-                    object value = this.GetParameterFromRequest(request, property.Name);
-                    property.SetValue(bindingModelInstance,Convert.ChangeType(value,property.PropertyType));
+                    //TODO: in this case we should have only primitive types in ViewModels. If property is collection?!?
+                    object value = this.GetParameterFromRequest(request, property.Name.ToLower());
+                    property.SetValue(bindingModelInstance, Convert.ChangeType(value, property.PropertyType));
 
                 }
-                catch 
+                catch
                 {
                     Console.WriteLine($"The {property.Name} field could not be mapped.");
-                   
+
                 }
             }
 

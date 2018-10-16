@@ -5,7 +5,7 @@
 
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(IndexViewModel model)
         {
             return this.View();
         }
