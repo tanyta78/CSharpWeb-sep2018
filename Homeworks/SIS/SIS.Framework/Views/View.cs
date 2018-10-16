@@ -1,7 +1,9 @@
 ﻿namespace SIS.Framework.Views
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using ActionResults;
 
     public class View : IRenderable 
@@ -30,7 +32,22 @@
         public string Render()
         {
             var fullHtml = this.ReadFile();
-            return fullHtml;
+            string renderedHtml = this.RenderHtml(fullHtml);
+            return renderedHtml;
+        }
+
+        private string RenderHtml(string fullHtml)
+        {
+            string renderedHtml = fullHtml;
+            if (this.viewData.Any())
+            {
+                foreach (var parameter in this.viewData)
+                {
+                    renderedHtml = renderedHtml.Replace($"{{{{{{{parameter.Key}}}}}}}", parameter.Value.ToString());
+                }
+            }
+
+            return renderedHtml;
         }
     }
 }
