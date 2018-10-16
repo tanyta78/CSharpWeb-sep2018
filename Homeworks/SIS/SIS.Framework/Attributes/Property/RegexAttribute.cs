@@ -9,7 +9,7 @@
 
         public RegexAttribute(string pattern)
         {
-            this.pattern = "^" + pattern + "$";
+            this.pattern = pattern;
         }
 
         public override bool IsValid(object value)

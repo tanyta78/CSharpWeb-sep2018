@@ -2,8 +2,8 @@
 {
     using ActionResults;
     using HTTP.Requests.Contracts;
-    using System.Runtime.CompilerServices;
     using Models;
+    using System.Runtime.CompilerServices;
     using Utilities;
     using Views;
 
@@ -18,7 +18,7 @@
 
         public ViewModel Model { get; }
 
-        public Model ModelState { get; }=new Model();
+        public Model ModelState { get; } = new Model();
 
         protected IViewable View([CallerMemberName] string viewName = "")
         {
@@ -27,7 +27,7 @@
             var fullyQualifiedName = ControllerUtilities
                 .GetViewFullQualifiedName(controllerName, viewName);
 
-            var view = new View(fullyQualifiedName,this.Model.Data);
+            var view = new View(fullyQualifiedName, this.Model.Data);
 
             return new ViewResult(view);
         }

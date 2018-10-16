@@ -10,6 +10,7 @@
     using SIS.HTTP.Responses.Contracts;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Reflection;
     using WebServer.Api;
@@ -17,7 +18,6 @@
 
     public class ControllerRouter : IHttpHandler
     {
-
         public IHttpResponse Handle(IHttpRequest request)
         {
             //1.Read the Request Data
@@ -43,7 +43,6 @@
                 actionName = requestUrlSplit[1].Capitalize();
             }
             //TODO: /users
-
 
             //2.Use reflection to:
             //-Instantiate a new Controller object - using a constant file path to the app's controllers folder and extracted controller name
@@ -96,24 +95,18 @@
             {
                 ParameterInfo currentParameterInfo = actionParametersInfo[index];
                 var currentParameterType = currentParameterInfo.ParameterType;
-                var mappedActionParameter = new object();
+
                 if (currentParameterType.IsPrimitive || currentParameterType == typeof(string))
                 {
-                    mappedActionParameter = this.ProcessPrimitiveParameter(currentParameterInfo, request);
+                    mappedActionParameters[index] = this.ProcessPrimitiveParameter(currentParameterInfo, request);
                 }
                 else
                 {
-                    mappedActionParameter = this.ProcessBindingModelParameter(currentParameterInfo, request);
-                   // controller.ModelState.IsValid = this.isValidModel(mappedActionParameter);
-
+                    var bindingObject = this.ProcessBindingModelParameter(currentParameterInfo, request);
+                    controller.ModelState.IsValid = this.isValidModel(bindingObject);
+                    mappedActionParameters[index] = bindingObject;
                 }
 
-                if (mappedActionParameter == null)
-                {
-                    break;
-                }
-
-                mappedActionParameters[index] = mappedActionParameter;
             }
 
             return mappedActionParameters;
@@ -121,11 +114,30 @@
 
         private bool? isValidModel(object bindingModel)
         {
-            //TODO: Traverse all of the bindingModel's properties.
-            //TODO: Extract all ValidationAttributes from the current Property(if any).
-            //TODO: Call isValid() method on the property's value, for each ValidationAttribute.
-            //TODO: If even one return false, this method should return false.
-            //TODO: If everything is valid, this method should return true.
+            // Traverse all of the bindingModel's properties.
+            var properties = bindingModel.GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                //Extract all ValidationAttributes from the current Property(if any).
+                var propertyAttributes = property
+                    .GetCustomAttributes()
+                    .Where(ca => ca is ValidationAttribute)
+                    .Cast<ValidationAttribute>()
+                    .ToList();
+
+                //Call isValid() method on the property's value, for each ValidationAttribute.
+
+                foreach (var attribute in propertyAttributes)
+                {
+                    if (!attribute.IsValid(property.GetValue(bindingModel)))
+                    {
+                        return false;
+                    }
+                }
+            }
+            //If even one return false, this method should return false.
+            //If everything is valid, this method should return true.
             return true;
         }
 
@@ -144,12 +156,10 @@
                     //TODO: in this case we should have only primitive types in ViewModels. If property is collection?!?
                     object value = this.GetParameterFromRequest(request, property.Name.ToLower());
                     property.SetValue(bindingModelInstance, Convert.ChangeType(value, property.PropertyType));
-
                 }
                 catch
                 {
                     Console.WriteLine($"The {property.Name} field could not be mapped.");
-
                 }
             }
 
