@@ -109,7 +109,7 @@
                         //-> check type of propertyInfo and set it correctly
                         //-> int, double, long, decimal, DateTime
 
-
+                        // can be simplified by using Convert.ChangeType()
                         object value = TryParse(strValue, propertyInfo.PropertyType);
 
                         propertyInfo.SetMethod.Invoke(instance, new object[] { value });

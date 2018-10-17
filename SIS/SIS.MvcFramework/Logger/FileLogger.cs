@@ -9,17 +9,12 @@
 
         private readonly string fileName;
 
-        public FileLogger()
+        public FileLogger(string fileName)
         {
-            this.fileName = "file.txt";
+            this.fileName = fileName;
         }
 
-        //public FileLogger(string fileName)
-        //{
-        //    this.fileName = fileName;
-        //}
-
-        public void Log(string message)
+      public void Log(string message)
         {
             lock (LockObject)
             {
