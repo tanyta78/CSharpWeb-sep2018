@@ -17,11 +17,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IRunesWebApp", "IRunesWebAp
 		{B51BE971-B03C-465B-B8B5-9E28A270A0F7} = {B51BE971-B03C-465B-B8B5-9E28A270A0F7}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIS.MvcFramework", "SIS.MvcFramework\SIS.MvcFramework.csproj", "{932D2D16-EAE4-484D-B57F-F4502E296AAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIS.MvcFramework", "SIS.MvcFramework\SIS.MvcFramework.csproj", "{932D2D16-EAE4-484D-B57F-F4502E296AAF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{AFF46E03-8C82-4FFA-A0E3-3ACCE312A565} = {AFF46E03-8C82-4FFA-A0E3-3ACCE312A565}
 		{B51BE971-B03C-465B-B8B5-9E28A270A0F7} = {B51BE971-B03C-465B-B8B5-9E28A270A0F7}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIS.MvcFramework.Tests", "SIS.MvcFramework.Tests\SIS.MvcFramework.Tests.csproj", "{75DB96EE-EDBC-4F03-8B0F-311AD2EFAAC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{932D2D16-EAE4-484D-B57F-F4502E296AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{932D2D16-EAE4-484D-B57F-F4502E296AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{932D2D16-EAE4-484D-B57F-F4502E296AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75DB96EE-EDBC-4F03-8B0F-311AD2EFAAC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75DB96EE-EDBC-4F03-8B0F-311AD2EFAAC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75DB96EE-EDBC-4F03-8B0F-311AD2EFAAC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75DB96EE-EDBC-4F03-8B0F-311AD2EFAAC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
