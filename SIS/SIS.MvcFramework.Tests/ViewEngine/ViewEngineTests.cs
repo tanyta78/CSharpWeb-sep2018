@@ -32,13 +32,6 @@
             // compare result!= view engine result
             Assert.Equal(expectedResult,engineResult);
         }
-
-        public class TestModel
-        {
-            public string String { get; set; }
-
-            public IEnumerable<string> List { get; set; }
-        }
     }
 
    
