@@ -26,7 +26,7 @@
                 // Get the hashed string.  
                 var hash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
 
-                this.logger.Log(hash);
+                //this.logger.Log(hash);
                 return hash;
             }
 

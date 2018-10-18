@@ -97,7 +97,7 @@
 
             //2.Save cookie/session with the user
             var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
-            this.Response.Cookies.Add(new HttpCookie(".auth-cakes", cookieContent, 7));
+            this.Response.Cookies.Add(new HttpCookie(".auth-app", cookieContent, 7));
 
             //4. REDIRECT TO HOME PAGE
             return this.Redirect("/");
@@ -106,12 +106,12 @@
         [HttpGet("/logout")]
         public IHttpResponse Logout()
         {
-            if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+            if (!this.Request.Cookies.ContainsCookie(".auth-app"))
             {
                 return this.Redirect("/");
             }
 
-            var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
+            var cookie = this.Request.Cookies.GetCookie(".auth-app");
             cookie.Delete();
             this.Response.Cookies.Add(cookie);
             return this.Redirect("/"); ;

@@ -6,15 +6,21 @@
     using HTTP.Responses.Contracts;
     using Services;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using HTTP.Headers;
+    using WebServer.Results;
 
     public abstract class Controller 
     {
         protected Controller()
         {
            this.Response = new HttpResponse(HttpResponseStatusCode.Ok);
+            this.ViewBag = new Dictionary<string, string>();
+
         }
+
+        public IDictionary<string, string> ViewBag { get; set; }
 
         public IHttpRequest Request { get; set; }
 
@@ -26,12 +32,12 @@
         {
             get
             {
-                if (!this.Request.Cookies.ContainsCookie(".auth-cakes"))
+                if (!this.Request.Cookies.ContainsCookie(".auth-app"))
                 {
                     return null;
                 }
 
-                var cookie = this.Request.Cookies.GetCookie(".auth-cakes");
+                var cookie = this.Request.Cookies.GetCookie(".auth-app");
                 var cookieContent = cookie.Value;
                 var username = this.UserCookieService.GetUserData(cookieContent);
                 return username;
@@ -46,7 +52,7 @@
                 viewBag = new Dictionary<string, string>();
             }
             var allContent = this.GetViewContent(viewName, viewBag);
-            PrepareHtmlResult(allContent);
+            this.PrepareHtmlResult(allContent);
             return this.Response;
         }
 
@@ -58,14 +64,69 @@
             {
                 content = content.Replace("@Model." + item.Key, item.Value);
             }
+            //TODO: ADD NAV   @RenderNav()
+            if (this.User!=null)
+            {
+                var loginNav = System.IO.File.ReadAllText("Views/Navigation/loginNav.html");
+                layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
+            }
+            else
+            {
+                var logoutNav = System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
+                layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
+
+            }
             var allContent = layoutContent.Replace(" @RenderBody()", content);
             return allContent;
         }
 
+        private string GetCurrentControllerName() => this.GetType().Name.Replace(ControllerDefaultName, string.Empty);
+
+        private const string ControllerDefaultName = "Controller";
+        private const string RootDirectoryRelativePath = "../../../";
+        private const string ViewsFolderName = "Views";
+        private const string DirectorySeparator = "/";
+        private const string HtmlFileExtension = ".html";
+        private const string LayoutViewFileName = "_Layout";
+        private const string RenderBodyConst = "@RenderBody()";
+
+        private IHttpResponse ViewAuto([CallerMemberName] string viewName = "")
+        {
+
+            string layoutPath = RootDirectoryRelativePath +
+                              ViewsFolderName +
+                              DirectorySeparator +
+                              LayoutViewFileName + HtmlFileExtension;
+            string filePath = RootDirectoryRelativePath +
+                              ViewsFolderName +
+                              DirectorySeparator +
+                              this.GetCurrentControllerName() +
+                              DirectorySeparator + viewName + HtmlFileExtension;
+            if (!System.IO.File.Exists(filePath))
+            {
+                return new BadRequestResult($"View {viewName} not found");
+            }
+
+            var viewContent = System.IO.File.ReadAllText(filePath);
+            var layoutContent = System.IO.File.ReadAllText(layoutPath);
+
+            foreach (var viewBagKey in this.ViewBag.Keys)
+            {
+                var dynamicDataPlaceholder = $"{{{{{viewBagKey}}}}}";
+                var newValue = this.ViewBag[viewBagKey];
+                if (viewContent.Contains(dynamicDataPlaceholder))
+                {
+                    viewContent = viewContent.Replace(dynamicDataPlaceholder, newValue);
+                }
+            }
+            var allContent = layoutContent.Replace(RenderBodyConst, viewContent);
+            this.PrepareHtmlResult(allContent);
+            return this.Response;
+        }
+
         protected IHttpResponse BadRequestError(string errorMessage)
         {
-            var viewBag = new Dictionary<string, string>();
-            viewBag.Add("Error", errorMessage);
+            var viewBag = new Dictionary<string, string> {{"Error", errorMessage}};
             var allContent = this.GetViewContent("Error", viewBag);
             this.PrepareHtmlResult(allContent);
             this.Response.StatusCode = HttpResponseStatusCode.BadRequest;

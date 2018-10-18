@@ -25,7 +25,7 @@
 
         public string GetUserData(string cookieContent)
         {
-            this.logger.Log("GetUserData" + cookieContent);
+            //this.logger.Log("GetUserData" + cookieContent);
             var username = DecryptString(cookieContent, EncryptKey);
             return username;
         }
