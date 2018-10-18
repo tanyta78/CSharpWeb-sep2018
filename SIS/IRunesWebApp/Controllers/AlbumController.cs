@@ -4,18 +4,27 @@
     using Models;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
     using System;
     using System.Linq;
+    using SIS.MvcFramework;
+    using SIS.MvcFramework.Logger;
+    using ViewModels.Album;
 
     public class AlbumController : BaseController
     {
+        private readonly ILogger logger;
 
-        public IHttpResponse All(IHttpRequest request)
+        public AlbumController(ILogger logger)
         {
-            if (!this.IsAuthenticated(request))
+            this.logger = logger;
+        }
+
+        [HttpGet("/Albums/All")]
+        public IHttpResponse All()
+        {
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
 
             var allAlbums = this.Db.Albums.Select(a => $"<a href=\"/Albums/Details?id={a.Id.ToString().ToUpper()}\"/>{a.Name}</a> </br>");
@@ -27,31 +36,30 @@
             return this.View("Albums/All");
         }
 
-
-        public IHttpResponse Create(IHttpRequest request)
+        [HttpGet("/Albums/Create")]
+        public IHttpResponse Create()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
 
 
             return this.View("Albums/Create");
         }
 
-        public IHttpResponse DoCreate(IHttpRequest request)
+        [HttpPost("/Albums/Create")]
+        public IHttpResponse DoCreate(DoCreateInputModel model)
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
-            var name = request.FormData["name"].ToString().Trim();
-            var cover = request.FormData["cover"].ToString();
-
+           
             var album = new Album
             {
-                Cover = cover,
-                Name = name
+                Cover = model.Cover,
+                Name = model.Name.Trim()
             };
 
             this.Db.Albums.Add(album);
@@ -66,18 +74,19 @@
             }
 
 
-            return new RedirectResult("/Albums/All");
+            return this.Redirect("/Albums/All");
         }
 
-        public IHttpResponse Details(IHttpRequest request)
+        [HttpGet("/albums/details")]
+        public IHttpResponse Details()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
 
 
-            var id = request.QueryData["id"].ToString().ToUpper();
+            var id = this.Request.QueryData["id"].ToString().ToUpper();
             var album = this.Db.Albums.Include(x => x.Tracks).ThenInclude(x => x.Track).FirstOrDefault(a => a.Id.ToString() == id);
 
             if (album == null)
@@ -89,7 +98,7 @@
                 var albumDetailsAsString = $"<img src={album.Cover} alt={album.Name} class=\"img-fluid\" > " +
                                            $"<h4 class=\"text-center\">Album Name:{album.Name} </h4>" +
                                            $"<h4 class=\"text-center\">Album Price:$ {album.Price:f2}</h4>";
-                var createTrack = $"<a href=\"/Tracks/Create?albumId={id}\" class=\"btn btn-success\">Create Track</a>" ;
+                var createTrack = $"<a href=\"/Tracks/Create?albumId={id}\" class=\"btn btn-success\">Create Track</a>";
                 this.ViewBag["albumDetails"] = albumDetailsAsString;
                 this.ViewBag["createTrack"] = createTrack;
 

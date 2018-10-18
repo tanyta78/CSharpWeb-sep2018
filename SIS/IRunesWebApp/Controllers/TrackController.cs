@@ -3,19 +3,20 @@
     using Models;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
+    using SIS.MvcFramework;
     using System;
     using System.Linq;
     using System.Net;
+    using ViewModels.Track;
 
     public class TrackController : BaseController
     {
-
+        [HttpGet("/Tracks/create")]
         public IHttpResponse Create(IHttpRequest request)
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
             var albumId = request.QueryData["albumId"].ToString().ToUpper();
             this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success\" >Back To Album</a>";
@@ -24,24 +25,24 @@
 
             return this.View("Tracks/Create");
         }
-
-        public IHttpResponse DoCreate(IHttpRequest request)
+        [HttpPost("/Tracks/create")]
+        public IHttpResponse DoCreate(DoCreateTrackInputModel model)
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
-            var name = request.FormData["name"].ToString().Trim();
-            var link = WebUtility.UrlDecode(request.FormData["link"].ToString()).Replace("watch?v=","embed/");
-           // src="https://www.youtube.com/watch?v=_avb2ikX-rQ<iframe width="640" height="480" src="https://www.youtube.com/embed/_avb2ikX-rQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>"
-            var price = decimal.Parse(request.FormData["price"].ToString());
-            var albumId = request.QueryData["albumId"].ToString().ToUpper();
-            
+
+            var link = WebUtility.UrlDecode(model.Link).Replace("watch?v=", "embed/");
+            // src="https://www.youtube.com/watch?v=_avb2ikX-rQ<iframe width="640" height="480" src="https://www.youtube.com/embed/_avb2ikX-rQ" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>"
+
+            var albumId = this.Request.QueryData["albumId"].ToString().ToUpper();
+
             var track = new Track
             {
-                Name = name,
+                Name = model.Name.Trim(),
                 Link = link,
-                Price = price
+                Price = decimal.Parse(model.Price)
             };
 
             this.Db.Tracks.Add(track);
@@ -56,7 +57,7 @@
             try
             {
 
-                
+
                 this.Db.SaveChanges();
             }
             catch (Exception e)
@@ -65,21 +66,21 @@
                 return this.ServerError(e.Message);
             }
 
-            var response = this.Create(request);
-            return response;
+            return this.Create(this.Request);
         }
 
-        public IHttpResponse Details(IHttpRequest request)
+        [HttpGet("/Tracks/Details")]
+        public IHttpResponse Details()
         {
 
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.Redirect("/Users/Login");
             }
-         
 
-            var albumId = request.QueryData["albumId"].ToString().ToUpper();
-            var trackId = request.QueryData["trackId"].ToString().ToUpper();
+
+            var albumId = this.Request.QueryData["albumId"].ToString().ToUpper();
+            var trackId = this.Request.QueryData["trackId"].ToString().ToUpper();
 
             var track = this.Db.Tracks.FirstOrDefault(t => t.Id.ToString() == trackId);
 
@@ -90,10 +91,10 @@
             else
             {
                 var trackDetailsAsString = $"<h4 class=\"text-center\">Track Name: {track.Name}</h4>" +
-                    $"<h4 class=\"text-center\">Track Price: ${track.Price}</h4>"+
-                    "<hr class=\"bg-success\" />"+
-                    "<div class=\"row text-center\"><div class=\"col-12\">"+
-                    $"<iframe  src=\"{track.Link}\" name=\"{track.Name}\"></iframe>"+
+                    $"<h4 class=\"text-center\">Track Price: ${track.Price}</h4>" +
+                    "<hr class=\"bg-success\" />" +
+                    "<div class=\"row text-center\"><div class=\"col-12\">" +
+                    $"<iframe  src=\"{track.Link}\" name=\"{track.Name}\"></iframe>" +
                     "</div></div>";
                 this.ViewBag["trackDetails"] = trackDetailsAsString;
             }
