@@ -20,15 +20,15 @@
     {
         private readonly Socket client;
 
-        private readonly IHttpHandler handler;
+        private readonly IHttpHandlingContext handlersContext;
 
-        public ConnectionHandler(Socket client, IHttpHandler handler)
+        public ConnectionHandler(Socket client, IHttpHandlingContext handlersContext)
         {
             CoreValidator.ThrowIfNull(client, nameof(client));
-            CoreValidator.ThrowIfNull(handler, nameof(handler));
+            CoreValidator.ThrowIfNull(handlersContext, nameof(handlersContext));
 
             this.client = client;
-            this.handler = handler;
+            this.handlersContext = handlersContext;
         }
 
         private async Task<IHttpRequest> ReadRequest()
@@ -82,7 +82,7 @@
                 {
                     string sessionId = this.SetRequestSession(httpRequest);
 
-                    var httpResponse = this.handler.Handle(httpRequest);
+                    var httpResponse = this.handlersContext.Handle(httpRequest);
 
                     this.SetResponseSession(httpResponse, sessionId);
 
@@ -130,17 +130,6 @@
             }
         }
 
-        private bool IsResourceRequest(string reqPath)
-        {
-            
-            if (reqPath.Contains('.'))
-            {
-                var reqPathExtension = reqPath.Substring(reqPath.LastIndexOf('.'));
-                var result = GlobalConstants.ResourceExtensions.Contains(reqPathExtension);
-                return result;
-            }
-
-            return false;
-        }
+       
     }
 }

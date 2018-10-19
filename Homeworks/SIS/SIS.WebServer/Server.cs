@@ -14,15 +14,15 @@
 
         private readonly TcpListener listener;
 
-        private readonly IHttpHandler handler;
+        private readonly IHttpHandlingContext handlersContext;
 
         private bool isRunning;
 
-       public Server(int port, IHttpHandler handler)
+       public Server(int port, IHttpHandlingContext handlersContext)
         {
             this.port = port;
             this.listener = new TcpListener(IPAddress.Parse(LocalhostIpAddress), port);
-            this.handler = handler;
+            this.handlersContext = handlersContext;
         }
 
         public void Run()
@@ -44,7 +44,7 @@
 
         public async void Listen(Socket client)
         {
-            var connectionHandler = new ConnectionHandler(client, this.handler);
+            var connectionHandler = new ConnectionHandler(client, this.handlersContext);
             await connectionHandler.ProcessRequestAsync();
         }
 

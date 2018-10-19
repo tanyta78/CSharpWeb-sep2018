@@ -8,8 +8,10 @@
     {
         static void Main(string[] args)
         {
-
-            Server server = new Server(80, new HttpHandler());
+            var handlingContext = new HttpRouteHandlingContext(
+                new ControllerRouter(),
+                new ResourceRouter());
+            Server server = new Server(80, handlingContext);
 
             MvcEngine.Run(server);
         }

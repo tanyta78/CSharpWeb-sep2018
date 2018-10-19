@@ -1,8 +1,6 @@
 ﻿namespace IRunesWebApp
 {
-    using System.Reflection;
     using Controllers;
-    using SIS.Framework;
     using SIS.Framework.Routers;
     using SIS.HTTP.Enums;
     using SIS.WebServer;
@@ -14,13 +12,13 @@
         static void Main(string[] args)
         {
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
-           // var handler = new HttpHandler(serverRoutingTable);
-            var handler = new ControllerRouter();
-          
-            
+
+            var handlingContext = new HttpRouteHandlingContext(new ControllerRouter(), new ResourceRouter());
+
+
             ConfigureRouting(serverRoutingTable);
 
-            Server server = new Server(80, handler);
+            Server server = new Server(80, handlingContext);
 
             server.Run();
         }

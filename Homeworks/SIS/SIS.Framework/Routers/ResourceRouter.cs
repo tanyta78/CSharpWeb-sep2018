@@ -1,12 +1,10 @@
 ﻿namespace SIS.Framework.Routers
 {
-    using System.IO;
-    using System.Linq;
-    using HTTP.Common;
     using HTTP.Enums;
     using HTTP.Responses;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
+    using System.IO;
     using WebServer.Api;
     using WebServer.Results;
 
@@ -14,19 +12,14 @@
     {
         public IHttpResponse Handle(IHttpRequest request)
         {
-           return this.HandleResourceResponce(request.Path);
-          
-        }
+            var httpPath = request.Path;
 
-       
-        private IHttpResponse HandleResourceResponce(string httpPath)
-        {
             var indexOfExtensionStart = httpPath.LastIndexOf('.');
             var indexOfNameStart = httpPath.LastIndexOf('/');
             var reqPathExtension = httpPath.Substring(indexOfExtensionStart);
             var resourceNameWithExt = httpPath.Substring(indexOfNameStart);
             //var executionAssembly = Assembly.GetExecutingAssembly().Location;
-            var resourcePath = "../../../Resources/" + $"{reqPathExtension.Substring(1)}" + resourceNameWithExt ;
+            var resourcePath = "../../../Resources/" + $"{reqPathExtension.Substring(1)}" + resourceNameWithExt;
 
             if (!File.Exists(resourcePath))
             {
@@ -35,9 +28,10 @@
 
             var fileContent = File.ReadAllBytes(resourcePath);
 
-            return new InlineResourceResult(fileContent,HttpResponseStatusCode.Ok);
+            return new InlineResourceResult(fileContent, HttpResponseStatusCode.Ok);
+
         }
 
-       
+
     }
 }
