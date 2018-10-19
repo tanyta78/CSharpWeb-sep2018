@@ -5,7 +5,6 @@
     using SIS.MvcFramework;
     using SIS.MvcFramework.Logger;
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using ViewModels.Cake;
@@ -28,7 +27,7 @@
         [HttpPost("/cakes/add")]
         public IHttpResponse DoAddCake(DoAddCakesInputModel model)
         {
-          
+
             // TODO: VALIDATE INPUT 
             //if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
             //{
@@ -85,12 +84,15 @@
             {
                 return this.BadRequestError("Cake not found.");
             }
-            //TODO: view model
-            var viewBag = new Dictionary<string, string>();
-            viewBag.Add("Name", product.Name);
-            viewBag.Add("Price", product.Price.ToString(CultureInfo.InvariantCulture));
-            viewBag.Add("ImageUrl", product.ImageUrl);
-            return this.View("CakeDetails", viewBag);
+
+            var viewModel = new CakeDetailsViewModel()
+            {
+                Name = product.Name,
+                Price = decimal.Parse(product.Price.ToString(CultureInfo.InvariantCulture)),
+                ImageUrl = product.ImageUrl
+            };
+
+            return this.View("CakeDetails", viewModel);
         }
     }
 }

@@ -3,6 +3,7 @@
     using SIS.HTTP.Responses.Contracts;
     using System.Collections.Generic;
     using SIS.MvcFramework;
+    using ViewModels.Home;
 
     public class HomeController : BaseController
     {
@@ -15,11 +16,7 @@
         [HttpGet("/hello")]
         public IHttpResponse WelcomeUser()
         {
-            var viewBag = new Dictionary<string, string>
-            {
-                {"Username", this.User}
-            };
-            return this.View("WelcomeUser", viewBag);
+           return this.View("WelcomeUser", new HelloUserViewModel{Username = this.User});
         }
     }
 }

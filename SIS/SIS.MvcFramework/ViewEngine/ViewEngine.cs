@@ -114,7 +114,7 @@ namespace MyAppViews
                 }
                 else
                 {
-                    var htmlLine = line.Replace("\"", "\\\"");
+                     var htmlLine = line.Replace("\"", "\\\"");
                     while (htmlLine.Contains("@"))
                     {
                         var specialSymbolIndex = htmlLine.IndexOf("@", StringComparison.InvariantCulture);

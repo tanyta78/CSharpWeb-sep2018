@@ -70,6 +70,8 @@
                 return new TextResult("Controller not found", HttpResponseStatusCode.InternalServerError);
             }
             controllerInstance.Request = request;
+            controllerInstance.ViewEngine = new ViewEngine.ViewEngine();
+            //TODO: use serviceCollection
             controllerInstance.UserCookieService = serviceCollection.CreateInstance<IUserCookieService>();
 
             //3.Get parameters for action

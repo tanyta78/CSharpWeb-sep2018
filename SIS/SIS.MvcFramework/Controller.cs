@@ -1,33 +1,30 @@
 ﻿namespace SIS.MvcFramework
 {
     using HTTP.Enums;
+    using HTTP.Headers;
     using HTTP.Requests.Contracts;
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using Services;
     using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
     using System.Text;
-    using HTTP.Headers;
-    using WebServer.Results;
+    using ViewEngine;
 
-    public abstract class Controller 
+    public abstract class Controller
     {
         protected Controller()
         {
-           this.Response = new HttpResponse(HttpResponseStatusCode.Ok);
-            this.ViewBag = new Dictionary<string, string>();
-
+            this.Response = new HttpResponse(HttpResponseStatusCode.Ok);
         }
-
-        public IDictionary<string, string> ViewBag { get; set; }
 
         public IHttpRequest Request { get; set; }
 
         public IHttpResponse Response { get; set; }
 
+        public IViewEngine ViewEngine { get; set; }
+
         public IUserCookieService UserCookieService { get; internal set; }
-        
+
         protected string User
         {
             get
@@ -45,88 +42,94 @@
         }
 
 
-        protected IHttpResponse View(string viewName, IDictionary<string, string> viewBag = null)
+        protected IHttpResponse View<T>(string viewName, T model = null) where T : class
         {
-            if (viewBag == null)
-            {
-                viewBag = new Dictionary<string, string>();
-            }
-            var allContent = this.GetViewContent(viewName, viewBag);
+            var allContent = this.GetViewContent(viewName, model);
             this.PrepareHtmlResult(allContent);
             return this.Response;
         }
 
-        private string GetViewContent(string viewName, IDictionary<string, string> viewBag)
+        protected IHttpResponse View(string viewName)
         {
-            var layoutContent = System.IO.File.ReadAllText("Views/_Layout.html");
-            var content = System.IO.File.ReadAllText("Views/" + viewName + ".html");
-            foreach (var item in viewBag)
-            {
-                content = content.Replace("@Model." + item.Key, item.Value);
-            }
+            var allContent = this.GetViewContent(viewName, (object)null);
+            this.PrepareHtmlResult(allContent);
+            return this.Response;
+        }
+
+        private string GetViewContent<T>(string viewName, T model)
+        {
+            var layoutCode = System.IO.File.ReadAllText("Views/_Layout.html");
+           
+
+            var viewCode = System.IO.File.ReadAllText("Views/" + viewName + ".html");
+            var content = this.ViewEngine.GetHtml(viewName, viewCode, model);
+
+
             //TODO: ADD NAV   @RenderNav()
-            if (this.User!=null)
-            {
-                var loginNav = System.IO.File.ReadAllText("Views/Navigation/loginNav.html");
-                layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
-            }
-            else
-            {
-                var logoutNav = System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
-                layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
+            //if (this.User != null)
+            //{
+            //    var loginNav = System.IO.File.ReadAllText("Views/Navigation/loginNav.html");
+            //    layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
+            //}
+            //else
+            //{
+            //    var logoutNav = System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
+            //    layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
 
-            }
-            var allContent = layoutContent.Replace(" @RenderBody()", content);
-            return allContent;
+            //}
+
+            var allContent = layoutCode.Replace(" @RenderBody()", content);
+            var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model);
+            return layoutContent;
         }
 
-        private string GetCurrentControllerName() => this.GetType().Name.Replace(ControllerDefaultName, string.Empty);
+        //private string GetCurrentControllerName() => this.GetType().Name.Replace(ControllerDefaultName, string.Empty);
 
-        private const string ControllerDefaultName = "Controller";
-        private const string RootDirectoryRelativePath = "../../../";
-        private const string ViewsFolderName = "Views";
-        private const string DirectorySeparator = "/";
-        private const string HtmlFileExtension = ".html";
-        private const string LayoutViewFileName = "_Layout";
-        private const string RenderBodyConst = "@RenderBody()";
+        //private const string ControllerDefaultName = "Controller";
+        //private const string RootDirectoryRelativePath = "../../../";
+        //private const string ViewsFolderName = "Views";
+        //private const string DirectorySeparator = "/";
+        //private const string HtmlFileExtension = ".html";
+        //private const string LayoutViewFileName = "_Layout";
+        //private const string RenderBodyConst = "@RenderBody()";
 
-        private IHttpResponse ViewAuto([CallerMemberName] string viewName = "")
-        {
+        //private IHttpResponse ViewAuto([CallerMemberName] string viewName = "")
+        //{
 
-            string layoutPath = RootDirectoryRelativePath +
-                              ViewsFolderName +
-                              DirectorySeparator +
-                              LayoutViewFileName + HtmlFileExtension;
-            string filePath = RootDirectoryRelativePath +
-                              ViewsFolderName +
-                              DirectorySeparator +
-                              this.GetCurrentControllerName() +
-                              DirectorySeparator + viewName + HtmlFileExtension;
-            if (!System.IO.File.Exists(filePath))
-            {
-                return new BadRequestResult($"View {viewName} not found");
-            }
+        //    string layoutPath = RootDirectoryRelativePath +
+        //                      ViewsFolderName +
+        //                      DirectorySeparator +
+        //                      LayoutViewFileName + HtmlFileExtension;
+        //    string filePath = RootDirectoryRelativePath +
+        //                      ViewsFolderName +
+        //                      DirectorySeparator +
+        //                      this.GetCurrentControllerName() +
+        //                      DirectorySeparator + viewName + HtmlFileExtension;
+        //    if (!System.IO.File.Exists(filePath))
+        //    {
+        //        return new BadRequestResult($"View {viewName} not found");
+        //    }
 
-            var viewContent = System.IO.File.ReadAllText(filePath);
-            var layoutContent = System.IO.File.ReadAllText(layoutPath);
+        //    var viewContent = System.IO.File.ReadAllText(filePath);
+        //    var layoutContent = System.IO.File.ReadAllText(layoutPath);
 
-            foreach (var viewBagKey in this.ViewBag.Keys)
-            {
-                var dynamicDataPlaceholder = $"{{{{{viewBagKey}}}}}";
-                var newValue = this.ViewBag[viewBagKey];
-                if (viewContent.Contains(dynamicDataPlaceholder))
-                {
-                    viewContent = viewContent.Replace(dynamicDataPlaceholder, newValue);
-                }
-            }
-            var allContent = layoutContent.Replace(RenderBodyConst, viewContent);
-            this.PrepareHtmlResult(allContent);
-            return this.Response;
-        }
+        //    foreach (var viewBagKey in this.ViewBag.Keys)
+        //    {
+        //        var dynamicDataPlaceholder = $"{{{{{viewBagKey}}}}}";
+        //        var newValue = this.ViewBag[viewBagKey];
+        //        if (viewContent.Contains(dynamicDataPlaceholder))
+        //        {
+        //            viewContent = viewContent.Replace(dynamicDataPlaceholder, newValue);
+        //        }
+        //    }
+        //    var allContent = layoutContent.Replace(RenderBodyConst, viewContent);
+        //    this.PrepareHtmlResult(allContent);
+        //    return this.Response;
+        //}
 
         protected IHttpResponse BadRequestError(string errorMessage)
         {
-            var viewBag = new Dictionary<string, string> {{"Error", errorMessage}};
+            var viewBag = new Dictionary<string, string> { { "Error", errorMessage } };
             var allContent = this.GetViewContent("Error", viewBag);
             this.PrepareHtmlResult(allContent);
             this.Response.StatusCode = HttpResponseStatusCode.BadRequest;
@@ -150,21 +153,21 @@
         protected IHttpResponse File(byte[] content)
         {
             this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentLength, content.Length.ToString()));
-            this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentDisposition,"inline"));
+            this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentDisposition, "inline"));
             this.Response.Content = content;
             return this.Response;
         }
 
         protected IHttpResponse Redirect(string location)
         {
-            this.Response.Headers.Add(new HttpHeader(HttpHeader.Location,location));
+            this.Response.Headers.Add(new HttpHeader(HttpHeader.Location, location));
             this.Response.StatusCode = HttpResponseStatusCode.SeeOther;
             return this.Response;
         }
 
         protected IHttpResponse Text(string content)
         {
-            this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentType,"text/plain; charset=utf-8"));
+            this.Response.Headers.Add(new HttpHeader(HttpHeader.ContentType, "text/plain; charset=utf-8"));
             this.Response.Content = Encoding.UTF8.GetBytes(content);
             return this.Response;
         }

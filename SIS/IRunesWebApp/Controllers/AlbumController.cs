@@ -2,12 +2,11 @@
 {
     using Microsoft.EntityFrameworkCore;
     using Models;
-    using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
-    using System;
-    using System.Linq;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Logger;
+    using System;
+    using System.Linq;
     using ViewModels.Album;
 
     public class AlbumController : BaseController
@@ -55,7 +54,7 @@
             {
                 return this.Redirect("/Users/Login");
             }
-           
+
             var album = new Album
             {
                 Cover = model.Cover,
