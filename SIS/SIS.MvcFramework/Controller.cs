@@ -60,7 +60,7 @@
             var layoutCode = System.IO.File.ReadAllText($"Views/{layoutName}.html");
 
             var viewCode = System.IO.File.ReadAllText("Views/" + viewName + ".html");
-            var content = this.ViewEngine.GetHtml(viewName, viewCode, model);
+            var content = this.ViewEngine.GetHtml(viewName, viewCode, model, this.User);
 
 
             var allContent = layoutCode.Replace(" @RenderBody()", content);
@@ -77,7 +77,7 @@
 
             }
 
-            var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model);
+            var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model, this.User);
 
             return layoutContent;
         }

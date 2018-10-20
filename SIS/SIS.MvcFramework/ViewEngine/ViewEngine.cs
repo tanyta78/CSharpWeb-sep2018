@@ -13,11 +13,12 @@
     public class ViewEngine : IViewEngine
     {
 
-        public string GetHtml<T>(string viewName, string viewCode, T model)
+        public string GetHtml<T>(string viewName, string viewCode, T model, string user = null)
         {
             // generate c# code from view code
             var csharpMethodBody = this.GenerateCSharpMethodBody(viewCode);
-            var viewTypeName = viewName.Replace("/","") + "View";
+            var viewTypeName = viewName.Replace("/", "") + "View";
+           
             var viewCodeAsCSharpCode = @"
 using System;
 using System.Linq;
@@ -29,11 +30,11 @@ namespace MyAppViews
 {
     public class " + viewTypeName + @": IView<" + typeof(T).FullName.Replace("+", ".") + @">
     {
-        public string GetHtml(" + typeof(T).FullName.Replace("+", ".") + @" model)
+        public string GetHtml(" + typeof(T).FullName.Replace("+", ".") + @" model, string user)
         {
             StringBuilder html = new StringBuilder();
             var Model = model;
-
+            var User = user;
             " + csharpMethodBody + @"
 
             return html.ToString().TrimEnd();
@@ -44,7 +45,7 @@ namespace MyAppViews
             //c# =>executable object.getHtml(model)
 
             var instanceOfViewClass = this.GetInstance(viewCodeAsCSharpCode, "MyAppViews." + viewTypeName, typeof(T)) as IView<T>;
-            var html = instanceOfViewClass.GetHtml(model);
+            var html = instanceOfViewClass.GetHtml(model, user);
 
             return html;
         }
@@ -114,7 +115,7 @@ namespace MyAppViews
                 }
                 else
                 {
-                     var htmlLine = line.Replace("\"", "\\\"");
+                    var htmlLine = line.Replace("\"", "\\\"");
                     while (htmlLine.Contains("@"))
                     {
                         var specialSymbolIndex = htmlLine.IndexOf("@", StringComparison.InvariantCulture);
@@ -141,7 +142,7 @@ namespace MyAppViews
             }
 
             return sb.ToString();
-            
+
         }
 
         private IEnumerable<string> GetLines(string input)

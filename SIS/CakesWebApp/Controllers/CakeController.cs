@@ -94,5 +94,11 @@
 
             return this.View("CakeDetails", viewModel);
         }
+
+        [HttpGet("/cakes/search")]
+        public IHttpResponse Search()
+        {
+
+        }
     }
 }
