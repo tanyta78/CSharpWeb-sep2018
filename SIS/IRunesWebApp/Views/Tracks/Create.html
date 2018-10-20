@@ -2,7 +2,7 @@
 <h1 class="text-center text-success">Create Track</h1>
 <div class="container col-md-6 align-self-center">
     <hr class="bg-success" />
-    <form {{formAction}} method="post">
+    <form action="/Tracks/Create?albumId=@Model.albumId" method="post">
         <div class="form-group ">
             <label for="name">Name</label>
             <input type="text" class="form-control" name="name" placeholder="Name...">
@@ -23,7 +23,7 @@
                 <button type="submit" class="btn btn-success">Create</button>
             </div>
             <div class="col-6">
-                <a href={{hrefAlbum}} class="btn btn-success">Back To Album</a>
+                <a href="/Albums/Details?id=@Model.albumId" class="btn btn-success">Back To Album</a>
             </div>
             
         </div>

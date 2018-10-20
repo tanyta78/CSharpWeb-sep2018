@@ -1,4 +1,4 @@
-﻿namespace IRunesWebApp.ViewModels.Album
+﻿namespace IRunesWebApp.ViewModels.Albums
 {
    public class DoCreateInputModel
     {

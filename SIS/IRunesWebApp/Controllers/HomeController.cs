@@ -1,5 +1,6 @@
 ﻿namespace IRunesWebApp.Controllers
 {
+    using IRunesWebApp.ViewModels.Account;
     using SIS.HTTP.Responses.Contracts;
     using SIS.MvcFramework;
 
@@ -11,8 +12,11 @@
             if (this.IsAuthenticated())
             {
                 var username = this.Request.Session.GetParameter("username");
-                this.ViewBag["username"] = username.ToString();
-                return this.View("Welcome");
+               var model= new DoLoginInputModel
+               {
+                   Username = username.ToString()
+               };
+                return this.View("Welcome",model);
             }
 
             return this.View("Index");

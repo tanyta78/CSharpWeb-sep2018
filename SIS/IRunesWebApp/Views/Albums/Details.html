@@ -2,11 +2,13 @@
 <div class="row">
     <div class="col-md-6">
         <div class="col-md-8">
-            {{albumDetails}}
+            <img src={@Model.Cover} alt={@Model.Name} class="img-fluid">
+            <h4 class="text-center">Album Name:@Model.Name </h4>
+            <h4 class="text-center">Album Price:$ @Model.Price </h4>";
         </div>     
         <div class="row">
             <div class="col-md-6">
-                {{createTrack}}
+                <a href="/Tracks/Create?albumId = @Model.Id" class=\"btn btn-success\">Create Track</a>"
             </div>
             <div class="col-md-6">
                 <a href="/Albums/All" class="btn btn-success">Back To All</a>
@@ -15,7 +17,20 @@
     </div>
     <div class="col-md-6">
         <h4>Tracks</h4>
-        {{albumTracks}}
+        @if (@Model.Count > 0)
+        {
+        <ol>
+         @foreach(var item in @Model.Tracks)
+            {
+            <li><a href="/Tracks/Details?albumId=@item.Id&trackId=@item.Id">@item.Name</a></li>
+            }           
+        </ol>
+        }
+        @else
+        {
+        <div>There are no tracks in album.</div>
+        }
+
     </div>
 </div>
 

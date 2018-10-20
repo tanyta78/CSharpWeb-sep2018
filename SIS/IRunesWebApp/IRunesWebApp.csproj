@@ -72,6 +72,9 @@
     <None Update="Views\Albums\Create.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Views\Error.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Views\Navigation\loginNav.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -16,8 +16,8 @@
         {
             collection.AddService<IHashService, HashService>();
             collection.AddService<IUserCookieService, UserCookieService>();
-            collection.AddService<ILogger, FileLogger>();
-            collection.AddService<ILogger>(() => new FileLogger($"log_{DateTime.Now.Date}.txt"));
+            //collection.AddService<ILogger, FileLogger>();
+            collection.AddService<ILogger>(() => new FileLogger($"log.txt"));
         }
     }
 }

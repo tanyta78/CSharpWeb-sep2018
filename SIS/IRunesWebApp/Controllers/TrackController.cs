@@ -4,14 +4,15 @@
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
     using SIS.MvcFramework;
+    using SIS.WebServer.Results;
     using System;
     using System.Linq;
     using System.Net;
-    using ViewModels.Track;
+    using ViewModels.Tracks;
 
     public class TrackController : BaseController
     {
-        [HttpGet("/Tracks/create")]
+        [HttpGet("/Tracks/Create")]
         public IHttpResponse Create(IHttpRequest request)
         {
             if (!this.IsAuthenticated())
@@ -19,13 +20,14 @@
                 return this.Redirect("/Users/Login");
             }
             var albumId = request.QueryData["albumId"].ToString().ToUpper();
-            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success\" >Back To Album</a>";
-            this.ViewBag["formAction"] = $"action=\"/Tracks/Create?albumId={albumId}\"";
-            this.ViewBag["hrefAlbum"] = $"/Albums/Details?id={albumId}";
+            var model = new DoCreateTrackInputModel
+            {
+                albumId = albumId
+            };
 
-            return this.View("Tracks/Create");
+            return this.View("Tracks/Create",model);
         }
-        [HttpPost("/Tracks/create")]
+        [HttpPost("/Tracks/Create")]
         public IHttpResponse DoCreate(DoCreateTrackInputModel model)
         {
             if (!this.IsAuthenticated())
@@ -83,25 +85,22 @@
             var trackId = this.Request.QueryData["trackId"].ToString().ToUpper();
 
             var track = this.Db.Tracks.FirstOrDefault(t => t.Id.ToString() == trackId);
-
+            var model = new DoCreateTrackInputModel();
             if (track == null)
             {
-                this.ViewBag["trackDetails"] = $"Something went wrong. There are currently no track with {trackId}.";
+                return new BadRequestResult("Something went wrong. There are currently no track with {trackId}.");
             }
             else
             {
-                var trackDetailsAsString = $"<h4 class=\"text-center\">Track Name: {track.Name}</h4>" +
-                    $"<h4 class=\"text-center\">Track Price: ${track.Price}</h4>" +
-                    "<hr class=\"bg-success\" />" +
-                    "<div class=\"row text-center\"><div class=\"col-12\">" +
-                    $"<iframe  src=\"{track.Link}\" name=\"{track.Name}\"></iframe>" +
-                    "</div></div>";
-                this.ViewBag["trackDetails"] = trackDetailsAsString;
+                model.albumId = albumId;
+                model.Name = track.Name;
+                model.Link = track.Link;
+                model.Price = track.Price.ToString();
             }
 
-            this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success text-center\">Back To Album</a>";
+            
 
-            return this.View("Tracks/Details");
+            return this.View("Tracks/Details", model);
         }
 
 

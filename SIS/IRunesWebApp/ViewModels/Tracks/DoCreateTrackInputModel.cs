@@ -1,4 +1,4 @@
-﻿namespace IRunesWebApp.ViewModels.Track
+﻿namespace IRunesWebApp.ViewModels.Tracks
 {
    public class DoCreateTrackInputModel
     {
@@ -8,6 +8,6 @@
 
         public string Price { get; set; }
 
-        
+        public string albumId { get; set; }
     }
 }
