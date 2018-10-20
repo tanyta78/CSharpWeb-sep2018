@@ -18,7 +18,7 @@
         public void Add(HttpHeader header)
         {
             CoreValidator.ThrowIfNull(header, nameof(header));
-            this.headers.Add(header.Key, header);
+            this.headers[header.Key]= header;
         }
 
         public bool ContainsHeader(string key)

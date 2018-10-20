@@ -4,7 +4,6 @@
     using Contracts;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class HttpHeaderCollection : IHttpHeaderCollection
     {
@@ -18,12 +17,12 @@
         public void Add(HttpHeader header)
         {
             CoreValidator.ThrowIfNull(header, nameof(header));
-            this.headers.Add(header.Key, header);
+            this.headers[header.Key] = header;
         }
 
         public bool ContainsHeader(string key)
         {
-           CoreValidator.ThrowIfNull(key,nameof(key));
+            CoreValidator.ThrowIfNull(key, nameof(key));
 
             return this.headers.ContainsKey(key);
         }

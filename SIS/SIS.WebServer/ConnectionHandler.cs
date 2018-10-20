@@ -68,16 +68,9 @@
 
         private IHttpResponse HandleRequest(IHttpRequest httpRequest)
         {
-            var isResourceRequest = this.IsResourceRequest(httpRequest.Path);
-
-            if (isResourceRequest)
+           if (!this.serverRoutingTable.Routes.ContainsKey(httpRequest.RequestMethod) || !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
             {
-                return this.HandleResourceResponce(httpRequest.Path);
-            }
-
-            if (!this.serverRoutingTable.Routes.ContainsKey(httpRequest.RequestMethod) || !this.serverRoutingTable.Routes[httpRequest.RequestMethod].ContainsKey(httpRequest.Path))
-            {
-                return new HttpResponse(HttpResponseStatusCode.NotFound);
+                return new TextResult($"Route with method {httpRequest.RequestMethod} and path {httpRequest.Path} not supported",HttpResponseStatusCode.NotFound);
             }
 
             return this.serverRoutingTable.Routes[httpRequest.RequestMethod][httpRequest.Path].Invoke(httpRequest);
