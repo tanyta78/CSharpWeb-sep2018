@@ -95,10 +95,29 @@
             return this.View("CakeDetails", viewModel);
         }
 
+        //cakes/search?searchText=cake
         [HttpGet("/cakes/search")]
-        public IHttpResponse Search()
+        public IHttpResponse Search(string searchText)
         {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                searchText = "";
+            }
+            var cakes = this.Db.Products.Where(x => x.Name.Contains(searchText)).Select(p => new CakeDetailsViewModel
+            {
+                Name = p.Name,
+                ImageUrl = p.ImageUrl,
+                Price = p.Price,
+                Id = p.Id
+            }).ToArray();
 
+            var model = new SearchViewModel
+            {
+                Cakes = cakes,
+                SearchText = searchText
+            };
+
+            return this.View("CakeSearch", model);
         }
     }
 }

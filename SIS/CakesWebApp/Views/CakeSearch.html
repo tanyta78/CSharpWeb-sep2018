@@ -1,0 +1,22 @@
+﻿<a href="/">Back to home</a>
+<form action="/cakes/search" method="get">
+    <input type="text" name="searchText" />
+    <button type="submit">Search</button>
+</form>
+<h1>Searching for @Model.SearchText </h1>
+<table class="table table-hover table-striped">
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Order</th>
+    </tr>
+    @foreach(var item in Model.Cakes)
+    {
+    <tr>
+    <td><a href="/cakes/details?id=@item.Id">@item.Name</a></td>
+    <td>$ @item.Price</td> 
+    <td><button class="btn btn-primary">Order</button></td>
+    </tr>
+    }  
+</table>
+  
