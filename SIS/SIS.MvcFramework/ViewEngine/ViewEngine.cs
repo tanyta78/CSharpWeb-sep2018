@@ -17,7 +17,7 @@
         {
             // generate c# code from view code
             var csharpMethodBody = this.GenerateCSharpMethodBody(viewCode);
-            var viewTypeName = viewName + "View";
+            var viewTypeName = viewName.Replace("/","") + "View";
             var viewCodeAsCSharpCode = @"
 using System;
 using System.Linq;

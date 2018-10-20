@@ -26,7 +26,7 @@
             AutoRegisterRoutes(serverRoutingTable, application, dependencyContainer);
 
             application.Configure();
-            Server server = new Server(80, serverRoutingTable);
+            Server server = new Server(8000, serverRoutingTable);
 
             server.Run();
         }
@@ -51,7 +51,13 @@
                         continue;
                     }
 
-                    routingTable.Add(httpAttribute.Method, httpAttribute.Path, (request) => ExecuteAction(controller, methodInfo, request, serviceCollection));
+                    var path = httpAttribute.Path;
+                    if (!path.StartsWith("/"))
+                    {
+                        path = "/" + path;
+                    }
+
+                    routingTable.Add(httpAttribute.Method, path, (request) => ExecuteAction(controller, methodInfo, request, serviceCollection));
 
                     Console.WriteLine($"Route registered:{controller.Name} {methodInfo.Name} ");
 
