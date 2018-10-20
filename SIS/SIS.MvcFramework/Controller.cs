@@ -6,7 +6,6 @@
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using Services;
-    using System.Collections.Generic;
     using System.Text;
     using ViewEngine;
 
@@ -42,44 +41,44 @@
         }
 
 
-        protected IHttpResponse View<T>(string viewName, T model = null) where T : class
+        protected IHttpResponse View<T>(string viewName, T model = null, string layoutName = "_Layout") where T : class
         {
-            var allContent = this.GetViewContent(viewName, model);
+            var allContent = this.GetViewContent(viewName, model, layoutName);
             this.PrepareHtmlResult(allContent);
             return this.Response;
         }
 
-        protected IHttpResponse View(string viewName)
+        protected IHttpResponse View(string viewName, string layoutName = "_Layout")
         {
-            var allContent = this.GetViewContent(viewName, (object)null);
+            var allContent = this.GetViewContent(viewName, (object)null, layoutName);
             this.PrepareHtmlResult(allContent);
             return this.Response;
         }
 
-        private string GetViewContent<T>(string viewName, T model)
+        private string GetViewContent<T>(string viewName, T model, string layoutName = "_Layout")
         {
-            var layoutCode = System.IO.File.ReadAllText("Views/_Layout.html");
-           
+            var layoutCode = System.IO.File.ReadAllText($"Views/{layoutName}.html");
 
             var viewCode = System.IO.File.ReadAllText("Views/" + viewName + ".html");
             var content = this.ViewEngine.GetHtml(viewName, viewCode, model);
 
 
-            //TODO: ADD NAV   @RenderNav()
-            //if (this.User != null)
-            //{
-            //    var loginNav = System.IO.File.ReadAllText("Views/Navigation/loginNav.html");
-            //    layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
-            //}
-            //else
-            //{
-            //    var logoutNav = System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
-            //    layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
-
-            //}
-
             var allContent = layoutCode.Replace(" @RenderBody()", content);
+
+            if (this.User != null)
+            {
+                var loginNav = System.IO.File.ReadAllText("Views/Navigation/loginNav.html");
+                allContent = allContent.Replace("@RenderNav()", loginNav);
+            }
+            else
+            {
+                var logoutNav = System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
+                allContent = allContent.Replace("@RenderNav()", logoutNav);
+
+            }
+
             var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model);
+
             return layoutContent;
         }
 
@@ -129,22 +128,24 @@
 
         protected IHttpResponse BadRequestError(string errorMessage)
         {
-            var viewBag = new Dictionary<string, string> { { "Error", errorMessage } };
-            var allContent = this.GetViewContent("Error", viewBag);
+            var model = new ErrorViewModel()
+            {
+                Error = errorMessage
+            };
+            var allContent = this.GetViewContent("Error", model);
             this.PrepareHtmlResult(allContent);
             this.Response.StatusCode = HttpResponseStatusCode.BadRequest;
             return this.Response;
+
         }
 
         protected IHttpResponse ServerError(string errorMessage)
         {
-            var viewBag = new Dictionary<string, string>
+            var model = new ErrorViewModel()
             {
-                {
-                    "Error", errorMessage
-                }
+                Error = errorMessage
             };
-            var allContent = this.GetViewContent("Error", viewBag);
+            var allContent = this.GetViewContent("Error", model);
             this.PrepareHtmlResult(allContent);
             this.Response.StatusCode = HttpResponseStatusCode.InternalServerError;
             return this.Response;
