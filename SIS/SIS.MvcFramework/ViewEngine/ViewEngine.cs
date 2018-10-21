@@ -103,11 +103,17 @@ namespace MyAppViews
             var sb = new StringBuilder();
             foreach (var line in codeLines)
             {
-                if (line.Trim().StartsWith("{") ||
-                    line.Trim().StartsWith("}") ||
-                    line.Trim().StartsWith("@for") ||
-                    line.Trim().StartsWith("@else") ||
-                    line.Trim().StartsWith("@if"))
+                if (line.Trim().StartsWith("{") && line.Trim().EndsWith("}"))
+                {
+                    var cSharpLine = line.Trim();
+                    cSharpLine = cSharpLine.Substring(1, cSharpLine.Length - 2);
+                    sb.AppendLine(cSharpLine);
+                }
+                else if (line.Trim().StartsWith("{") ||
+                         line.Trim().StartsWith("}") ||
+                         line.Trim().StartsWith("@for") ||
+                         line.Trim().StartsWith("@else") ||
+                         line.Trim().StartsWith("@if"))
                 {
                     // CSharp
                     var firstAtSymbolIndex = line.IndexOf("@", StringComparison.InvariantCulture);
