@@ -1,12 +1,12 @@
 ﻿namespace CakesWebApp.Controllers
 {
+    using System;
+    using System.Globalization;
+    using System.Linq;
     using Models;
     using SIS.HTTP.Responses.Contracts;
     using SIS.MvcFramework;
     using SIS.MvcFramework.Logger;
-    using System;
-    using System.Globalization;
-    using System.Linq;
     using ViewModels.Cake;
 
     public class CakeController : BaseController
@@ -85,12 +85,17 @@
                 return this.BadRequestError("Cake not found.");
             }
 
-            var viewModel = new CakeDetailsViewModel()
-            {
-                Name = product.Name,
-                Price = decimal.Parse(product.Price.ToString(CultureInfo.InvariantCulture)),
-                ImageUrl = product.ImageUrl
-            };
+            //code for object mapper
+            var viewModel = product.To<CakeDetailsViewModel>();
+
+            //code without object mapper
+            //var viewModel = new CakeDetailsViewModel()
+            //{
+            //    Name = product.Name,
+            //    Price = decimal.Parse(product.Price.ToString(CultureInfo.InvariantCulture)),
+            //    ImageUrl = product.ImageUrl,
+            //    Id = id
+            //};
 
             return this.View("CakeDetails", viewModel);
         }

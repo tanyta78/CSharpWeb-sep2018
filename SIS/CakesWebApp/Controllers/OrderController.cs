@@ -15,7 +15,8 @@
         {
             var userId = this.Db.Users.FirstOrDefault(u => u.Username == this.User)?.Id;
             if (userId == null)
-            {
+       
+     {
                 return this.BadRequestError("Please login first.");
             }
             var lastUserOrder = this.Db.Orders
@@ -44,6 +45,7 @@
             return this.Redirect("/orders/byId?id=" + lastUserOrder.Id);
 
         }
+        
         //Order by Id
         [HttpGet("/orders/byId")]
         public IHttpResponse GetOrderById(int id)
@@ -61,7 +63,7 @@
                                .Where(po => po.OrderId == order.Id)
                                .Select(op => new CakeDetailsViewModel
                                {
-                                   Id = op.Id,
+                                   Id = op.ProductId,
                                    ImageUrl = op.Product.ImageUrl,
                                    Price = op.Product.Price,
                                    Name = op.Product.Name

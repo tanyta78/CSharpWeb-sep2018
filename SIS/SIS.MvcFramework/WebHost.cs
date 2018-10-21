@@ -1,14 +1,14 @@
 ﻿namespace SIS.MvcFramework
 {
-    using HTTP.Enums;
-    using HTTP.Requests.Contracts;
-    using HTTP.Responses.Contracts;
-    using Services;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
+    using HTTP.Enums;
+    using HTTP.Requests.Contracts;
+    using HTTP.Responses.Contracts;
+    using Services;
     using WebServer;
     using WebServer.Results;
     using WebServer.Routing;
@@ -101,7 +101,7 @@
                     || Type.GetTypeCode(actionParameter.ParameterType) == TypeCode.String)
                 {
                     var stringValue = GetRequestData(request, actionParameter.Name);
-                    actionParametersObject.Add(TryParse(stringValue, actionParameter.ParameterType));
+                    actionParametersObject.Add(ObjectMapper.TryParse(stringValue, actionParameter.ParameterType));
                 }
                 else
                 {
@@ -118,7 +118,7 @@
                         //-> int, double, long, decimal, DateTime
 
                         // can be simplified by using Convert.ChangeType()
-                        object value = TryParse(strValue, propertyInfo.PropertyType);
+                        object value = ObjectMapper.TryParse(strValue, propertyInfo.PropertyType);
 
                         propertyInfo.SetMethod.Invoke(instance, new object[] { value });
 
@@ -145,56 +145,6 @@
             }
 
             return strValue;
-        }
-
-        private static object TryParse(string strValue, Type type)
-        {
-            var typeCode = Type.GetTypeCode(type);
-            object value = null;
-            switch (typeCode)
-            {
-                case TypeCode.Int32:
-                    if (int.TryParse(strValue, out var intResult))
-                    {
-                        value = intResult;
-                    }
-                    break;
-                case TypeCode.Int64:
-                    if (long.TryParse(strValue, out var longResult))
-                    {
-                        value = longResult;
-                    }
-                    break;
-                case TypeCode.Double:
-                    if (double.TryParse(strValue, out var doubleResult))
-                    {
-                        value = doubleResult;
-                    }
-                    break;
-                case TypeCode.Decimal:
-                    if (decimal.TryParse(strValue, out var decimalResult))
-                    {
-                        value = decimalResult;
-                    }
-                    break;
-                case TypeCode.Char:
-                    if (char.TryParse(strValue, out var charResult))
-                    {
-                        value = charResult;
-                    }
-                    break;
-                case TypeCode.DateTime:
-                    if (DateTime.TryParse(strValue, out var dateResult))
-                    {
-                        value = dateResult;
-                    }
-                    break;
-                case TypeCode.String:
-                    value = strValue;
-                    break;
-            }
-
-            return value;
         }
     }
 }
