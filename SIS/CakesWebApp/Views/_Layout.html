@@ -14,6 +14,9 @@
             </div>
             <div class="col-md-9">
                 @RenderBody()
+                <hr />
+                { var year = DateTime.UtcNow.Year; }
+                Copyright &copy; @year
             </div>
         </div>
     </div>

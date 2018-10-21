@@ -17,6 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Views\OrdersList.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Views\GetOrderById.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

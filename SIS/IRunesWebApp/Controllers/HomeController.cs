@@ -1,6 +1,6 @@
 ﻿namespace IRunesWebApp.Controllers
 {
-    using IRunesWebApp.ViewModels.Account;
+    using ViewModels.Account;
     using SIS.HTTP.Responses.Contracts;
     using SIS.MvcFramework;
 

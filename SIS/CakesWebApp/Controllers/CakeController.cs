@@ -78,7 +78,7 @@
         public IHttpResponse Details()
         {
             var id = int.Parse(this.Request.QueryData["id"].ToString());
-            var product = Db.Products.FirstOrDefault(x => x.Id == id);
+            var product = this.Db.Products.FirstOrDefault(x => x.Id == id);
 
             if (product == null)
             {
