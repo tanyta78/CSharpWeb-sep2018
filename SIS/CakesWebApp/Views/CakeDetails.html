@@ -3,6 +3,9 @@
     <div class="card-body">
         <h5 class="card-title">"@Model.Name"</h5>
         <p class="card-text"><em>Price: $@Model.Price</em></p>
-        <a href="/cakes/order" class="btn btn-secondary">Order</a>
+        <form action="/orders/add" method="post">
+            <input type="hidden" name="productId" value="@item.Id" />
+            <input class="btn btn-primary" type="submit" value="Order"/>
+        </form>        
     </div>
 </div>

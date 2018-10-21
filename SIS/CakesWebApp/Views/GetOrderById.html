@@ -1,0 +1,28 @@
+﻿@if (Model.IsShoppingCart)
+{
+<h1>Shopping cart</h1>
+}
+@else
+{
+<h1>Order with id @Model.Id</h1>
+}
+<table class="table table-hover table-striped">
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+    </tr>
+    @foreach(var item in Model.Products)
+    {
+    <tr>
+        <td><a href="/cakes/details?id=@item.Id">@item.Name</a></td>
+        <td>$ @item.Price</td>
+        <td>
+            1
+        </td>
+    </tr>
+    }
+</table>
+<a href="/cakes/search" class="btn btn-secondary">Continue shopping</a>
+
+<a href="/orders/finish" class="btn btn-success">Finish order</a>

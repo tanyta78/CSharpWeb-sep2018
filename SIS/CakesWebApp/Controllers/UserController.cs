@@ -17,10 +17,15 @@
                       DateOfRegister = x.DateOfRegistration,
                       OrdersCount = x.Orders.Count
                   }).FirstOrDefault();
-
+            
             if (viewModel == null)
             {
                 return this.BadRequestError("Profile page not accessible for this user.");
+            }
+
+            if (viewModel.OrdersCount > 0)
+            {
+                viewModel.OrdersCount--;
             }
 
             return this.View("Profile",viewModel);
