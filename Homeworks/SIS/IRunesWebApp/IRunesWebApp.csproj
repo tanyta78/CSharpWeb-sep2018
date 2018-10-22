@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SIS.Framework\SIS.Framework.csproj" />
-    <ProjectReference Include="..\SIS.WebServer\SIS.WebServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

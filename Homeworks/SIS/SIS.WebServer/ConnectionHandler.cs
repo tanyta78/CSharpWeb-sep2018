@@ -93,11 +93,13 @@
             }
             catch (BadRequestException e)
             {
+                Console.WriteLine(e);
                 await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
             }
             catch (Exception e)
             {
-                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
+                Console.WriteLine(e);
+                await this.PrepareResponse(new TextResult(e.StackTrace, HttpResponseStatusCode.BadRequest));
             }
 
             this.client.Shutdown(SocketShutdown.Both);

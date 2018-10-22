@@ -36,7 +36,7 @@
             string renderedHtml = this.RenderHtml(fullHtml);
 
             var layoutWithView = this.AddViewToLayout(renderedHtml);
-            return renderedHtml;
+            return layoutWithView;
         }
 
         private string AddViewToLayout(string renderedHtml)
@@ -55,10 +55,24 @@
 
             var layoutContent = File.ReadAllText(layoutPath);
 
-            var layoutWithView = layoutContent.Replace(RenderBodyConst, renderedHtml);
             //TODO: ADD NAVIGATION RENDER
+            if (this.IsLoggedIn)
+            {
+                var loginNav = File.ReadAllText("Views/Navigation/loginNav.html");
+                layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
+            }
+            else
+            {
+                var logoutNav = File.ReadAllText("Views/Navigation/logoutNav.html");
+                layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
+            }
+
+            var layoutWithView = layoutContent.Replace(RenderBodyConst, renderedHtml);
+
             return layoutWithView;
         }
+
+        public bool IsLoggedIn { get; set; }
 
         private string RenderHtml(string fullHtml)
         {

@@ -58,6 +58,7 @@
             //3.Prepare the response :
             //-Invoke the Action and extract it's result - using the extracted MethodInfo and the controller object; format the IActionResult to a proper result - if it's an IViewable => HtmlResult, if it's IRedirectable=>RedirectResult
             object[] actionParameters = this.MapActionParameters(action, request, controller);
+
             IActionResult actionResult = this.InvokeAction(controller, action, actionParameters);
 
             return this.PrepareResponse(actionResult);
