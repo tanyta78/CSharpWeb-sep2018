@@ -72,6 +72,7 @@
             return layoutWithView;
         }
 
+        //TODO: refactor to work. Now is set to false
         public bool IsLoggedIn { get; set; }
 
         private string RenderHtml(string fullHtml)
