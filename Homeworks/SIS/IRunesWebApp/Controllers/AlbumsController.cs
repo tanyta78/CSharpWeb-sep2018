@@ -8,7 +8,7 @@
     using System;
     using System.Linq;
 
-    public class AlbumController : BaseController
+    public class AlbumsController : BaseController
     {
 
         public IHttpResponse All(IHttpRequest request)
@@ -24,7 +24,7 @@
             this.ViewBag["allAlbums"] = string.IsNullOrWhiteSpace(allAlbumsString)
                 ? "There are currently no albums."
                 : allAlbumsString;
-            return this.View("Albums/All");
+            return this.ViewMethod();
         }
 
 
@@ -34,9 +34,8 @@
             {
                 return new RedirectResult("/Users/Login");
             }
-
-
-            return this.View("Albums/Create");
+            
+            return this.ViewMethod();
         }
 
         public IHttpResponse DoCreate(IHttpRequest request)
@@ -102,7 +101,7 @@
 
             }
 
-            return this.View("Albums/Details");
+            return this.ViewMethod();
         }
     }
 }

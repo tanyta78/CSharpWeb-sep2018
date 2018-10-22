@@ -1,25 +1,25 @@
 ﻿namespace IRunesWebApp.Controllers
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.CompilerServices;
     using Data;
     using Services;
+    using SIS.Framework.Controllers;
     using SIS.HTTP.Cookies;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
     using SIS.WebServer.Results;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Runtime.CompilerServices;
-    using SIS.Framework.Controllers;
 
-    public abstract class BaseController:Controller
+    public abstract class BaseController : Controller
     {
         protected BaseController()
         {
             this.Db = new IRunesDbContext();
             this.ViewBag = new Dictionary<string, string>();
             this.UserCookieService = new UserCookieService();
-          
+
         }
 
         protected IDictionary<string, string> ViewBag { get; set; }
@@ -27,51 +27,52 @@
         protected IRunesDbContext Db { get; }
 
         protected IUserCookieService UserCookieService { get; }
+
         public bool IsLoggedIn { get; private set; }
 
-        protected string GetUsername(IHttpRequest request)
-        {
-            if (!request.Cookies.ContainsCookie(".auth-irunes"))
-            {
-                return null;
-            }
+        //protected string GetUsername(IHttpRequest request)
+        //{
+        //    if (!request.Cookies.ContainsCookie(".auth-irunes"))
+        //    {
+        //        return null;
+        //    }
 
-            var cookie = request.Cookies.GetCookie(".auth-irunes");
-            var cookieContent = cookie.Value;
-            var username = this.UserCookieService.GetUserData(cookieContent);
-            return username;
-        }
+        //    var cookie = request.Cookies.GetCookie(".auth-irunes");
+        //    var cookieContent = cookie.Value;
+        //    var username = this.UserCookieService.GetUserData(cookieContent);
+        //    return username;
+        //}
 
-        protected IHttpResponse View(string viewName)
-        {
-            var layoutContent = File.ReadAllText("Views/_Layout.html");
-           
-            var fileContent = File.ReadAllText("Views/" + viewName + ".html");
-            foreach (var viewBagKey in this.ViewBag.Keys)
-            {
-                var dynamicDataPlaceholder = $"{{{{{viewBagKey}}}}}";
-                var newValue = this.ViewBag[viewBagKey];
-                if (fileContent.Contains(dynamicDataPlaceholder))
-                {
-                    fileContent = fileContent.Replace(dynamicDataPlaceholder, newValue);
-                }
-              
-            }
-             //TODO: ADD NAV   @RenderNav()
-            if (this.IsLoggedIn)
-            {
-                var loginNav = File.ReadAllText("Views/Navigation/loginNav.html");
-                layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
-            }
-            else
-            {
-                var logoutNav = File.ReadAllText("Views/Navigation/logoutNav.html");
-                layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
+        //protected IHttpResponse View(string viewName)
+        //{
+        //    var layoutContent = File.ReadAllText("Views/_Layout.html");
 
-            }
-            var allContent = layoutContent.Replace("@RenderBody()", fileContent);
-            return new HtmlResult(allContent, HttpResponseStatusCode.Ok);
-        }
+        //    var fileContent = File.ReadAllText("Views/" + viewName + ".html");
+        //    foreach (var viewBagKey in this.ViewBag.Keys)
+        //    {
+        //        var dynamicDataPlaceholder = $"{{{{{viewBagKey}}}}}";
+        //        var newValue = this.ViewBag[viewBagKey];
+        //        if (fileContent.Contains(dynamicDataPlaceholder))
+        //        {
+        //            fileContent = fileContent.Replace(dynamicDataPlaceholder, newValue);
+        //        }
+
+        //    }
+        //    //TODO: ADD NAV   @RenderNav()
+        //    if (this.IsLoggedIn)
+        //    {
+        //        var loginNav = File.ReadAllText("Views/Navigation/loginNav.html");
+        //        layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
+        //    }
+        //    else
+        //    {
+        //        var logoutNav = File.ReadAllText("Views/Navigation/logoutNav.html");
+        //        layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
+
+        //    }
+        //    var allContent = layoutContent.Replace("@RenderBody()", fileContent);
+        //    return new HtmlResult(allContent, HttpResponseStatusCode.Ok);
+        //}
 
         protected IHttpResponse BadRequestError(string errorMessage)
         {
@@ -93,25 +94,51 @@
         private const string LayoutViewFileName = "_Layout";
         private const string RenderBodyConst = "@RenderBody()";
 
-        protected IHttpResponse ViewAuto([CallerMemberName] string viewName = "")
+        protected IHttpResponse ViewMethod([CallerMemberName] string viewName = "")
         {
 
             string layoutPath = RootDirectoryRelativePath +
                               ViewsFolderName +
                               DirectorySeparator +
-                              LayoutViewFileName + HtmlFileExtension;
+                              LayoutViewFileName +
+                              HtmlFileExtension;
+
             string filePath = RootDirectoryRelativePath +
                               ViewsFolderName +
                               DirectorySeparator +
                               this.GetCurrentControllerName() +
                               DirectorySeparator + viewName + HtmlFileExtension;
+
             if (!File.Exists(filePath))
             {
                 return new BadRequestResult($"View {viewName} not found");
             }
 
-            var viewContent = File.ReadAllText(filePath);
+            var viewContent = this.BuildViewContent(filePath);
+
             var layoutContent = File.ReadAllText(layoutPath);
+
+            //TODO: ADD NAV   @RenderNav()
+            if (this.IsLoggedIn)
+            {
+                var loginNav = File.ReadAllText("Views/Navigation/loginNav.html");
+                layoutContent = layoutContent.Replace("@RenderNav()", loginNav);
+            }
+            else
+            {
+                var logoutNav = File.ReadAllText("Views/Navigation/logoutNav.html");
+                layoutContent = layoutContent.Replace("@RenderNav()", logoutNav);
+            }
+
+            var fileContent = layoutContent.Replace(RenderBodyConst, viewContent);
+            var response = new HtmlResult(fileContent, HttpResponseStatusCode.Ok);
+
+            return response;
+        }
+
+        private string BuildViewContent(string filePath)
+        {
+            var viewContent = File.ReadAllText(filePath);
 
             foreach (var viewBagKey in this.ViewBag.Keys)
             {
@@ -122,25 +149,24 @@
                     viewContent = viewContent.Replace(dynamicDataPlaceholder, newValue);
                 }
             }
-            var fileContent = layoutContent.Replace(RenderBodyConst, viewContent);
-            var response = new HtmlResult(fileContent, HttpResponseStatusCode.Ok);
 
-            return response;
+            return viewContent;
         }
 
         public IHttpResponse SignInUser(string username, IHttpRequest request)
         {
             request.Session.AddParameter("username", username);
-         
+
             var cookieContent = this.UserCookieService.GetUserCookie(username);
             var response = new RedirectResult("/");
             response.Cookies.Add(new HttpCookie(".auth-irunes", cookieContent, 7));
             return response;
         }
+
         public bool IsAuthenticated(IHttpRequest request)
         {
-            this.IsLoggedIn=request.Session.ContainsParameter("username");
-            return IsLoggedIn;
+            this.IsLoggedIn = request.Session.ContainsParameter("username");
+            return this.IsLoggedIn;
         }
     }
 }

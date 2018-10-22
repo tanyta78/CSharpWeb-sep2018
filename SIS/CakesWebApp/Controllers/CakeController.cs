@@ -29,34 +29,18 @@
         {
 
             // TODO: VALIDATE INPUT 
-            //if (string.IsNullOrWhiteSpace(username) || username.Length < 4)
-            //{
-            //    return this.BadRequestError("Please provide valid user name with length of 4 or more characters");
-            //}
-
-            //if (this.Db.Users.Any(x => x.Username == username))
-            //{
-            //    return this.BadRequestError("User with the same name already exist!");
-            //}
-
-            //if (string.IsNullOrWhiteSpace(password) || password.Length < 6)
-            //{
-            //    return this.BadRequestError("Please provide password  with length of 6 or more characters");
-            //}
-
-            //if (password != confirmPassword)
-            //{
-            //    return this.BadRequestError("Passwords do not match!");
-            //}
-
-
+           
             //CREATE PRODUCT
-            var product = new Product
-            {
-                Name = model.Name,
-                Price = model.Price.ToDecimalOrDefault(),
-                ImageUrl = model.ImageUrl
-            };
+            //with object mapper
+            var product = model.To<Product>();
+
+            //without object mapper
+            //var product = new Product
+            //{
+            //    Name = model.Name,
+            //    Price = model.Price.ToDecimalOrDefault(),
+            //    ImageUrl = model.ImageUrl
+            //};
 
             this.Db.Products.Add(product);
             try
@@ -70,8 +54,8 @@
             }
 
 
-            //REDIRECT TO HOME PAGE
-            return this.Redirect("/");
+            //REDIRECT TO PRODUCT DETAILS PAGE
+            return this.Redirect("/cakes/details?id="+ product.Id);
         }
 
         [HttpGet("/cakes/details")]

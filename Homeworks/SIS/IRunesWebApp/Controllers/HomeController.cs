@@ -11,10 +11,10 @@
             {
                 var username = request.Session.GetParameter("username");
                 this.ViewBag["username"] = username.ToString();
-                return this.View("Welcome");
+                return this.ViewMethod("Welcome");
             }
 
-            return this.View("Index");
+            return this.ViewMethod();
         }
     }
 }

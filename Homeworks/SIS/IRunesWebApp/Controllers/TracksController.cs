@@ -8,7 +8,7 @@
     using System.Linq;
     using System.Net;
 
-    public class TrackController : BaseController
+    public class TracksController : BaseController
     {
 
         public IHttpResponse Create(IHttpRequest request)
@@ -22,7 +22,7 @@
             this.ViewBag["formAction"] = $"action=\"/Tracks/Create?albumId={albumId}\"";
             this.ViewBag["hrefAlbum"] = $"/Albums/Details?id={albumId}";
 
-            return this.View("Tracks/Create");
+            return this.ViewMethod();
         }
 
         public IHttpResponse DoCreate(IHttpRequest request)
@@ -100,7 +100,7 @@
 
             this.ViewBag["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success text-center\">Back To Album</a>";
 
-            return this.View("Tracks/Details");
+            return this.ViewMethod();
         }
 
 

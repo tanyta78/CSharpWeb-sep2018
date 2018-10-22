@@ -8,18 +8,19 @@
     using System;
     using System.Linq;
 
-    public class AccountController : BaseController
+    public class UsersController : BaseController
     {
         private readonly IHashService hashService;
 
-        public AccountController()
+        public UsersController()
         {
             this.hashService = new HashService();
         }
 
         public IHttpResponse Register(IHttpRequest request)
         {
-            return this.View("Users/Register");
+            //return this.View("Users/Register");
+            return this.ViewMethod();
         }
 
         public IHttpResponse DoRegister(IHttpRequest request)
@@ -64,7 +65,7 @@
 
         public IHttpResponse Login(IHttpRequest request)
         {
-            return this.View("Users/Login");
+            return this.ViewMethod();
         }
 
         public IHttpResponse DoLogin(IHttpRequest request)
