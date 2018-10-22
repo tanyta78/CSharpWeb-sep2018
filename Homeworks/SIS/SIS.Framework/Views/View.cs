@@ -1,17 +1,18 @@
 ﻿namespace SIS.Framework.Views
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using ActionResults;
+    using HTTP.Common;
 
-    public class View : IRenderable 
+    public class View : IRenderable
     {
         private readonly string fullyQualifiedTemplateName;
+        private const string RenderBodyConst = "@RenderBody()";
         private readonly IDictionary<string, object> viewData;
 
-        public View(string fullyQualifiedTemplateName, IDictionary<string,object> viewData)
+        public View(string fullyQualifiedTemplateName, IDictionary<string, object> viewData)
         {
             this.fullyQualifiedTemplateName = fullyQualifiedTemplateName;
             this.viewData = viewData;
@@ -33,7 +34,30 @@
         {
             var fullHtml = this.ReadFile();
             string renderedHtml = this.RenderHtml(fullHtml);
+
+            var layoutWithView = this.AddViewToLayout(renderedHtml);
             return renderedHtml;
+        }
+
+        private string AddViewToLayout(string renderedHtml)
+        {
+            string layoutPath = MvcContext.Get.RootDirectoryRelativePath +
+                                GlobalConstants.DirectorySeparator +
+                                MvcContext.Get.ViewsFolderName +
+                                GlobalConstants.DirectorySeparator +
+                                MvcContext.Get.LayoutFileName +
+                                GlobalConstants.HtmlFileExtension;
+
+            if (!File.Exists(layoutPath))
+            {
+                throw new FileNotFoundException($"View {layoutPath} not found");
+            }
+
+            var layoutContent = File.ReadAllText(layoutPath);
+
+            var layoutWithView = layoutContent.Replace(RenderBodyConst, renderedHtml);
+            //TODO: ADD NAVIGATION RENDER
+            return layoutWithView;
         }
 
         private string RenderHtml(string fullHtml)

@@ -1,10 +1,10 @@
 ﻿namespace SIS.Framework.Routers
 {
+    using System.IO;
     using HTTP.Enums;
     using HTTP.Responses;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
-    using System.IO;
     using WebServer.Api;
     using WebServer.Results;
 
@@ -19,7 +19,11 @@
             var reqPathExtension = httpPath.Substring(indexOfExtensionStart);
             var resourceNameWithExt = httpPath.Substring(indexOfNameStart);
             //var executionAssembly = Assembly.GetExecutingAssembly().Location;
-            var resourcePath = "../../../Resources/" + $"{reqPathExtension.Substring(1)}" + resourceNameWithExt;
+
+            var resourcePath = MvcContext.Get.RootDirectoryRelativePath
+                               + $"/{MvcContext.Get.ResourceFolder}"
+                               + $"/{reqPathExtension.Substring(1)}"
+                               + resourceNameWithExt;
 
             if (!File.Exists(resourcePath))
             {

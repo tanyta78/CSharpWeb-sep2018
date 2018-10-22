@@ -4,7 +4,7 @@
     {
         private static MvcContext Instance;
 
-        private MvcContext(){}
+        private MvcContext() { }
 
         public static MvcContext Get => Instance ?? (Instance = new MvcContext());
 
@@ -14,8 +14,15 @@
 
         public string ControllersSuffix { get; set; } = "Controller";
 
-        public string ViewsFolder { get; set; } = "Views";
+        public string ViewsFolderName { get; set; } = "Views";
 
         public string ModelsFolder { get; set; } = "Models";
+
+        public string ResourceFolder { get; set; } = "Resources";
+
+        public string LayoutFileName { get; set; } = "_Layout";
+
+        public string RootDirectoryRelativePath { get; set; } = "../../../";
+
     }
 }

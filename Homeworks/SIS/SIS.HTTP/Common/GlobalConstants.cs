@@ -26,5 +26,9 @@
 
         public static string[] ResourceExtensions = new string[]{".js",".css"};
 
+        public const string DirectorySeparator = "/";
+
+        public const string HtmlFileExtension = ".html";
+        
     }
 }

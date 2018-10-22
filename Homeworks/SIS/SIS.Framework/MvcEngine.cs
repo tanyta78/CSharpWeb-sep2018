@@ -32,7 +32,7 @@
 
         private static void RegisterViewsData()
         {
-            MvcContext.Get.ViewsFolder = "Views";
+            MvcContext.Get.ViewsFolderName = "Views";
 
         }
 

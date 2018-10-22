@@ -1,7 +1,5 @@
 ﻿namespace SIS.Framework.Utilities
 {
-    using System;
-
     public static class ControllerUtilities
     {
         public static string GetControllerName(object controller)
@@ -12,6 +10,6 @@
         }
 
         public static string GetViewFullQualifiedName(string controller, string action) =>
-            string.Format("../../../{0}/{1}/{2}.html", MvcContext.Get.ViewsFolder, controller, action);
+            string.Format("../../../{0}/{1}/{2}.html", MvcContext.Get.ViewsFolderName, controller, action);
     }
 }
