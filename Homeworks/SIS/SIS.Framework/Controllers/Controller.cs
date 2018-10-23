@@ -1,9 +1,10 @@
 ﻿namespace SIS.Framework.Controllers
 {
+    using System.Runtime.CompilerServices;
     using ActionResults;
     using HTTP.Requests.Contracts;
     using Models;
-    using System.Runtime.CompilerServices;
+    using Security.Contracts;
     using Utilities;
     using Views;
 
@@ -33,5 +34,17 @@
         }
 
         protected IRedirectable RedirectToAction(string redirectUrl) => new RedirectResult(redirectUrl);
+
+        protected void SignIn(IIdentity auth)
+        {
+            this.Request.Session.AddParameter("auth", auth);
+        }
+
+        protected void SignOut()
+        {
+            this.Request.Session.ClearParameters();
+        }
+
+        public IIdentity Identity => (IIdentity) this.Request.Session.GetParameter("auth");
     }
 }
