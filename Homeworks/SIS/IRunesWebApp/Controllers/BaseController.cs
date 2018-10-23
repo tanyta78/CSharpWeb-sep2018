@@ -1,9 +1,8 @@
 ﻿namespace IRunesWebApp.Controllers
 {
-    using System.IO;
     using Data;
-    using Services;
     using SIS.Framework.Controllers;
+    using SIS.Framework.Services.Contracts;
     using SIS.HTTP.Cookies;
     using SIS.HTTP.Enums;
     using SIS.HTTP.Requests.Contracts;
@@ -14,13 +13,15 @@
     {
         protected BaseController(IUserCookieService userCookieService)
         {
-            this.Db = new IRunesDbContext();
+          
             this.UserCookieService = userCookieService;
         }
 
-        protected IRunesDbContext Db { get; }
+      
 
         protected IUserCookieService UserCookieService { get; }
+
+        protected string Error { get; set; }
 
         protected IHttpResponse BadRequestError(string errorMessage)
         {
@@ -33,14 +34,13 @@
         }
 
 
-       public IHttpResponse SignInUser(string username, IHttpRequest request)
+        public void SignInUser(string username, IHttpRequest request)
         {
             request.Session.AddParameter("username", username);
 
             var cookieContent = this.UserCookieService.GetUserCookie(username);
-            var response = new RedirectResult("/");
-            response.Cookies.Add(new HttpCookie(".auth-irunes", cookieContent, 7));
-            return response;
+
+            request.Cookies.Add(new HttpCookie(".auth-irunes", cookieContent, 7));
         }
 
         public bool IsAuthenticated()

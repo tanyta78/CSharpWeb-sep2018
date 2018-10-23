@@ -1,4 +1,4 @@
-﻿namespace IRunesWebApp.Services
+﻿namespace SIS.Framework.Services.Contracts
 {
     public interface IUserCookieService
     {

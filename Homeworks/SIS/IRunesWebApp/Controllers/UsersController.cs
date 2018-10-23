@@ -1,103 +1,80 @@
 ﻿namespace IRunesWebApp.Controllers
 {
-    using Models;
-    using Services;
-    using SIS.HTTP.Requests.Contracts;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
-    using System;
-    using System.Linq;
+    using Services.Contracts;
+    using SIS.Framework.ActionResults;
+    using SIS.Framework.Attributes.Methods;
+    using SIS.Framework.Services.Contracts;
+    using ViewModels;
 
     public class UsersController : BaseController
     {
-        private readonly IHashService hashService;
 
-        public UsersController()
+        public UsersController(IUserService userService, IUserCookieService cookieService) : base(cookieService)
         {
-            this.hashService = new HashService();
+            this.UserService = userService;
         }
 
-        public IHttpResponse Register(IHttpRequest request)
+        public IUserService UserService { get; }
+
+        [HttpGet]
+        public IActionResult Register()
         {
-            //return this.View("Users/Register");
-            return this.ViewMethod();
+            return this.View();
         }
 
-        public IHttpResponse DoRegister(IHttpRequest request)
+        [HttpPost]
+        public IActionResult Register(RegisterViewModel model)
         {
-            var username = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
-            var confirmPassword = request.FormData["confirmPassword"].ToString();
-            var email = request.FormData["email"].ToString();
 
-            if (password != confirmPassword)
+            if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
             {
-                return this.BadRequestError("Passwords do not match!");
+                return this.Register();
             }
 
-            //2. GENERATE HASH PASSWORD
-            var hashedPassword = this.hashService.Hash(password);
-
-            //3. CREATE USER
-            var user = new User
+            if (this.UserService.RegisterUser(model.Username, model.Password, model.ConfirmPassword, model.Email))
             {
-                Email = email,
-                Username = username,
-                Password = hashedPassword
-            };
-
-            this.Db.Users.Add(user);
-            try
-            {
-                this.Db.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                //TODO: log error
-                return this.ServerError(e.Message);
+                this.SignInUser(model.Username, this.Request);
+                return this.RedirectToAction("/");
             }
 
-            var response = this.SignInUser(username, request);
-
-            //4. REDIRECT TO HOME PAGE
-            return response;
+            return this.Register();
         }
 
-        public IHttpResponse Login(IHttpRequest request)
+        [HttpGet]
+        public IActionResult Login()
         {
-            return this.ViewMethod();
+            return this.View();
         }
 
-        public IHttpResponse DoLogin(IHttpRequest request)
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
         {
-            var username = request.FormData["username"].ToString().Trim();
-            var password = request.FormData["password"].ToString();
+            if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
+            {
+                return this.RedirectToAction("/Users/Login");
+            }
 
-            var hashedPassword = this.hashService.Hash(password);
+
             //1.Validate user exist and pass is correct
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == username && u.Password == hashedPassword);
+            var user = this.UserService.GetUser(model.Username.Trim(), model.Password);
 
-            if (user == null)
+            if (user != null)
             {
-                return new RedirectResult("/Users/Login");
+                this.SignInUser(user.Username, this.Request);
+                return this.RedirectToAction("/");
             }
 
-            //2.Save session with the user
-            var response = this.SignInUser(user.Username, request);
+            this.Error = "Invalid credentials";
 
-            //4. REDIRECT TO HOME PAGE
-            return response;
+            return this.Login();
         }
 
-        public IHttpResponse Logout(IHttpRequest request)
+        [HttpGet]
+        public IActionResult Logout()
         {
-            request.Session.ClearParameters();
-            var response = new RedirectResult("/");
-            if (!request.Cookies.ContainsCookie(".auth-irunes")) return null;
-            var cookie = request.Cookies.GetCookie(".auth-irunes");
-            cookie.Delete();
-            response.Cookies.Add(cookie);
-            return response;
+            this.Request.Session.ClearParameters();
+
+            return this.RedirectToAction("/");
         }
 
     }

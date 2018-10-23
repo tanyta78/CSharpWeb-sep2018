@@ -1,8 +1,8 @@
 ﻿namespace IRunesWebApp.Controllers
 {
-    using Services;
     using SIS.Framework.ActionResults;
     using SIS.Framework.Attributes.Methods;
+    using SIS.Framework.Services.Contracts;
 
     public class HomeController : BaseController
     {

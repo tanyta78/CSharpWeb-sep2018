@@ -1,10 +1,10 @@
-﻿namespace IRunesWebApp.Services
+﻿namespace SIS.Framework.Services
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Security.Cryptography;
     using System.Text;
+    using Contracts;
 
     public class UserCookieService : IUserCookieService
     {

@@ -1,8 +1,10 @@
-﻿namespace IRunesWebApp.Services
+﻿namespace SIS.Framework.Services
 {
     using System;
     using System.Security.Cryptography;
     using System.Text;
+    using Contracts;
+
 
     public class HashService : IHashService
     {
