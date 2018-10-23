@@ -63,6 +63,7 @@
             catch (Exception e)
             {
                 //TODO: handle error
+                Console.WriteLine(e.Message);
                 return false;
             }
 

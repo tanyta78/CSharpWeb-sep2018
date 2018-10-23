@@ -16,8 +16,7 @@
           
             this.UserCookieService = userCookieService;
         }
-
-      
+     
 
         protected IUserCookieService UserCookieService { get; }
 

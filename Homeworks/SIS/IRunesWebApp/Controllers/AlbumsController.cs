@@ -1,107 +1,109 @@
 ﻿namespace IRunesWebApp.Controllers
 {
-    using Microsoft.EntityFrameworkCore;
-    using Models;
-    using SIS.HTTP.Requests.Contracts;
-    using SIS.HTTP.Responses.Contracts;
-    using SIS.WebServer.Results;
     using System;
     using System.Linq;
+    using Services.Contracts;
+    using SIS.Framework.ActionResults;
+    using SIS.Framework.Attributes.Methods;
+    using SIS.Framework.Services.Contracts;
+    using ViewModels;
 
     public class AlbumsController : BaseController
     {
-
-        public IHttpResponse All(IHttpRequest request)
+        public AlbumsController(IAlbumService albumService, IUserCookieService cookieService) : base(cookieService)
         {
-            if (!this.IsAuthenticated(request))
+            this.AlbumService = albumService;
+        }
+
+        public IAlbumService AlbumService { get; }
+
+        [HttpGet]
+        public IActionResult All()
+        {
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.RedirectToAction("/Users/Login");
             }
 
-            var allAlbums = this.Db.Albums.Select(a => $"<a href=\"/Albums/Details?id={a.Id.ToString().ToUpper()}\"/>{a.Name}</a> </br>");
+            var allAlbums = this.AlbumService.GetAllAlbums();
             var allAlbumsString = String.Join(Environment.NewLine, allAlbums);
 
-            this.ViewBag["allAlbums"] = string.IsNullOrWhiteSpace(allAlbumsString)
+            this.Model.Data["allAlbums"] = string.IsNullOrWhiteSpace(allAlbumsString)
                 ? "There are currently no albums."
                 : allAlbumsString;
-            return this.ViewMethod();
+
+            return this.View();
         }
 
-
-        public IHttpResponse Create(IHttpRequest request)
+        [HttpGet]
+        public IActionResult Create()
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.RedirectToAction("/Users/Login");
             }
-            
-            return this.ViewMethod();
+
+            return this.View();
         }
 
-        public IHttpResponse DoCreate(IHttpRequest request)
+        [HttpPost]
+        public IActionResult Create(CreateAlbumViewModel model)
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
-            }
-            var name = request.FormData["name"].ToString().Trim();
-            var cover = request.FormData["cover"].ToString();
-
-            var album = new Album
-            {
-                Cover = cover,
-                Name = name
-            };
-
-            this.Db.Albums.Add(album);
-            try
-            {
-                this.Db.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                //TODO: log error
-                return this.ServerError(e.Message);
+                return this.RedirectToAction("/Users/Login");
             }
 
+            if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
+            {
+                return this.RedirectToAction("/Albums/Create");
+            }
 
-            return new RedirectResult("/Albums/All");
+            if (this.AlbumService.CreateAlbum(model.Name, model.Cover) == null)
+            {
+                this.Model.Data["Error"] = "Something went wrong when trying to create album in database.";
+                return this.RedirectToAction("/Albums/Create");
+            }
+
+            //TODO: add success message handle in viewEngine!!!
+            this.Model.Data["Success"] = "Successfully create album in database.";
+            return this.RedirectToAction("/Albums/All");
         }
 
-        public IHttpResponse Details(IHttpRequest request)
+        [HttpGet]
+        public IActionResult Details(AlbumDetailsViewModel model)
         {
-            if (!this.IsAuthenticated(request))
+            if (!this.IsAuthenticated())
             {
-                return new RedirectResult("/Users/Login");
+                return this.RedirectToAction("/Users/Login");
             }
 
-
-            var id = request.QueryData["id"].ToString().ToUpper();
-            var album = this.Db.Albums.Include(x => x.Tracks).ThenInclude(x => x.Track).FirstOrDefault(a => a.Id.ToString() == id);
+            //var id = this.Request.QueryData["id"].ToString().ToUpper();
+            var album = this.AlbumService.GetAlbumById(model.Id);
 
             if (album == null)
             {
-                this.ViewBag["albumDetails"] = $"There are currently no album with {id}.";
+                this.Model.Data["albumDetails"] = $"There are currently no album with {model.Id}.";
             }
             else
             {
                 var albumDetailsAsString = $"<img src={album.Cover} alt={album.Name} class=\"img-fluid\" > " +
                                            $"<h4 class=\"text-center\">Album Name:{album.Name} </h4>" +
                                            $"<h4 class=\"text-center\">Album Price:$ {album.Price:f2}</h4>";
-                var createTrack = $"<a href=\"/Tracks/Create?albumId={id}\" class=\"btn btn-success\">Create Track</a>" ;
-                this.ViewBag["albumDetails"] = albumDetailsAsString;
-                this.ViewBag["createTrack"] = createTrack;
+                var createTrack = $"<a href=\"/Tracks/Create?albumId={model.Id}\" class=\"btn btn-success\">Create Track</a>";
+                this.Model.Data["albumDetails"] = albumDetailsAsString;
+                this.Model.Data["createTrack"] = createTrack;
 
 
-                var albumTracksAsString = album.Tracks.Select(t => $"<li><a href=\"/Tracks/Details?albumId={id}&trackId={t.Track.Id.ToString().ToUpper()}\"/>{t.Track.Name}</a></li>");
+                var albumTracksAsString = album.Tracks.Select(t => $"<li><a href=\"/Tracks/Details?albumId={model.Id}&trackId={t.Track.Id.ToString().ToUpper()}\"/>{t.Track.Name}</a></li>");
 
-                this.ViewBag["albumTracks"] = album.Tracks.Count == 0
+                this.Model.Data["albumTracks"] = album.Tracks.Count == 0
                     ? "There are no tracks in album"
                     : $"<ol>{string.Join(Environment.NewLine, albumTracksAsString)}</ol>";
 
             }
 
-            return this.ViewMethod();
+            return this.View();
         }
     }
 }
