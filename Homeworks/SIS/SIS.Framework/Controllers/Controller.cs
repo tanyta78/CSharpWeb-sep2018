@@ -1,5 +1,7 @@
 ﻿namespace SIS.Framework.Controllers
 {
+    using System;
+    using System.IO;
     using System.Runtime.CompilerServices;
     using ActionResults;
     using HTTP.Requests.Contracts;
@@ -21,16 +23,25 @@
 
         public Model ModelState { get; } = new Model();
 
+        private ViewEngine ViewEngine { get; } = new ViewEngine();
+
         protected IViewable View([CallerMemberName] string viewName = "")
         {
             var controllerName = ControllerUtilities.GetControllerName(this);
+            string viewContent = null;
 
-            var fullyQualifiedName = ControllerUtilities
-                .GetViewFullQualifiedName(controllerName, viewName);
+            try
+            {
+                viewContent = this.ViewEngine.GetViewContent(controllerName, viewName);
+            }
+            catch (FileNotFoundException e)
+            {
+                this.Model.Data["Error"] = e.Message;
+                viewContent = this.ViewEngine.GetErrorContent();
+            }
 
-            var view = new View(fullyQualifiedName, this.Model.Data);
-
-            return new ViewResult(view);
+            var renderedContent = this.ViewEngine.RenderHtml(viewContent, this.Model.Data);
+            return new ViewResult(new View(renderedContent));
         }
 
         protected IRedirectable RedirectToAction(string redirectUrl) => new RedirectResult(redirectUrl);
