@@ -33,7 +33,7 @@
             return identity.Roles.Any(r => r == this.role);
         }
 
-        private bool IsAuthorized(IIdentity user)
+        public bool IsAuthorized(IIdentity user)
         {
             if (this.role == null)
             {

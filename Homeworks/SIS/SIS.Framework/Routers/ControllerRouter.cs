@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Reflection;
     using ActionResults;
+    using Attributes.Actions;
     using Attributes.Methods;
     using Controllers;
     using HTTP.Enums;
@@ -70,7 +71,9 @@
 
             IActionResult actionResult = this.InvokeAction(controller, action, actionParameters);
 
-            return this.PrepareResponse(actionResult);
+            return 
+                this.Authorize(controller, action) ??
+                this.PrepareResponse(actionResult);
         }
 
         private IHttpResponse PrepareResponse(IActionResult actionResult)
@@ -256,6 +259,21 @@
                 .GetMethods()
                 .Where(mi => mi.Name.ToLower() == actionName.ToLower());
 
+        }
+
+        private IHttpResponse Authorize(Controller controller, MethodInfo action)
+        {
+            var result = action
+                         .GetCustomAttributes()
+                         .Where(a => a is AuthorizeAttribute)
+                         .Cast<AuthorizeAttribute>()
+                         .Any(a => !a.IsAuthorized(controller.Identity));
+            if (result)
+            {
+                return new UnauthorizedResult();
+            }
+
+            return null;
         }
 
     }
