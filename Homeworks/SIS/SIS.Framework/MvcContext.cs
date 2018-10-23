@@ -24,5 +24,6 @@
 
         public string RootDirectoryRelativePath { get; set; } = "../../../";
 
+        public string SharedViewsFolderName { get; set; } = "Shared";
     }
 }
