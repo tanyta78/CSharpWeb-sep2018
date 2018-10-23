@@ -1,7 +1,10 @@
 ﻿namespace SIS.Framework.Views
 {
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     public class ViewEngine
     {
@@ -66,16 +69,64 @@
             return File.ReadAllText(viewPath);
         }
 
-        //TODO:
         private string RenderObject(object viewObject, string displayTemplate)
         {
-            return "";
+            var properties = viewObject.GetType().GetProperties();
+
+            foreach (var prop in properties)
+            {
+                var obj = prop.GetValue(viewObject);
+                var objName = prop.Name;
+                displayTemplate = this.RenderViewData(displayTemplate, obj, objName);
+            }
+
+            return displayTemplate;
         }
 
-        //TODO:
         private string RenderViewData(string template, object viewObject, string viewObjectName = null)
         {
-            return "";
+
+            if (viewObject != null
+                && viewObject.GetType()!=typeof(string)
+                && viewObject is IEnumerable enumerable
+                && Regex.IsMatch(template, ModelCollectionViewParameterPattern))
+            {
+                Match collectionMatch = Regex.Matches(template, ModelCollectionViewParameterPattern)
+                                             .First(cm => cm.Groups[1].Value == viewObjectName);
+
+                string fullMatch = collectionMatch.Groups[0].Value;
+                string itemPattern = collectionMatch.Groups[2].Value;
+
+                var result = string.Empty;
+
+                foreach (var subObj in enumerable)
+                {
+                    result += itemPattern.Replace("@item", this.RenderViewData(template, subObj));
+                }
+
+                return template.Replace(fullMatch, result);
+            }
+
+            if (viewObject != null
+                && viewObject.GetType() != typeof(string)
+                && !viewObject.GetType().IsPrimitive
+                )
+            {
+                if (File.Exists(this.FormatDisplayTemplatePath(viewObject.GetType().Name)))
+                {
+                    var displayTemplate = File.ReadAllText(this.FormatDisplayTemplatePath(viewObject.GetType().Name));
+
+                    var renderedObj = this.RenderObject(viewObject, displayTemplate);
+
+                    return viewObjectName != null
+                        ? template.Replace($"@Model.{viewObjectName}", renderedObj)
+                        : renderedObj;
+                }
+            }
+            
+            return viewObjectName != null 
+                ? template.Replace($"@Model.{viewObjectName}", viewObject?.ToString())
+                : viewObject?.ToString();
         }
 
         public string GetErrorContent()
