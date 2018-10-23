@@ -34,8 +34,10 @@
                 throw  new InvalidOperationException($"Type {instanceType.FullName} cannot be instantiated.");
             }
 
-            ConstructorInfo constructor = instanceType.GetConstructors().OrderBy(c => c.GetParameters().Length).First();
+            ConstructorInfo constructor = instanceType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
+
             ParameterInfo[] constructorParameters = constructor.GetParameters();
+
             object[] constructorParamsObject = new object[constructorParameters.Length];
 
             for (int i = 0; i < constructorParameters.Length; i++)

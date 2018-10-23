@@ -1,23 +1,32 @@
 ﻿namespace SIS.Framework.Routers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Reflection;
     using ActionResults;
     using Attributes.Methods;
     using Controllers;
     using HTTP.Enums;
     using HTTP.Extensions;
     using HTTP.Responses;
+    using Services;
     using SIS.HTTP.Requests.Contracts;
     using SIS.HTTP.Responses.Contracts;
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Reflection;
     using WebServer.Api;
     using WebServer.Results;
 
     public class ControllerRouter : IHttpHandler
     {
+        private readonly IDependencyContainer dependencyContainer;
+
+        public ControllerRouter(IDependencyContainer dependencyContainer)
+        {
+            this.dependencyContainer = dependencyContainer;
+        }
+
+
         public IHttpResponse Handle(IHttpRequest request)
         {
             //1.Read the Request Data
@@ -192,7 +201,7 @@
                     MvcContext.Get.ControllersSuffix);
 
                 var controllerType = Type.GetType(fullyQualifiedControllerName);
-                var controller = (Controller)Activator.CreateInstance(controllerType);
+                var controller = (Controller)this.dependencyContainer.CreateInstance(controllerType);
 
                 if (controller != null)
                 {
@@ -247,28 +256,6 @@
                 .GetMethods()
                 .Where(mi => mi.Name.ToLower() == actionName.ToLower());
 
-        }
-
-        private IHttpResponse PrepareResponseOld(Controller controller, MethodInfo action)
-        {
-            Console.WriteLine(controller.ToString());
-            Console.WriteLine(action.ToString());
-            ;
-            IActionResult actionResult = (IActionResult)action.Invoke(controller, null);
-            string result = actionResult.Invoke();
-
-            if (actionResult is IViewable)
-            {
-                return new HtmlResult(result, HttpResponseStatusCode.Ok);
-            }
-            else if (actionResult is IRedirectable)
-            {
-                return new WebServer.Results.RedirectResult(result);
-            }
-            else
-            {
-                throw new InvalidOperationException("The view result is not supported");
-            }
         }
 
     }
