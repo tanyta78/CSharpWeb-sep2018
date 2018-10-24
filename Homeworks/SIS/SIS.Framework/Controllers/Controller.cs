@@ -29,7 +29,7 @@
         {
             var controllerName = ControllerUtilities.GetControllerName(this);
             string viewContent = null;
-
+         
             try
             {
                 viewContent = this.ViewEngine.GetViewContent(controllerName, viewName);
@@ -40,7 +40,20 @@
                 viewContent = this.ViewEngine.GetErrorContent();
             }
 
+            if (this.IsAuthenticated())
+            {
+                this.Model.Data["LogIn"] = "block;";
+                this.Model.Data["LoggedOut"] = "none;";
+            }
+            else
+            {
+                this.Model.Data["LogIn"] = "none;";
+                this.Model.Data["LoggedOut"] = "block;";
+            }
+
+
             var renderedContent = this.ViewEngine.RenderHtml(viewContent, this.Model.Data);
+
             return new ViewResult(new View(renderedContent));
         }
 
@@ -57,5 +70,11 @@
         }
 
         public IIdentity Identity => (IIdentity) this.Request.Session.GetParameter("auth");
+
+        public bool IsAuthenticated()
+        {
+            return this.Request.Session.ContainsParameter("username");
+
+        }
     }
 }

@@ -99,7 +99,7 @@
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await this.PrepareResponse(new TextResult(e.StackTrace, HttpResponseStatusCode.BadRequest));
+                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
             }
 
             this.client.Shutdown(SocketShutdown.Both);

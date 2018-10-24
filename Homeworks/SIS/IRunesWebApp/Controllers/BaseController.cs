@@ -1,6 +1,5 @@
 ﻿namespace IRunesWebApp.Controllers
 {
-    using Data;
     using SIS.Framework.Controllers;
     using SIS.Framework.Services.Contracts;
     using SIS.HTTP.Cookies;
@@ -13,10 +12,10 @@
     {
         protected BaseController(IUserCookieService userCookieService)
         {
-          
+
             this.UserCookieService = userCookieService;
         }
-     
+
 
         protected IUserCookieService UserCookieService { get; }
 
@@ -42,10 +41,6 @@
             request.Cookies.Add(new HttpCookie(".auth-irunes", cookieContent, 7));
         }
 
-        public bool IsAuthenticated()
-        {
-            return this.Request.Session.ContainsParameter("username");
 
-        }
     }
 }

@@ -5,16 +5,7 @@
 
     public class IRunesDbContext:DbContext
     {
-        public IRunesDbContext()
-        {
-            
-        }
-
-        public IRunesDbContext(DbContextOptions options):base(options)
-        {
-            
-        }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -26,8 +17,11 @@
         }
 
         public DbSet<User> Users { get; set; }
+
         public DbSet<Album> Albums { get; set; }
+
         public DbSet<Track> Tracks { get; set; }
+
         public DbSet<AlbumTrack> AlbumsTracks { get; set; }
 
     }

@@ -14,15 +14,20 @@
 
         private const string ErrorViewName = "_Error";
 
+        private const string NavViewName = "_Nav";
+        
         private const string ViewExtension = "html";
 
         private const string ModelCollectionViewParameterPattern = @"\@Model\.Collection\.(\w+)\((.+)\)";
 
         private string ViewsFolderPath =>
-            $@"{MvcContext.Get.RootDirectoryRelativePath}{MvcContext.Get.ViewsFolderName}";
+            $@"{MvcContext.Get.RootDirectoryRelativePath}/{MvcContext.Get.ViewsFolderName}";
 
         private string ViewsSharedFolderPath =>
             $@"{this.ViewsFolderPath}/{MvcContext.Get.SharedViewsFolderName}";
+
+        private string FormatNavViewPath =>
+            $@"{this.ViewsFolderPath}/{MvcContext.Get.NavigationFolder}/{NavViewName}.{ViewExtension}";
 
         private string ViewsDisplayTemplateFolderPath =>
             $@"{this.ViewsSharedFolderPath}/{DisplayTemplatesFolderName}";
@@ -31,7 +36,7 @@
             $@"{this.ViewsSharedFolderPath}/{MvcContext.Get.LayoutFileName}.{ViewExtension}";
 
         private string FormatErrorViewPath =>
-            $@"{this.ViewsSharedFolderPath}/{ErrorViewName}.${ViewExtension}";
+            $@"{this.ViewsSharedFolderPath}/{ErrorViewName}.{ViewExtension}";
 
         private string FormatViewPath(string controllerName, string actionName) =>
             $@"{this.ViewsFolderPath}/{controllerName}/{actionName}.{ViewExtension}";
@@ -67,6 +72,17 @@
             }
 
             return File.ReadAllText(viewPath);
+        }
+
+        private string ReadNavHtml(string navViewPath)
+        {
+            
+            if (!File.Exists(navViewPath))
+            {
+                throw new FileNotFoundException($"Navigation view does not exist.");
+            }
+
+            return File.ReadAllText(navViewPath);
         }
 
         private string RenderObject(object viewObject, string displayTemplate)
@@ -131,17 +147,14 @@
 
         public string GetErrorContent()
             => this.ReadLayoutHtml(this.FormatLayoutViewPath())
-                   .Replace("@RenderError()", this.ReadLayoutHtml(this.FormatErrorViewPath));
+                   .Replace("@Error", this.ReadLayoutHtml(this.FormatErrorViewPath));
 
         public string GetViewContent(string controllerName, string actionName)
             => this.ReadLayoutHtml(this.FormatLayoutViewPath())
-                   .Replace("@RenderBody()", this.ReadViewHtml(this.FormatViewPath(controllerName, actionName)));
+                   .Replace("@RenderBody()", this.ReadViewHtml(this.FormatViewPath(controllerName, actionName)))
+                   .Replace("@RenderNav()", this.ReadNavHtml(this.FormatNavViewPath));
 
-        //TODO - depends on login or refactor with display
-        public string GetNavigationContent(string controllerName, string actionName)
-            => this.ReadLayoutHtml(this.FormatLayoutViewPath())
-                   .Replace("@RenderNav()", this.ReadViewHtml(this.FormatViewPath(controllerName, actionName)));
-
+       
         public string RenderHtml(string fullHtmlContent, IDictionary<string, object> viewData)
         {
             string renderedHtml = fullHtmlContent;
@@ -157,6 +170,10 @@
             if (viewData.ContainsKey("Error"))
             {
                 renderedHtml = renderedHtml.Replace("@Error", viewData["Error"].ToString());
+            }
+            else
+            {
+                renderedHtml = renderedHtml.Replace("@Error","");
             }
 
             return renderedHtml;

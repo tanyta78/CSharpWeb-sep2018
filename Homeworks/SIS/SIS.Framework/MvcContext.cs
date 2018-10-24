@@ -22,7 +22,9 @@
 
         public string LayoutFileName { get; set; } = "_Layout";
 
-        public string RootDirectoryRelativePath { get; set; } = "../../../";
+        public string NavigationFolder { get; set; } = "Navigation";
+
+        public string RootDirectoryRelativePath { get; set; } = "../../..";
 
         public string SharedViewsFolderName { get; set; } = "Shared";
     }

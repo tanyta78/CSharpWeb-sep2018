@@ -1,5 +1,6 @@
 ﻿namespace IRunesWebApp.Controllers
 {
+    using System;
     using Services.Contracts;
     using SIS.Framework.ActionResults;
     using SIS.Framework.Attributes.Methods;
@@ -25,15 +26,22 @@
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
+            Console.WriteLine(model.Confirmpassword);
+            Console.WriteLine(model.Username);
+            Console.WriteLine(model.Password);
+            Console.WriteLine(model.Email);
+
 
             if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
             {
                 return this.Register();
             }
 
-            if (this.UserService.RegisterUser(model.Username, model.Password, model.ConfirmPassword, model.Email))
+            if (this.UserService.RegisterUser(model.Username, model.Password, model.Confirmpassword, model.Email))
             {
                 this.SignInUser(model.Username, this.Request);
+                this.Model.Data["username"] = model.Username;
+              
                 return this.RedirectToAction("/");
             }
 
@@ -64,7 +72,7 @@
                 return this.RedirectToAction("/");
             }
 
-            this.Error = "Invalid credentials";
+            this.Model.Data["Error"] = "Invalid credentials";
 
             return this.Login();
         }
