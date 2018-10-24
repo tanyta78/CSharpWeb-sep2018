@@ -7,19 +7,19 @@
     using WebServer.Api;
 
     public static class WebHost
-   {
-       private const int HostingPort = 8000;
+    {
+        private const int HostingPort = 8000;
 
-       public static void Start(IMvcApplication application)
-       {
-           IDependencyContainer container = new DependencyContainer();
-           application.ConfigureServices(container);
+        public static void Start(IMvcApplication application)
+        {
+            IDependencyContainer container = new DependencyContainer();
+            application.ConfigureServices(container);
 
-           IHttpHandler controllerRouter = new ControllerRouter(container);
+            IHttpHandler controllerRouter = new ControllerRouter(container);
             application.Configure();
 
-           Server server = new Server(HostingPort,new HttpRouteHandlingContext(controllerRouter,new ResourceRouter()));
-            server.Run();
-       }
-   }
+            Server server = new Server(HostingPort, new HttpRouteHandlingContext(controllerRouter, new ResourceRouter()));
+            MvcEngine.Run(server);
+        }
+    }
 }
