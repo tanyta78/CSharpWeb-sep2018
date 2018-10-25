@@ -73,8 +73,8 @@
 
         public bool IsAuthenticated()
         {
-            return this.Request.Session.ContainsParameter("username");
-
+            //return this.Request.Session.ContainsParameter("username");
+            return this.Request.Session.ContainsParameter("auth");
         }
     }
 }

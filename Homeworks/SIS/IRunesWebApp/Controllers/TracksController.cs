@@ -4,6 +4,7 @@
     using Models;
     using Services.Contracts;
     using SIS.Framework.ActionResults;
+    using SIS.Framework.Attributes.Actions;
     using SIS.Framework.Attributes.Methods;
     using SIS.Framework.Services.Contracts;
     using ViewModels;
@@ -17,13 +18,14 @@
             this.TrackService = trackService;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
             var albumId = this.Request.QueryData["albumId"].ToString().ToUpper();
             this.Model.Data["backToAlbum"] = $"<a href=\"/Albums/Details?id={albumId}\" class=\"btn btn-success\" >Back To Album</a>";
@@ -33,13 +35,14 @@
             return this.View();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create(CreateTrackViewModel model)
         {
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
             if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
             {
@@ -72,14 +75,15 @@
 
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Details()
         {
 
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
 
             var albumId = this.Request.QueryData["albumId"].ToString().ToUpper();

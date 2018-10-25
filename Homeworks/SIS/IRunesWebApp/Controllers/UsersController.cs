@@ -4,6 +4,7 @@
     using Services.Contracts;
     using SIS.Framework.ActionResults;
     using SIS.Framework.Attributes.Methods;
+    using SIS.Framework.Security;
     using SIS.Framework.Services.Contracts;
     using ViewModels;
 
@@ -39,7 +40,7 @@
 
             if (this.UserService.RegisterUser(model.Username, model.Password, model.Confirmpassword, model.Email))
             {
-                this.SignInUser(model.Username, this.Request);
+                this.SignIn(new IdentityUser{Username = model.Username});
                 this.Model.Data["username"] = model.Username;
               
                 return this.RedirectToAction("/");
@@ -68,7 +69,7 @@
 
             if (user != null)
             {
-                this.SignInUser(user.Username, this.Request);
+                this.SignIn(new IdentityUser{Username = model.Username});
                 return this.RedirectToAction("/");
             }
 
@@ -80,7 +81,7 @@
         [HttpGet]
         public IActionResult Logout()
         {
-            this.Request.Session.ClearParameters();
+            this.SignOut();
 
             return this.RedirectToAction("/");
         }

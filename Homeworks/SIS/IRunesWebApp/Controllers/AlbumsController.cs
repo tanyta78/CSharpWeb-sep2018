@@ -4,6 +4,7 @@
     using System.Linq;
     using Services.Contracts;
     using SIS.Framework.ActionResults;
+    using SIS.Framework.Attributes.Actions;
     using SIS.Framework.Attributes.Methods;
     using SIS.Framework.Services.Contracts;
     using ViewModels;
@@ -17,13 +18,14 @@
 
         public IAlbumService AlbumService { get; }
 
+        [Authorize]
         [HttpGet]
         public IActionResult All()
         {
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
             var allAlbums = this.AlbumService.GetAllAlbums();
             var allAlbumsString = String.Join(Environment.NewLine, allAlbums);
@@ -35,24 +37,26 @@
             return this.View();
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Create()
         {
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
             return this.View();
         }
 
+        [Authorize]
         [HttpPost]
         public IActionResult Create(CreateAlbumViewModel model)
         {
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
             if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
             {
@@ -70,13 +74,14 @@
             return this.RedirectToAction("/Albums/All");
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Details(AlbumDetailsViewModel model)
         {
-            if (!this.IsAuthenticated())
-            {
-                return this.RedirectToAction("/Users/Login");
-            }
+            //if (!this.IsAuthenticated())
+            //{
+            //    return this.RedirectToAction("/Users/Login");
+            //}
 
             //var id = this.Request.QueryData["id"].ToString().ToUpper();
             var album = this.AlbumService.GetAlbumById(model.Id);

@@ -15,7 +15,7 @@
         private const string ErrorViewName = "_Error";
 
         private const string NavViewName = "_Nav";
-        
+
         private const string ViewExtension = "html";
 
         private const string ModelCollectionViewParameterPattern = @"\@Model\.Collection\.(\w+)\((.+)\)";
@@ -76,7 +76,7 @@
 
         private string ReadNavHtml(string navViewPath)
         {
-            
+
             if (!File.Exists(navViewPath))
             {
                 throw new FileNotFoundException($"Navigation view does not exist.");
@@ -103,7 +103,7 @@
         {
 
             if (viewObject != null
-                && viewObject.GetType()!=typeof(string)
+                && viewObject.GetType() != typeof(string)
                 && viewObject is IEnumerable enumerable
                 && Regex.IsMatch(template, ModelCollectionViewParameterPattern))
             {
@@ -139,22 +139,22 @@
                         : renderedObj;
                 }
             }
-            
-            return viewObjectName != null 
+
+            return viewObjectName != null
                 ? template.Replace($"@Model.{viewObjectName}", viewObject?.ToString())
                 : viewObject?.ToString();
         }
 
         public string GetErrorContent()
             => this.ReadLayoutHtml(this.FormatLayoutViewPath())
-                   .Replace("@Error", this.ReadLayoutHtml(this.FormatErrorViewPath));
+                .Replace("@RenderError()", this.ReadErrorHtml(this.FormatErrorViewPath))
+                .Replace("@RenderNav()", this.ReadNavHtml(this.FormatNavViewPath));
 
         public string GetViewContent(string controllerName, string actionName)
             => this.ReadLayoutHtml(this.FormatLayoutViewPath())
                    .Replace("@RenderBody()", this.ReadViewHtml(this.FormatViewPath(controllerName, actionName)))
                    .Replace("@RenderNav()", this.ReadNavHtml(this.FormatNavViewPath));
-
-       
+        
         public string RenderHtml(string fullHtmlContent, IDictionary<string, object> viewData)
         {
             string renderedHtml = fullHtmlContent;
@@ -173,7 +173,7 @@
             }
             else
             {
-                renderedHtml = renderedHtml.Replace("@Error","");
+                renderedHtml = renderedHtml.Replace("@Error", "");
             }
 
             return renderedHtml;

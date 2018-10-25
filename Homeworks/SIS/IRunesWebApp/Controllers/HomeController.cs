@@ -17,8 +17,7 @@
         {
             if (this.IsAuthenticated())
             {
-                var username = this.Request.Session.GetParameter("username");
-                this.Model.Data["username"] = username.ToString();
+                this.Model.Data["username"] = this.Identity.Username;
                 return this.View("Welcome");
             }
 
