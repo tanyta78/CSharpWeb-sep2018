@@ -99,7 +99,7 @@
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.BadRequest));
+                await this.PrepareResponse(new TextResult(e.Message, HttpResponseStatusCode.InternalServerError));
             }
 
             this.client.Shutdown(SocketShutdown.Both);
@@ -128,7 +128,7 @@
         {
             if (sessionId != null)
             {
-                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey, $"{sessionId}; HttpOnly"));
+                httpResponse.AddCookie(new HttpCookie(HttpSessionStorage.SessionCookieKey,sessionId));
             }
         }
 
