@@ -22,7 +22,7 @@
 
         public void AddService<T>(Func<T> p)
         {
-            this.dependencyContainerWithFunc.Add(typeof(T), () => p());
+            this.dependencyContainerWithFunc[typeof(T)] = () => p();
         }
 
         public T CreateInstance<T>()

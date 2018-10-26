@@ -8,6 +8,7 @@
     using HTTP.Enums;
     using HTTP.Requests.Contracts;
     using HTTP.Responses.Contracts;
+    using Logger;
     using Services;
     using WebServer;
     using WebServer.Results;
@@ -20,6 +21,11 @@
             CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
             var dependencyContainer = new ServiceCollection();
+
+            dependencyContainer.AddService<IHashService, HashService>();
+            dependencyContainer.AddService<IUserCookieService, UserCookieService>();
+            dependencyContainer.AddService<ILogger>(() => new FileLogger($"log.txt"));
+
             application.ConfigureServices(dependencyContainer);
 
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
