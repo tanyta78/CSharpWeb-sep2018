@@ -1,16 +1,16 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" >
 <head>
     <meta charset="utf-8" />
     <title>IRunes</title>
-    <link href="bootstrap.min.css" rel="stylesheet" />
-    <link href="style.css" rel="stylesheet" />
+    <link href="bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
 </head>
 <body>
     @RenderNav()
 <div class="container-fluid">
-    @RenderError()
+    <h1 class="alert alert-danger" style="display: @ErrorDisplay">@RenderError</h1>
     @RenderBody()
 </div>
     <hr class="bg-success"/>

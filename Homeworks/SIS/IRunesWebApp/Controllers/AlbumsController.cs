@@ -22,17 +22,16 @@
         [HttpGet]
         public IActionResult All()
         {
-            //if (!this.IsAuthenticated())
-            //{
-            //    return this.RedirectToAction("/Users/Login");
-            //}
+            var allAlbums = this.AlbumService.GetAllAlbums()
+                .Select(a => new AlbumViewModel { Id = a.Id.ToString().ToUpper(), Name = a.Name });
 
-            var allAlbums = this.AlbumService.GetAllAlbums();
-            var allAlbumsString = String.Join(Environment.NewLine, allAlbums);
+            var allAlbumsViewModel = new AllAlbumsViewModel()
+            {
+                AllAlbums = allAlbums
+            };
 
-            this.Model.Data["allAlbums"] = string.IsNullOrWhiteSpace(allAlbumsString)
-                ? "There are currently no albums."
-                : allAlbumsString;
+
+            this.Model.Data["allAlbums"] = allAlbumsViewModel;
 
             return this.View();
         }
@@ -41,11 +40,6 @@
         [HttpGet]
         public IActionResult Create()
         {
-            //if (!this.IsAuthenticated())
-            //{
-            //    return this.RedirectToAction("/Users/Login");
-            //}
-
             return this.View();
         }
 
@@ -53,10 +47,6 @@
         [HttpPost]
         public IActionResult Create(CreateAlbumViewModel model)
         {
-            //if (!this.IsAuthenticated())
-            //{
-            //    return this.RedirectToAction("/Users/Login");
-            //}
 
             if (!this.ModelState.IsValid.HasValue || !this.ModelState.IsValid.Value)
             {
@@ -78,13 +68,7 @@
         [HttpGet]
         public IActionResult Details(AlbumDetailsViewModel model)
         {
-            //if (!this.IsAuthenticated())
-            //{
-            //    return this.RedirectToAction("/Users/Login");
-            //}
-
-            //var id = this.Request.QueryData["id"].ToString().ToUpper();
-            var album = this.AlbumService.GetAlbumById(model.Id);
+           var album = this.AlbumService.GetAlbumById(model.Id);
 
             if (album == null)
             {
@@ -92,19 +76,35 @@
             }
             else
             {
-                var albumDetailsAsString = $"<img src={album.Cover} alt={album.Name} class=\"img-fluid\" > " +
-                                           $"<h4 class=\"text-center\">Album Name:{album.Name} </h4>" +
-                                           $"<h4 class=\"text-center\">Album Price:$ {album.Price:f2}</h4>";
-                var createTrack = $"<a href=\"/Tracks/Create?albumId={model.Id}\" class=\"btn btn-success\">Create Track</a>";
-                this.Model.Data["albumDetails"] = albumDetailsAsString;
-                this.Model.Data["createTrack"] = createTrack;
+                var albumTracksAsViewModel = album.Tracks.Select(at => new AlbumTracksViewModel
+                {
+                    Album = at.Album,
+                    AlbumId = at.AlbumId.ToString().ToUpper(),
+                    Track = at.Track,
+                    TrackId = at.TrackId.ToString().ToUpper()
+                }).ToList();
+
+                foreach (var albumTracks in albumTracksAsViewModel)
+                {
+                    Console.WriteLine($"Album Name {albumTracks.Album.Name} Track Name {albumTracks.Track.Name} TRackName {albumTracks.Trackname}");
+                }
+
+                var albumsAsViewModel = new AlbumDetailsViewModel()
+                {
+                    Cover = album.Cover,
+                    Id = album.Id.ToString().ToUpper(),
+                    Name = album.Name,
+                    AlbumTracks = albumTracksAsViewModel
+                };
 
 
-                var albumTracksAsString = album.Tracks.Select(t => $"<li><a href=\"/Tracks/Details?albumId={model.Id}&trackId={t.Track.Id.ToString().ToUpper()}\"/>{t.Track.Name}</a></li>");
+                if (album.Tracks.Count == 0)
+                {
+                    albumsAsViewModel.NoTracks = "There are no tracks in album";
+                }
 
-                this.Model.Data["albumTracks"] = album.Tracks.Count == 0
-                    ? "There are no tracks in album"
-                    : $"<ol>{string.Join(Environment.NewLine, albumTracksAsString)}</ol>";
+                this.Model.Data["albumDetails"] = albumsAsViewModel;
+
 
             }
 

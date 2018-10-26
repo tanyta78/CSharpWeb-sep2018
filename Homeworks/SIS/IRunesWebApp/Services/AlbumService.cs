@@ -18,9 +18,15 @@
         }
 
         //TODO:  change inline html with template
-        public IEnumerable<string> GetAllAlbums()
+        //public IEnumerable<string> GetAllAlbums()
+        //{
+        //    return this.db.Albums.Select(a => $"<a href=\"/Albums/Details?id={a.Id.ToString().ToUpper()}\"/>{a.Name}</a> </br>");
+        //}
+
+        //with template
+        public IEnumerable<Album> GetAllAlbums()
         {
-            return this.db.Albums.Select(a => $"<a href=\"/Albums/Details?id={a.Id.ToString().ToUpper()}\"/>{a.Name}</a> </br>");
+            return this.db.Albums.ToList();
         }
 
         public Album CreateAlbum(string name, string cover)
@@ -49,7 +55,10 @@
 
         public Album GetAlbumById(string id)
         {
-            return this.db.Albums.Include(x => x.Tracks).ThenInclude(x => x.Track).FirstOrDefault(a => a.Id.ToString() == id);
+            return this.db.Albums
+                .Include(x => x.Tracks)
+                .ThenInclude(x => x.Track)
+                .FirstOrDefault(a => a.Id.ToString() == id);
         }
 
     }

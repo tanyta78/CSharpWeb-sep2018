@@ -169,11 +169,12 @@
 
             if (viewData.ContainsKey("Error"))
             {
-                renderedHtml = renderedHtml.Replace("@Error", viewData["Error"].ToString());
+               
+                renderedHtml = renderedHtml.Replace("@RenderError()", viewData["Error"].ToString()).Replace("@ErrorDisplay","block");
             }
             else
             {
-                renderedHtml = renderedHtml.Replace("@Error", "");
+                renderedHtml = renderedHtml.Replace("@ErrorDisplay","none");
             }
 
             return renderedHtml;
