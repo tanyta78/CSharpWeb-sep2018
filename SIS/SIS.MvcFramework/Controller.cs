@@ -82,50 +82,7 @@
             return layoutContent;
         }
 
-        //private string GetCurrentControllerName() => this.GetType().Name.Replace(ControllerDefaultName, string.Empty);
-
-        //private const string ControllerDefaultName = "Controller";
-        //private const string RootDirectoryRelativePath = "../../../";
-        //private const string ViewsFolderName = "Views";
-        //private const string DirectorySeparator = "/";
-        //private const string HtmlFileExtension = ".html";
-        //private const string LayoutViewFileName = "_Layout";
-        //private const string RenderBodyConst = "@RenderBody()";
-
-        //private IHttpResponse ViewAuto([CallerMemberName] string viewName = "")
-        //{
-
-        //    string layoutPath = RootDirectoryRelativePath +
-        //                      ViewsFolderName +
-        //                      DirectorySeparator +
-        //                      LayoutViewFileName + HtmlFileExtension;
-        //    string filePath = RootDirectoryRelativePath +
-        //                      ViewsFolderName +
-        //                      DirectorySeparator +
-        //                      this.GetCurrentControllerName() +
-        //                      DirectorySeparator + viewName + HtmlFileExtension;
-        //    if (!System.IO.File.Exists(filePath))
-        //    {
-        //        return new BadRequestResult($"View {viewName} not found");
-        //    }
-
-        //    var viewContent = System.IO.File.ReadAllText(filePath);
-        //    var layoutContent = System.IO.File.ReadAllText(layoutPath);
-
-        //    foreach (var viewBagKey in this.ViewBag.Keys)
-        //    {
-        //        var dynamicDataPlaceholder = $"{{{{{viewBagKey}}}}}";
-        //        var newValue = this.ViewBag[viewBagKey];
-        //        if (viewContent.Contains(dynamicDataPlaceholder))
-        //        {
-        //            viewContent = viewContent.Replace(dynamicDataPlaceholder, newValue);
-        //        }
-        //    }
-        //    var allContent = layoutContent.Replace(RenderBodyConst, viewContent);
-        //    this.PrepareHtmlResult(allContent);
-        //    return this.Response;
-        //}
-
+       
         protected IHttpResponse BadRequestError(string errorMessage)
         {
             var model = new ErrorViewModel()
