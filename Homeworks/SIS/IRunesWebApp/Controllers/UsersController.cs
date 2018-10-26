@@ -69,7 +69,7 @@
 
             if (user != null)
             {
-                this.SignIn(new IdentityUser{Username = model.Username});
+                this.SignIn(new IdentityUser(){Username = model.Username});
                 return this.RedirectToAction("/");
             }
 

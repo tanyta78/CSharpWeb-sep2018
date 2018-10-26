@@ -81,12 +81,13 @@
                     Album = at.Album,
                     AlbumId = at.AlbumId.ToString().ToUpper(),
                     Track = at.Track,
-                    TrackId = at.TrackId.ToString().ToUpper()
+                    TrackId = at.TrackId.ToString().ToUpper(),
+                    NameOfTrack = at.Track.Name
                 }).ToList();
 
                 foreach (var albumTracks in albumTracksAsViewModel)
                 {
-                    Console.WriteLine($"Album Name {albumTracks.Album.Name} Track Name {albumTracks.Track.Name} TRackName {albumTracks.Trackname}");
+                    Console.WriteLine($"Album Name {albumTracks.Album.Name} Track Name {albumTracks.Track.Name} TRackName {albumTracks.NameOfTrack}");
                 }
 
                 var albumsAsViewModel = new AlbumDetailsViewModel()
