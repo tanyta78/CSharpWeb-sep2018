@@ -5,7 +5,7 @@
 
     public class HomeController : BaseController
     {
-        [HttpGet("/Home/Index")]
+        [HttpGet("/home/index")]
         public IHttpResponse Index()
         {
            // return this.View(this.User!=null ? "Home/Profile" : "Home/Index");
