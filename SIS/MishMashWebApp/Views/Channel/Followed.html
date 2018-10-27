@@ -1,0 +1,55 @@
+﻿ <hr class="hr-2 bg-mishmash"/>
+<div class="channel-main-data-holder w-75 mx-auto d-flex justify-content-between">
+    <h3 class="text-center text-mishmash">Channel: @Model.Name</h3>
+    <h3 class="text-center text-mishmash">Type: @Model.Type</h3>
+    <h3 class="text-center text-mishmash">Followers: @Model.FollowersCount</h3>
+</div>
+<hr class="hr-2 bg-mishmash"/>
+<h3 class="text-center text-mishmash">Tags</h3>
+<div class="channel-tags-holder w-75 mx-auto">
+    <h6 class="text-center text-mishmash">@Model.TagsAsString</h6>
+</div>
+<hr class="hr-2 bg-mishmash"/>
+<h3 class="text-center text-mishmash">Description</h3>
+<div class="product-description-holder">
+    <p class="text-center text-mishmash mt-4">
+        @Model.Description
+    </p>
+</div>
+<hr class="hr-2 bg-mishmash"/>
+<div class="button-holder d-flex justify-content-center">
+    <a href="javascript:window.history.back()" class="btn bg-mishmash text-white">Back</a>
+</div>
+
+<h1 class="text-center text-mishmash">Following</h1>
+<hr class="hr-2 bg-mishmash"/>
+<table class="table w-75 mx-auto table-hover">
+    <thead>
+    <tr class="row">
+        <th class="col-md-1">#</th>
+        <th class="col-md-5">Channel</th>
+        <th class="col-md-1">Type</th>
+        <th class="col-md-2">Followers</th>
+        <th class="col-md-2">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in @Model.FollowingChannels)
+        {
+        <tr class="row">
+            <th class="col-md-1">1</th>
+            <td class="col-md-5">SoftUni</td>
+            <td class="col-md-1">Lessons</td>
+            <td class="col-md-2">10000</td>
+            <td class="col-md-2">
+                <div class="button-holder d-flex justify-content-between">
+                    <a class="btn bg-mishmash text-white" href="/channels/unfollow?id=3">Unfollow</a>
+                    <a class="btn bg-mishmash text-white" href="/channels/details?id=3" >Details</a>
+                </div>
+            </td>
+        </tr>
+        }
+
+      
+    </tbody>
+</table>

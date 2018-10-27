@@ -105,7 +105,7 @@
             this.Response.Cookies.Add(new HttpCookie(".auth-app", cookieContent, 7));
 
             //4. REDIRECT TO HOME PAGE
-            return this.Redirect("/");
+            return this.Redirect("/home/index");
         }
 
         [HttpGet("/users/logout")]

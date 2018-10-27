@@ -8,13 +8,17 @@
         [HttpGet("/Home/Index")]
         public IHttpResponse Index()
         {
-            return this.View("Home/Index");
+           // return this.View(this.User!=null ? "Home/Profile" : "Home/Index");
+            return this.View(this.User!=null ? "Home/HomeTest" : "Home/Index");
+
         }
 
         [HttpGet("/")]
         public IHttpResponse RootIndex()
         {
-            return this.View("Home/Index");
+           // return this.View(this.User!=null ? "Home/Profile" : "Home/Index");
+            return this.View(this.User!=null ? "Home/HomeTest" : "Home/Index");
+
         }
     }
 }

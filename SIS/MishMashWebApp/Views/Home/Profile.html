@@ -1,0 +1,42 @@
+﻿<div class="jumbotron mt-3 bg-mishmash">
+    <h1 class="text-white">Welcome to Mish-Mash Media Channels</h1>
+    <hr class="bg-white hr-2" />
+    <h3 class="text-white"><a href="/users/login">Login</a> if you have an account.</h3>
+    <h3 class="text-white"><a href="/users/register">Register</a> if you don't.</h3>
+</div>
+<div>
+    <h1 class="text-center text-mishmash">Welcome, @Model.Username</h1>
+</div>
+<div>
+    <h3 class="text-mishmash">Your channels</h3>
+    <hr class="bg-white hr-2"/>
+    @if (@Model.Count > 0)
+    {
+    @foreach(var item in @Model.MyChannels)
+    {
+    <div>
+        <div class="card border-info mb-3 bg-mishmash col-sm-2 col-sm-offset-1" style="max-width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title text-white">@item.Name</h5>
+                <hr class="bg-white hr-2" />
+                <h5 class="card-text text-white">@item.Type Channel</h5>
+                <hr class="bg-white hr-2" />
+                <h5 class="card-text text-white">@item.FollowersCount Following</h5>
+                <hr class="bg-white hr-2" />
+                <h5 class="card-text text-white">Following</h5>
+            </div>
+        </div>
+    </div>
+    }
+    }
+    @else
+    {
+    <div>There are currently no channels.</div>
+    }
+</div>
+
+<form action="/orders/add" method="post">
+    <input type="hidden" name="productId" value="@Model.Id" />
+    <input class="btn btn-primary" type="submit" value="Order"/>
+</form>  
+
