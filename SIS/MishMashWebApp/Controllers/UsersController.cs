@@ -9,24 +9,24 @@
     using SIS.MvcFramework.Services;
     using ViewModels.User;
 
-    public class UserController : BaseController
+    public class UsersController : BaseController
     {
 
         private readonly IHashService hashService;
 
-        public UserController(IHashService hashService)
+        public UsersController(IHashService hashService)
         {
             this.hashService = hashService;
         }
 
-        [HttpGet("/users/register")]
+        [HttpGet]
         public IHttpResponse Register()
         {
-            return this.View("User/Register");
+            return this.View("Users/Register");
         }
 
-        [HttpPost("/users/register")]
-        public IHttpResponse DoRegister(DoRegisterInputModel model)
+        [HttpPost]
+        public IHttpResponse Register(DoRegisterInputModel model)
         {
             //1.VALIDATE INPUT
             if (string.IsNullOrWhiteSpace(model.Username) || model.Username.Trim().Length < 3)
@@ -85,17 +85,17 @@
             }
 
           //4. REDIRECT TO HOME PAGE
-            return this.Redirect("/users/login");
+            return this.Redirect("/Users/Login");
         }
 
-        [HttpGet("/users/login")]
+        [HttpGet]
         public IHttpResponse Login()
         {
-            return this.View("User/Login");
+            return this.View("Users/Login");
         }
 
-        [HttpPost("/users/login")]
-        public IHttpResponse DoLogin(DoLoginInputModel model)
+        [HttpPost]
+        public IHttpResponse Login(DoLoginInputModel model)
         {
             var hashedPassword = this.hashService.Hash(model.Password);
 
@@ -112,10 +112,10 @@
             this.Response.Cookies.Add(new HttpCookie(".auth-app", cookieContent, 7));
 
             //4. REDIRECT TO HOME PAGE
-            return this.Redirect("/home/index");
+            return this.Redirect("/Home/Index");
         }
 
-        [HttpGet("/users/logout")]
+        [HttpGet]
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-app"))

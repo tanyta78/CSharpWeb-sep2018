@@ -7,14 +7,14 @@
     using SIS.MvcFramework;
     using ViewModels.Channel;
 
-    public class ChannelController : BaseController
+    public class ChannelsController : BaseController
     {
-        [HttpGet("/channels/details")]
+        [HttpGet]
         public IHttpResponse Details(int id)
         {
             if (this.User == null)
             {
-                return this.Redirect("/users/login");
+                return this.Redirect("/Users/Login");
             }
 
             var channelViewModel = this.Db.Channels.Where(c => c.Id == id).Select(x => new ChannelViewModel
@@ -26,15 +26,15 @@
                 FollowersCount = x.Followers.Count
             }).FirstOrDefault();
 
-            return this.View("Channel/Details", channelViewModel);
+            return this.View("Channels/Details", channelViewModel);
         }
 
-        [HttpGet("/channels/followed")]
+        [HttpGet]
         public IHttpResponse Followed()
         {
             if (this.User == null)
             {
-                return this.Redirect("/users/login");
+                return this.Redirect("/Users/Login");
             }
 
             var myChannels = this.Db.Channels
@@ -52,17 +52,17 @@
                 FollowingChannels = myChannels
             };
 
-            return this.View("Channel/Followed", folowedChannelsViewModel);
+            return this.View("Channels/Followed", folowedChannelsViewModel);
         }
 
-        [HttpGet("/channels/unfollow")]
+        [HttpGet]
         public IHttpResponse Unfollow(int id)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
 
             if (user == null)
             {
-                return this.Redirect("/users/login");
+                return this.Redirect("/Users/Login");
             }
 
             var userInChannel = this.Db.UsersInChannels.FirstOrDefault(x => x.UserId == user.Id && x.ChannelId == id);
@@ -73,18 +73,18 @@
                 this.Db.SaveChanges();
             }
 
-            return this.Redirect("/channels/followed");
+            return this.Redirect("/Channels/Followed");
 
         }
 
-        [HttpGet("/channels/follow")]
+        [HttpGet]
         public IHttpResponse Follow(int id)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
 
             if (user == null)
             {
-                return this.Redirect("/users/login");
+                return this.Redirect("/Users/Login");
             }
 
             if (!this.Db.UsersInChannels.Any(x => x.UserId == user.Id && x.ChannelId == id))
@@ -98,10 +98,10 @@
                 this.Db.SaveChanges();
             }
 
-            return this.Redirect("/channels/followed");
+            return this.Redirect("/Channels/Followed");
         }
 
-        [HttpGet("/channels/create")]
+        [HttpGet]
         public IHttpResponse Create()
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
@@ -111,10 +111,10 @@
                 return this.BadRequestError("You do not have permission to access this functionality!");
             }
 
-            return this.View("Channel/Create");
+            return this.View("Channels/Create");
         }
 
-        [HttpPost("/channels/create")]
+        [HttpPost]
         public IHttpResponse Create(CreateChannelsInputModel model)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
@@ -161,7 +161,7 @@
           this.Db.Channels.Add(channel);
             this.Db.SaveChanges();
 
-            return this.Redirect("/channels/details?id="+channel.Id);
+            return this.Redirect("/Channels/Details?id="+channel.Id);
         }
     }
 }

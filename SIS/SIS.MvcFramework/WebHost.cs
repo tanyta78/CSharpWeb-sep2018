@@ -29,7 +29,7 @@
             application.ConfigureServices(dependencyContainer);
 
             ServerRoutingTable serverRoutingTable = new ServerRoutingTable();
-            AutoRegisterRoutes(serverRoutingTable, application, dependencyContainer);
+            RegisterRoutes(serverRoutingTable, application, dependencyContainer);
 
             application.Configure();
             Server server = new Server(8000, serverRoutingTable);
@@ -37,10 +37,13 @@
             server.Run();
         }
 
-        private static void AutoRegisterRoutes(ServerRoutingTable routingTable, IMvcApplication application, IServiceCollection serviceCollection)
+        private static void RegisterRoutes(ServerRoutingTable routingTable, IMvcApplication application, IServiceCollection serviceCollection)
         {
             var controllers = application.GetType().Assembly.GetTypes()
-                 .Where(t => t.IsClass && !t.IsAbstract && t.IsSubclassOf(typeof(Controller)));
+                 .Where(t => t.IsClass 
+                             && !t.IsAbstract 
+                             && t.IsSubclassOf(typeof(Controller)));
+
             foreach (var controller in controllers)
             {
                 var getMethods = controller.GetMethods(BindingFlags.Public | BindingFlags.Instance)
@@ -49,25 +52,48 @@
                 foreach (var methodInfo in getMethods)
                 {
                     var httpAttribute = (HttpAttribute)
-                        methodInfo.GetCustomAttributes(true).FirstOrDefault(ca =>
+                        methodInfo
+                            .GetCustomAttributes(true)
+                            .FirstOrDefault(ca =>
                             ca.GetType().IsSubclassOf(typeof(HttpAttribute)));
 
                     if (httpAttribute == null)
                     {
+                        //TODO: Assume HttpGet
                         continue;
                     }
 
                     var path = httpAttribute.Path;
-                    if (!path.StartsWith("/"))
+
+                   
+                    if (path == null)
+                    {
+                        //If path is null => generate path from controller and action /ControllerName/ActionName
+                        var controllerName = controller.Name;
+                        if (controllerName.EndsWith("Controller"))
+                        {
+                            controllerName = controllerName.Substring(0, controllerName.Length - "Controller".Length);
+                        }
+
+                        var actionName = methodInfo.Name;
+
+                        path = $"/{controllerName}/{actionName}";
+                    }
+                    else if (!path.StartsWith("/"))
                     {
                         path = "/" + path;
                     }
 
                     routingTable.Add(httpAttribute.Method, path, (request) => ExecuteAction(controller, methodInfo, request, serviceCollection));
 
-                    Console.WriteLine($"Route registered:{controller.Name} {methodInfo.Name} ");
+                    Console.WriteLine($"Route registered:{controller.Name} {methodInfo.Name} => {path}");
 
                 }
+            }
+
+            if (!routingTable.Routes[HttpRequestMethod.Get].ContainsKey("/") && routingTable.Routes[HttpRequestMethod.Get].ContainsKey("/Home/Index"))
+            {
+                routingTable.Routes[HttpRequestMethod.Get]["/"]= (request)=> routingTable.Routes[HttpRequestMethod.Get]["/Home/Index"](request);
             }
         }
 

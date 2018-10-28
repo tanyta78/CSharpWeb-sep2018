@@ -8,7 +8,7 @@
 
     public class HomeController : BaseController
     {
-        [HttpGet("/home/index")]
+        [HttpGet]
         public IHttpResponse Index()
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User );
@@ -64,10 +64,10 @@
 
         }
 
-        [HttpGet("/")]
-        public IHttpResponse RootIndex()
-        {
-            return this.Index();
-        }
+        //[HttpGet("/")]
+        //public IHttpResponse RootIndex()
+        //{
+        //    return this.Index();
+        //}
     }
 }

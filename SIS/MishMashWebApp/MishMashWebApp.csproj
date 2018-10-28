@@ -25,13 +25,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Views\Channel\Create.html">
+    <None Update="Views\Channels\Create.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Views\Channel\Followed.html">
+    <None Update="Views\Channels\Followed.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Views\Channel\Details.html">
+    <None Update="Views\Channels\Details.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Views\Error.html">
@@ -52,10 +52,10 @@
     <None Update="Views\Navigation\logoutNav.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Views\User\Login.html">
+    <None Update="Views\Users\Login.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Views\User\Register.html">
+    <None Update="Views\Users\Register.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Views\_Layout.html">

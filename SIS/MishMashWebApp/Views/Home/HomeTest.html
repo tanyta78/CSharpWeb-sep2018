@@ -3,7 +3,7 @@
     {
     <h1 class="text-center text-mishmash">Welcome, Admin-@Model.Username!</h1>
     <div>
-        <a href="/channels/create" class="btn btn-primary">Create channel</a>
+        <a href="/Channels/Create" class="btn btn-primary">Create channel</a>
     </div>
     }
     @else
@@ -58,8 +58,8 @@
                 <hr class="bg-white hr-2" />
                 <h5 class="card-text text-white">@channel.FollowersCount Following</h5>
                 <h5 class="card-text text-white">
-                    <a href="/channels/follow?id=@channel.Id" class="text-white">Follow</a>
-                    <a href="/channels/details?id=@channel.Id" class="text-white">Details</a>
+                    <a href="/Channels/Follow?id=@channel.Id" class="text-white">Follow</a>
+                    <a href="/Channels/Details?id=@channel.Id" class="text-white">Details</a>
                 </h5>
             </div>
         </div>
@@ -86,8 +86,8 @@
                 <hr class="bg-white hr-2" />
                 <h5 class="card-text text-white">@other.FollowersCount Following</h5>
                 <h5 class="card-text text-white">
-                    <a href="/channels/follow?id=@other.Id" class=" text-white">Follow</a>
-                    <a href="/channels/details?id=@other.Id" class=" text-white">Details</a>
+                    <a href="/Channels/Follow?id=@other.Id" class=" text-white">Follow</a>
+                    <a href="/Channels/Details?id=@other.Id" class=" text-white">Details</a>
                 </h5>
             </div>
         </div>
