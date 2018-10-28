@@ -124,6 +124,8 @@
 
                 if (httpRequest != null)
                 {
+                    Console.WriteLine($"Processing : {httpRequest.RequestMethod} {httpRequest.Path}");
+
                     string sessionId = this.SetRequestSession(httpRequest);
 
                     var httpResponse = this.HandleRequest(httpRequest);
