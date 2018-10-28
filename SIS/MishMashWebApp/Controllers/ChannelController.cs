@@ -1,5 +1,6 @@
 ﻿namespace MishMashWebApp.Controllers
 {
+    using System;
     using System.Linq;
     using Models;
     using SIS.HTTP.Responses.Contracts;
@@ -98,6 +99,69 @@
             }
 
             return this.Redirect("/channels/followed");
+        }
+
+        [HttpGet("/channels/create")]
+        public IHttpResponse Create()
+        {
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
+
+            if (user == null || user.Role != Role.Admin)
+            {
+                return this.BadRequestError("You do not have permission to access this functionality!");
+            }
+
+            return this.View("Channel/Create");
+        }
+
+        [HttpPost("/channels/create")]
+        public IHttpResponse Create(CreateChannelsInputModel model)
+        {
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
+
+            if (user == null || user.Role != Role.Admin)
+            {
+                return this.BadRequestError("You do not have permission to access this functionality!");
+            }
+
+            if (!Enum.TryParse(model.Type, true, out ChannelType type))
+            {
+                return this.BadRequestError("Invalid channel type.");
+            };
+
+            var channel = new Channel()
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Type = type
+            };
+
+            if (!string.IsNullOrWhiteSpace(model.Tags))
+            {
+                var tags = model.Tags.Split(',', ';',StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var tag in tags)
+                {
+                    var dbTag = this.Db.Tags.FirstOrDefault(x => x.Name == tag.Trim());
+
+                    if (dbTag == null)
+                    {
+                        dbTag=new Tag(){Name = tag.Trim()};
+                        this.Db.Tags.Add(dbTag);
+                        this.Db.SaveChanges();
+                    }
+
+                    channel.Tags.Add(new ChannelTag()
+                    {
+                        TagId = dbTag.Id
+                    });
+                }
+            }
+
+          this.Db.Channels.Add(channel);
+            this.Db.SaveChanges();
+
+            return this.Redirect("/channels/details?id="+channel.Id);
         }
     }
 }

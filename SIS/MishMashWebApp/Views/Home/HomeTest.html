@@ -2,6 +2,9 @@
     @if (Model.UserRole == "Admin")
     {
     <h1 class="text-center text-mishmash">Welcome, Admin-@Model.Username!</h1>
+    <div>
+        <a href="/channels/create" class="btn btn-primary">Create channel</a>
+    </div>
     }
     @else
     {

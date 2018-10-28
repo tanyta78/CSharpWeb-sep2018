@@ -57,13 +57,20 @@
             //2. GENERATE HASH PASSWORD
             var hashedPassword = this.hashService.Hash(model.Password);
 
+            var role = Role.User;
+
+            if (!this.Db.Users.Any())
+            {
+                role = Role.Admin;
+            }
+
             //3. CREATE USER
             var user = new User
             {
                 Username = model.Username.Trim(),
                 Password = hashedPassword,
                 Email = model.Email,
-                Role = Role.User
+                Role = role
             };
 
             this.Db.Users.Add(user);

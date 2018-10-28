@@ -1,0 +1,41 @@
+﻿<h1 class="text-center text-mishmash">Create Channel</h1>
+<hr class="bg-mishmash w-50 hr-2" />
+<form class="mx-auto w-50" method="post" action="/channels/create">
+    <div class="form-group">
+        <label for="name" class="text-mishmash">Name</label>
+        <input type="text" class="form-control" id="name" placeholder="Name..." name="name">
+    </div>
+    <div class="form-group">
+        <label for="description" class="text-mishmash">Description</label>
+        <textarea class="form-control" id="description" rows="10" placeholder="Description..." name="description"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="tags" class="text-mishmash">Tags</label>
+        <textarea class="form-control" id="tags" placeholder="Tag1,Tag2,Tag3..." name="tags"></textarea>
+    </div>
+    <div class="form-group">
+        <h3 class="text-center text-mishmash">Channel Type</h3>
+        <hr class="bg-mishmash w-50 hr-2" />
+        <div class="row justify-content-around">
+            <div class="col-md-2">
+                <label class="radio-inline"><input type="radio" name="type" value="Game" checked>Game</label>
+            </div>
+            <div class="col-md-2">
+                <label class="radio-inline"><input type="radio" name="type" value="Motivation">Motivation</label>
+            </div>
+            <div class="col-md-2">
+                <label class="radio-inline"><input type="radio" name="type" value="Lessons">Lessons</label>
+            </div>
+            <div class="col-md-2">
+                <label class="radio-inline"><input type="radio" name="type" value="Radio">Radio</label>
+            </div>
+            <div class="col-md-2">
+                <label class="radio-inline"><input type="radio" name="type" value="Other">Other</label>
+            </div>
+        </div>
+        <hr class="bg-mishmash w-50 hr-2" />
+    </div>
+    <div class="button-holder mt-4 d-flex justify-content-center">
+        <button type="submit" class="btn bg-mishmash text-white">Create</button>
+    </div>
+</form>
