@@ -26,7 +26,7 @@
                 FollowersCount = x.Followers.Count
             }).FirstOrDefault();
 
-            return this.View("Channels/Details", channelViewModel);
+            return this.View(channelViewModel);
         }
 
       
@@ -52,7 +52,7 @@
                 FollowingChannels = myChannels
             };
 
-            return this.View("Channels/Followed", folowedChannelsViewModel);
+            return this.View(folowedChannelsViewModel);
         }
 
        
@@ -111,7 +111,7 @@
                 return this.BadRequestError("You do not have permission to access this functionality!");
             }
 
-            return this.View("Channels/Create");
+            return this.View();
         }
 
         [HttpPost]

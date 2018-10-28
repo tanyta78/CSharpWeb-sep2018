@@ -2,20 +2,19 @@
 {
     using System.Linq;
     using SIS.HTTP.Responses.Contracts;
-    using SIS.MvcFramework;
     using ViewModels.Channel;
     using ViewModels.Home;
 
     public class HomeController : BaseController
     {
-       
+
         public IHttpResponse Index()
         {
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User );
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
 
             if (user == null)
             {
-               return this.View("Home/Index");
+                return this.View();
             }
 
             var yourChannels = this.Db.Channels.Where(x => x.Followers.Any(f => f.User.Username == this.User)).Select(c =>
@@ -63,11 +62,5 @@
             return this.View("Home/HomeTest", homeTestViewModel);
 
         }
-
-        //[HttpGet("/")]
-        //public IHttpResponse RootIndex()
-        //{
-        //    return this.Index();
-        //}
     }
 }

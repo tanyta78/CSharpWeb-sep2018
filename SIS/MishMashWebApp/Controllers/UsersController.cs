@@ -22,7 +22,7 @@
        
         public IHttpResponse Register()
         {
-            return this.View("Users/Register");
+            return this.View();
         }
 
         [HttpPost]
@@ -91,7 +91,7 @@
        
         public IHttpResponse Login()
         {
-            return this.View("Users/Login");
+            return this.View();
         }
 
         [HttpPost]

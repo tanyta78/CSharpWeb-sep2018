@@ -1,12 +1,12 @@
 ﻿namespace SIS.MvcFramework
 {
+    using System.Text;
     using HTTP.Enums;
     using HTTP.Headers;
     using HTTP.Requests.Contracts;
     using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using Services;
-    using System.Text;
     using ViewEngine;
 
     public abstract class Controller
@@ -40,21 +40,41 @@
             }
         }
 
-
-        protected IHttpResponse View<T>(string viewName, T model = null, string layoutName = "_Layout") where T : class
+        //this.View()
+        // this.View(model,);
+        // this.View(viewName,);
+        // this.View(viewName,model,);
+        protected IHttpResponse View<T>(
+            string viewName = null, 
+            T model = null, 
+            string layoutName = "_Layout") 
+            where T : class
         {
+            if (viewName == null)
+            {
+                //Generate viewName
+                viewName = this.Request.Path.Trim('/', '\\');
+                if (string.IsNullOrWhiteSpace(viewName))
+                {
+                    viewName = "Home/Index";
+                }
+            }
+
             var allContent = this.GetViewContent(viewName, model, layoutName);
             this.PrepareHtmlResult(allContent);
             return this.Response;
         }
 
-        protected IHttpResponse View(string viewName, string layoutName = "_Layout")
+        protected IHttpResponse View<T>(T model = null, string layoutName = "_Layout") where T : class
         {
-            var allContent = this.GetViewContent(viewName, (object)null, layoutName);
-            this.PrepareHtmlResult(allContent);
-            return this.Response;
+            return this.View(null, model, layoutName);
         }
-
+        
+        protected IHttpResponse View(string viewName = null, string layoutName = "_Layout")
+        {
+            return this.View(viewName, (object) null, layoutName);
+        }
+        
         private string GetViewContent<T>(string viewName, T model, string layoutName = "_Layout")
         {
             var layoutCode = System.IO.File.ReadAllText($"Views/{layoutName}.html");
@@ -82,7 +102,7 @@
             return layoutContent;
         }
 
-       
+
         protected IHttpResponse BadRequestError(string errorMessage)
         {
             var model = new ErrorViewModel()
