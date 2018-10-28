@@ -1,25 +1,33 @@
 ﻿<div>
-    <h3 class="text-center text-mishmash">Welcome, Model.Username</h3>
+    @if (Model.UserRole == "Admin")
+    {
+    <h1 class="text-center text-mishmash">Welcome, Admin-@Model.Username!</h1>
+    }
+    @else
+    {
+    <h1 class="text-center text-mishmash">Welcome, @Model.Username!</h1>
+    }
 </div>
 
 <h5 class="text-mishmash mt-3">Your channels</h5>
 <hr class="bg-white hr-2" />
 <div class="container-fluid">
     <div class="row justify-content-start">
-        @for(var i = 0; i < 13; i++)
+        @for(var i = 0; i < Model.YourChannels.Count(); i++)
         {
         @if (i % 5 == 0 && i > 1 )
         {
     </div>
     <div class="row justify-content-start mt-3">
         }
-        <div class="card border-info ml-3 bg-mishmash col-md-2 " style="max-width: 18rem;">
+        {var item = Model.YourChannels.ToList()[i];}
+        <div class="card border-info ml-3 bg-mishmash col-md-2 " >
             <div class="card-body text-center">
-                <h5 class="card-title text-white">SoftUni</h5>
+                <h5 class="card-title text-white">@item.Name</h5>
                 <hr class="bg-white hr-2" />
-                <h5 class="card-text text-white">Lesson Channel</h5>
+                <h5 class="card-text text-white">@item.Type Channel</h5>
                 <hr class="bg-white hr-2" />
-                <h5 class="card-text text-white">10000 Following</h5>
+                <h5 class="card-text text-white">@item.FollowersCount Following</h5>
                 <hr class="bg-white hr-2" />
                 <h5 class="card-text text-white">Following</h5>
             </div>
@@ -31,24 +39,24 @@
 <hr class="bg-white hr-2" />
 <div class="container-fluid">
     <div class="row justify-content-start">
-        @for(var i = 0; i < 13; i++)
+        @for(var i = 0; i < Model.Suggested.Count(); i++)
         {
         @if (i % 5 == 0 && i > 1 )
         {
     </div>
     <div class="row justify-content-start mt-3">
         }
-        <div class="card border-info ml-3 bg-mishmash col-md-2 " style="max-width: 18rem;">
+        {var channel = Model.Suggested.ToList()[i];}
+        <div class="card border-info ml-3 bg-mishmash col-md-2 " >
             <div class="card-body text-center">
-                <h5 class="card-title text-white">Markiplier</h5>
+                <h5 class="card-title text-white">@channel.Name</h5>
                 <hr class="bg-white hr-2" />
-                <h5 class="card-text text-white">Game Channel</h5>
+                <h5 class="card-text text-white">@channel.Type Channel</h5>
                 <hr class="bg-white hr-2" />
-                <h5 class="card-text text-white">4500 Following</h5>
-                <hr class="bg-white hr-2" />
+                <h5 class="card-text text-white">@channel.FollowersCount Following</h5>
                 <h5 class="card-text text-white">
-                    <a href="/channels/follow?id=1" class="text-white">Follow</a>
-                    <a href="/channels/details?id=1" class="text-white">Details</a>
+                    <a href="/channels/follow?id=@channel.Id" class="text-white">Follow</a>
+                    <a href="/channels/details?id=@channel.Id" class="text-white">Details</a>
                 </h5>
             </div>
         </div>
@@ -57,26 +65,26 @@
 </div>
 <h5 class="text-mishmash mt-3">See Other</h5>
 <hr class="bg-white hr-2" />
-<div class="container-fluid">
+<div class="container-fluid mb-3">
     <div class="row justify-content-start">
-        @for(var i = 0; i < 13; i++)
+        @for(var i = 0; i < Model.SeeOther.Count(); i++)
         {
         @if (i % 5 == 0 && i > 1 )
         {
     </div>
     <div class="row justify-content-start mt-3">
         }
-        <div class="card border-info ml-3 bg-mishmash col-md-2 " style="max-width: 18rem;">
+        {var other = Model.SeeOther.ToList()[i];}
+        <div class="card border-info ml-3 bg-mishmash col-md-2 " >
             <div class="card-body text-center">
-                <h5 class="card-title text-white">Markiplier</h5>
+                <h5 class="card-title text-white">@other.Name</h5>
                 <hr class="bg-white hr-2" />
-                <h5 class="card-text text-white">Game Channel</h5>
+                <h5 class="card-text text-white">@other.Type Channel</h5>
                 <hr class="bg-white hr-2" />
-                <h5 class="card-text text-white">4500 Following</h5>
-                <hr class="bg-white hr-2" />
+                <h5 class="card-text text-white">@other.FollowersCount Following</h5>
                 <h5 class="card-text text-white">
-                    <a href="/channels/follow?id=3" class=" text-white">Follow</a>
-                    <a href="/channels/details?id=3" class=" text-white">Details</a>
+                    <a href="/channels/follow?id=@other.Id" class=" text-white">Follow</a>
+                    <a href="/channels/details?id=@other.Id" class=" text-white">Details</a>
                 </h5>
             </div>
         </div>
