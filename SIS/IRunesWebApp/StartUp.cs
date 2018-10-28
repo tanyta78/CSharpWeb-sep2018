@@ -7,9 +7,9 @@
 
     public class StartUp : IMvcApplication
     {
-        public void Configure()
+        public MvcFrameworkSettings Configure()
         {
-
+            return new MvcFrameworkSettings();
         }
 
         public void ConfigureServices(IServiceCollection collection)

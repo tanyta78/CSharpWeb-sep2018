@@ -19,7 +19,7 @@
             this.hashService = hashService;
         }
 
-        [HttpGet]
+       
         public IHttpResponse Register()
         {
             return this.View("Users/Register");
@@ -88,7 +88,7 @@
             return this.Redirect("/Users/Login");
         }
 
-        [HttpGet]
+       
         public IHttpResponse Login()
         {
             return this.View("Users/Login");
@@ -115,7 +115,7 @@
             return this.Redirect("/Home/Index");
         }
 
-        [HttpGet]
+      
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-app"))

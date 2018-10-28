@@ -9,7 +9,7 @@
 
     public class ChannelsController : BaseController
     {
-        [HttpGet]
+       
         public IHttpResponse Details(int id)
         {
             if (this.User == null)
@@ -29,7 +29,7 @@
             return this.View("Channels/Details", channelViewModel);
         }
 
-        [HttpGet]
+      
         public IHttpResponse Followed()
         {
             if (this.User == null)
@@ -55,7 +55,7 @@
             return this.View("Channels/Followed", folowedChannelsViewModel);
         }
 
-        [HttpGet]
+       
         public IHttpResponse Unfollow(int id)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
@@ -77,7 +77,7 @@
 
         }
 
-        [HttpGet]
+    
         public IHttpResponse Follow(int id)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
@@ -101,7 +101,7 @@
             return this.Redirect("/Channels/Followed");
         }
 
-        [HttpGet]
+       
         public IHttpResponse Create()
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);

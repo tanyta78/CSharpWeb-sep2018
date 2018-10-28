@@ -8,7 +8,7 @@
 
     public class HomeController : BaseController
     {
-        [HttpGet]
+       
         public IHttpResponse Index()
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User );
