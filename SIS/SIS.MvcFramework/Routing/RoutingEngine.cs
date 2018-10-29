@@ -6,7 +6,9 @@
     using System.Linq;
     using System.Reflection;
     using HTTP.Enums;
+    using HTTP.Headers;
     using HTTP.Requests.Contracts;
+    using HTTP.Responses;
     using HTTP.Responses.Contracts;
     using Services;
     using WebServer.Results;
@@ -14,19 +16,25 @@
 
     public class RoutingEngine
     {
-        public void RegisterRoutes(ServerRoutingTable routingTable, IMvcApplication application, MvcFrameworkSettings settings, IServiceCollection serviceCollection)
+        public void RegisterRoutes(
+            ServerRoutingTable routingTable,
+            IMvcApplication application, 
+            MvcFrameworkSettings settings,
+            IServiceCollection serviceCollection)
         {
             //1. Register static files
             RegisterStaticFiles(routingTable, settings);
 
             //2. Register actions
-            RegisterActions(routingTable, application, serviceCollection);
+            RegisterActions(routingTable, application, settings,  serviceCollection);
 
             //3. Register /
             RegisterDefaultRoute(routingTable);
         }
 
-        private static void RegisterStaticFiles(ServerRoutingTable routingTable, MvcFrameworkSettings settings)
+        private static void RegisterStaticFiles(
+            ServerRoutingTable routingTable, 
+            MvcFrameworkSettings settings)
         {
             var path = settings.WwwrootPath;
             var files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
@@ -79,8 +87,14 @@
             }
         }
 
-        private static void RegisterActions(ServerRoutingTable routingTable, IMvcApplication application, IServiceCollection serviceCollection)
+        private static void RegisterActions(
+            ServerRoutingTable routingTable,
+            IMvcApplication application, 
+            MvcFrameworkSettings settings,
+            IServiceCollection serviceCollection)
         {
+            var userCookieService = serviceCollection.CreateInstance<IUserCookieService>();
+
             var controllers = application.GetType().Assembly.GetTypes()
                  .Where(t => t.IsClass
                              && !t.IsAbstract
@@ -125,7 +139,31 @@
                         path = "/" + path;
                     }
 
-                    routingTable.Add(method, path, (request) => ExecuteAction(controller, methodInfo, request, serviceCollection));
+                    var hasAuthorizeAttribute = methodInfo
+                            .GetCustomAttributes(true)
+                            .Any(ca =>
+                                ca.GetType()== typeof(AuthorizeAttribute));
+
+                    routingTable.Add(method, path, (request) =>
+                    {
+                        // if (method has AuthorizeAttribute)
+                        if (hasAuthorizeAttribute)
+                        {
+                            //get username Controller.GetUserData
+                            var userData = Controller.GetUserData(request.Cookies, userCookieService);
+                            // check if user is logged
+                            if (userData==null)
+                            {
+                                //if not redirect to login page
+                                var response = new HttpResponse();
+                                response.Headers.Add(new HttpHeader(HttpHeader.Location, settings.LoginPageUrl));
+                                response.StatusCode = HttpResponseStatusCode.SeeOther;
+                                return response;
+                            }
+                        }
+                        
+                        return ExecuteAction(controller, methodInfo, request, serviceCollection);
+                    });
 
                     Console.WriteLine($"Route registered:{controller.Name} {methodInfo.Name} => {method} => {path}");
 

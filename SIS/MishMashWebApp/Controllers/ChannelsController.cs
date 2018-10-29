@@ -9,15 +9,10 @@
 
     public class ChannelsController : BaseController
     {
-       
+       [Authorize]
         public IHttpResponse Details(int id)
         {
-            if (this.User == null)
-            {
-                return this.Redirect("/Users/Login");
-            }
-
-            var channelViewModel = this.Db.Channels.Where(c => c.Id == id).Select(x => new ChannelViewModel
+           var channelViewModel = this.Db.Channels.Where(c => c.Id == id).Select(x => new ChannelViewModel
             {
                 Type = x.Type,
                 Name = x.Name,
@@ -29,14 +24,9 @@
             return this.View(channelViewModel);
         }
 
-      
+      [Authorize]
         public IHttpResponse Followed()
         {
-            if (this.User == null)
-            {
-                return this.Redirect("/Users/Login");
-            }
-
             var myChannels = this.Db.Channels
                 .Where(c => c.Followers.Any(x => x.User.Username == this.User))
                 .Select(c => new ChannelViewModel()
@@ -55,15 +45,10 @@
             return this.View(folowedChannelsViewModel);
         }
 
-       
-        public IHttpResponse Unfollow(int id)
+      [Authorize]
+      public IHttpResponse Unfollow(int id)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
-
-            if (user == null)
-            {
-                return this.Redirect("/Users/Login");
-            }
 
             var userInChannel = this.Db.UsersInChannels.FirstOrDefault(x => x.UserId == user.Id && x.ChannelId == id);
 
@@ -77,17 +62,12 @@
 
         }
 
-    
-        public IHttpResponse Follow(int id)
+      [Authorize]
+      public IHttpResponse Follow(int id)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
 
-            if (user == null)
-            {
-                return this.Redirect("/Users/Login");
-            }
-
-            if (!this.Db.UsersInChannels.Any(x => x.UserId == user.Id && x.ChannelId == id))
+          if (!this.Db.UsersInChannels.Any(x => x.UserId == user.Id && x.ChannelId == id))
             {
                 this.Db.UsersInChannels.Add(new UsersInChannel()
                 {
@@ -101,12 +81,12 @@
             return this.Redirect("/Channels/Followed");
         }
 
-       
-        public IHttpResponse Create()
+      [Authorize]
+      public IHttpResponse Create()
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
 
-            if (user == null || user.Role != Role.Admin)
+            if (user.Role != Role.Admin)
             {
                 return this.BadRequestError("You do not have permission to access this functionality!");
             }
@@ -114,12 +94,13 @@
             return this.View();
         }
 
+        [Authorize]
         [HttpPost]
         public IHttpResponse Create(CreateChannelsInputModel model)
         {
             var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
 
-            if (user == null || user.Role != Role.Admin)
+            if (user.Role != Role.Admin)
             {
                 return this.BadRequestError("You do not have permission to access this functionality!");
             }

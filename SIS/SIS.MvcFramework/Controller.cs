@@ -1,6 +1,7 @@
 ﻿namespace SIS.MvcFramework
 {
     using System.Text;
+    using HTTP.Cookies.Contracts;
     using HTTP.Enums;
     using HTTP.Headers;
     using HTTP.Requests.Contracts;
@@ -24,20 +25,21 @@
 
         public IUserCookieService UserCookieService { get; internal set; }
 
-        protected string User
-        {
-            get
-            {
-                if (!this.Request.Cookies.ContainsCookie(".auth-app"))
-                {
-                    return null;
-                }
+        protected string User => GetUserData(this.Request.Cookies, this.UserCookieService);
 
-                var cookie = this.Request.Cookies.GetCookie(".auth-app");
-                var cookieContent = cookie.Value;
-                var username = this.UserCookieService.GetUserData(cookieContent);
-                return username;
+       public static string GetUserData(
+            IHttpCookieCollection cookieCollection,
+            IUserCookieService userCookieService)
+        {
+            if (!cookieCollection.ContainsCookie(".auth-app"))
+            {
+                return null;
             }
+
+            var cookie = cookieCollection.GetCookie(".auth-app");
+            var cookieContent = cookie.Value;
+            var username = userCookieService.GetUserData(cookieContent);
+            return username;
         }
 
         //this.View()
