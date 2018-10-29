@@ -50,13 +50,14 @@
                 return new MvcUserInfo();
 
             }
-            
+
         }
 
         //this.View()
         // this.View(model,);
         // this.View(viewName,);
         // this.View(viewName,model,);
+
         protected IHttpResponse View<T>(
             string viewName = null,
             T model = null,
@@ -126,7 +127,7 @@
 
         protected IHttpResponse BadRequestErrorWithView(string errorMessage)
         {
-           return this.BadRequestErrorWithView(errorMessage, (object)null);
+            return this.BadRequestErrorWithView(errorMessage, (object)null);
         }
 
         protected IHttpResponse BadRequestErrorWithView<T>(string errorMessage, T model, string layoutName = "_Layout")
