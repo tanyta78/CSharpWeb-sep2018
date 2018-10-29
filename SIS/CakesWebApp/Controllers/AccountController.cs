@@ -96,7 +96,8 @@
             }
 
             //2.Save cookie/session with the user
-            var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
+            var mvcUser = new MvcUserInfo{Username = user.Username};
+            var cookieContent = this.UserCookieService.GetUserCookie(mvcUser);
             this.Response.Cookies.Add(new HttpCookie(".auth-app", cookieContent, 7));
 
             //4. REDIRECT TO HOME PAGE

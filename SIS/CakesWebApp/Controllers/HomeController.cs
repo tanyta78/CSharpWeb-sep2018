@@ -16,7 +16,7 @@
         [HttpGet("/hello")]
         public IHttpResponse WelcomeUser()
         {
-           return this.View("WelcomeUser", new HelloUserViewModel{Username = this.User});
+           return this.View("WelcomeUser", new HelloUserViewModel{Username = this.User.Username});
         }
     }
 }

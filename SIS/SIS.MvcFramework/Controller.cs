@@ -26,21 +26,31 @@
 
         public IUserCookieService UserCookieService { get; internal set; }
 
-        protected string User => GetUserData(this.Request.Cookies, this.UserCookieService);
+        protected MvcUserInfo User => GetUserData(this.Request.Cookies, this.UserCookieService);
 
-        public static string GetUserData(
+        public static MvcUserInfo GetUserData(
              IHttpCookieCollection cookieCollection,
              IUserCookieService userCookieService)
         {
             if (!cookieCollection.ContainsCookie(".auth-app"))
             {
-                return null;
+                return new MvcUserInfo();
             }
 
             var cookie = cookieCollection.GetCookie(".auth-app");
             var cookieContent = cookie.Value;
-            var username = userCookieService.GetUserData(cookieContent);
-            return username;
+
+            try
+            {
+                var username = userCookieService.GetUserData(cookieContent);
+                return username;
+            }
+            catch (Exception)
+            {
+                return new MvcUserInfo();
+
+            }
+            
         }
 
         //this.View()
@@ -84,7 +94,7 @@
             var viewCode = System.IO.File.ReadAllText("Views/" + viewName + ".html");
             var content = this.ViewEngine.GetHtml(viewName, viewCode, model, this.User);
 
-            string navContent = this.User != null
+            string navContent = this.User.IsLoggedIn
                 ? System.IO.File.ReadAllText("Views/Navigation/loginNav.html")
                 : System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
 
@@ -135,7 +145,7 @@
 
             var layoutFileContent = System.IO.File.ReadAllText($"Views/{layoutName}.html");
             var allContent = layoutFileContent.Replace("@RenderBody()", errorAndViewContent);
-            string navContent = this.User != null
+            string navContent = this.User.IsLoggedIn
                 ? System.IO.File.ReadAllText("Views/Navigation/loginNav.html")
                 : System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
             allContent = allContent.Replace("@RenderNav()", navContent);

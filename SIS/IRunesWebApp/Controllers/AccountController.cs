@@ -77,16 +77,18 @@
             }
 
             //2.Save session/cookie with the user
-            this.SignInUser(user.Username);
+            this.SignInUser(user);
 
             //4. REDIRECT TO HOME PAGE
             return this.Redirect("/");
         }
 
-        private void SignInUser(string username)
+        private void SignInUser(User user)
         {
-            this.Request.Session.AddParameter("username", username);
-            var cookieContent = this.UserCookieService.GetUserCookie(username);
+            var mvcUser = new MvcUserInfo{Username = user.Username,Info = user.Email};
+
+            this.Request.Session.AddParameter("username", mvcUser.Username);
+            var cookieContent = this.UserCookieService.GetUserCookie(mvcUser);
 
             this.Response.Cookies.Add(new HttpCookie(".auth-app", cookieContent, 7));
 

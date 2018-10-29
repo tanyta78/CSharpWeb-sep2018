@@ -19,7 +19,7 @@
             this.hashService = hashService;
         }
 
-       
+
         public IHttpResponse Register()
         {
             return this.View();
@@ -84,11 +84,11 @@
                 return this.ServerError(e.Message);
             }
 
-          //4. REDIRECT TO HOME PAGE
+            //4. REDIRECT TO HOME PAGE
             return this.Redirect("/Users/Login");
         }
 
-       
+
         public IHttpResponse Login()
         {
             return this.View();
@@ -108,14 +108,16 @@
             }
 
             //2.Save cookie/session with the user
-            var cookieContent = this.UserCookieService.GetUserCookie(user.Username);
+            var mvcUser = new MvcUserInfo { Username = user.Username, Role = user.Role.ToString(), Info = user.Email };
+
+            var cookieContent = this.UserCookieService.GetUserCookie(mvcUser);
             this.Response.Cookies.Add(new HttpCookie(".auth-app", cookieContent, 7));
 
             //4. REDIRECT TO HOME PAGE
             return this.Redirect("/Home/Index");
         }
 
-      
+
         public IHttpResponse Logout()
         {
             if (!this.Request.Cookies.ContainsCookie(".auth-app"))

@@ -13,7 +13,7 @@
     public class ViewEngine : IViewEngine
     {
 
-        public string GetHtml<T>(string viewName, string viewCode, T model, string user = null)
+        public string GetHtml<T>(string viewName, string viewCode, T model, MvcUserInfo user = null)
         {
             // generate c# code from view code
             var csharpMethodBody = this.GenerateCSharpMethodBody(viewCode);
@@ -24,13 +24,14 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using SIS.MvcFramework;
 using SIS.MvcFramework.ViewEngine;
 using " + typeof(T).Namespace + @";
 namespace MyAppViews
 {
     public class " + viewTypeName + @": IView<" + typeof(T).FullName.Replace("+", ".") + @">
     {
-        public string GetHtml(" + typeof(T).FullName.Replace("+", ".") + @" model, string user)
+        public string GetHtml(" + typeof(T).FullName.Replace("+", ".") + @" model, MvcUserInfo user)
         {
             StringBuilder html = new StringBuilder();
             var Model = model;

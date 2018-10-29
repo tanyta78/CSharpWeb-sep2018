@@ -13,7 +13,7 @@
         [HttpPost("/orders/add")]
         public IHttpResponse Add(int productId)
         {
-            var userId = this.Db.Users.FirstOrDefault(u => u.Username == this.User)?.Id;
+            var userId = this.Db.Users.FirstOrDefault(u => u.Username == this.User.Username)?.Id;
             if (userId == null)
        
      {
@@ -52,7 +52,7 @@
         {
             //order must exist and must be to current user
             var order = this.Db.Orders
-                            .FirstOrDefault(o => o.Id == id && o.User.Username == this.User);
+                            .FirstOrDefault(o => o.Id == id && o.User.Username == this.User.Username);
 
             if (order == null)
             {
@@ -71,7 +71,7 @@
                                .ToList();
 
             var lastOrderIdForUser = this.Db.Orders
-                                         .Where(o => o.User.Username == this.User)
+                                         .Where(o => o.User.Username == this.User.Username)
                                          .OrderByDescending(o => o.Id)
                                          .Select(x => x.Id)
                                          .FirstOrDefault();
@@ -91,7 +91,7 @@
         public IHttpResponse ListOrders()
         {
             var orders = this.Db.Orders
-                            .Where(o => o.User.Username == this.User)
+                            .Where(o => o.User.Username == this.User.Username)
                             .Select(o => new ListOrderViewModel
                             {
                                 Id = o.Id,
@@ -115,7 +115,7 @@
         [HttpPost("/orders/finish")]
         public IHttpResponse Finish(int orderId)
         {
-            var userId = this.Db.Users.FirstOrDefault(u => u.Username == this.User)?.Id;
+            var userId = this.Db.Users.FirstOrDefault(u => u.Username == this.User.Username)?.Id;
 
             if (userId == null)
             {
@@ -124,7 +124,7 @@
 
             //Validate that the current user has permissions to finish this order
 
-            if (!this.Db.Orders.Any(x => x.Id == orderId && x.User.Username == this.User))
+            if (!this.Db.Orders.Any(x => x.Id == orderId && x.User.Username == this.User.Username))
             {
                 return this.BadRequestError("Order not found.");
             }

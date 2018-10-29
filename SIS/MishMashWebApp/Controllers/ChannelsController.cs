@@ -33,7 +33,7 @@
         public IHttpResponse Followed()
         {
             var myChannels = this.Db.Channels
-                .Where(c => c.Followers.Any(x => x.User.Username == this.User))
+                .Where(c => c.Followers.Any(x => x.User.Username == this.User.Username))
                 .Select(c => new ChannelViewModel()
                 {
                     Type = c.Type,
@@ -53,7 +53,7 @@
       [Authorize]
       public IHttpResponse Unfollow(int id)
         {
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User.Username);
 
             var userInChannel = this.Db.UsersInChannels.FirstOrDefault(x => x.UserId == user.Id && x.ChannelId == id);
 
@@ -70,7 +70,7 @@
       [Authorize]
       public IHttpResponse Follow(int id)
         {
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User.Username);
 
           if (!this.Db.UsersInChannels.Any(x => x.UserId == user.Id && x.ChannelId == id))
             {
@@ -89,7 +89,7 @@
       [Authorize]
       public IHttpResponse Create()
         {
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User.Username);
 
             if (user.Role != Role.Admin)
             {
@@ -103,7 +103,7 @@
         [HttpPost]
         public IHttpResponse Create(CreateChannelsInputModel model)
         {
-            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User);
+            var user = this.Db.Users.FirstOrDefault(u => u.Username == this.User.Username);
 
             if (user.Role != Role.Admin)
             {
