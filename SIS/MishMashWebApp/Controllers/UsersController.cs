@@ -31,27 +31,27 @@
             //1.VALIDATE INPUT
             if (string.IsNullOrWhiteSpace(model.Username) || model.Username.Trim().Length < 3)
             {
-                return this.BadRequestError("Please provide valid user name with length of 3 or more characters");
+                return this.BadRequestErrorWithView("Please provide valid user name with length of 3 or more characters");
             }
 
             if (string.IsNullOrWhiteSpace(model.Email) || model.Email.Trim().Length < 3)
             {
-                return this.BadRequestError("Please provide valid email with length of 3 or more characters");
+                return this.BadRequestErrorWithView("Please provide valid email with length of 3 or more characters");
             }
 
             if (this.Db.Users.Any(x => x.Username == model.Username.Trim()))
             {
-                return this.BadRequestError("User with the same name already exist!");
+                return this.BadRequestErrorWithView("User with the same name already exist!");
             }
 
             if (string.IsNullOrWhiteSpace(model.Password) || model.Password.Length < 3)
             {
-                return this.BadRequestError("Please provide password  with length of 3 or more characters");
+                return this.BadRequestErrorWithView("Please provide password  with length of 3 or more characters");
             }
 
             if (model.Password != model.ConfirmPassword)
             {
-                return this.BadRequestError("Passwords do not match!");
+                return this.BadRequestErrorWithView("Passwords do not match!");
             }
 
             //2. GENERATE HASH PASSWORD
@@ -104,7 +104,7 @@
 
             if (user == null)
             {
-                return this.BadRequestError("Invalid username or password");
+                return this.BadRequestErrorWithView("Invalid username or password");
             }
 
             //2.Save cookie/session with the user

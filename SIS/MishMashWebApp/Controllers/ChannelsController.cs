@@ -21,6 +21,11 @@
                 FollowersCount = x.Followers.Count
             }).FirstOrDefault();
 
+            if (channelViewModel==null)
+            {
+                return this.BadRequestError("Invalid channel id");
+            }
+
             return this.View(channelViewModel);
         }
 
@@ -107,7 +112,7 @@
 
             if (!Enum.TryParse(model.Type, true, out ChannelType type))
             {
-                return this.BadRequestError("Invalid channel type.");
+                return this.BadRequestErrorWithView("Invalid channel type.");
             };
 
             var channel = new Channel()

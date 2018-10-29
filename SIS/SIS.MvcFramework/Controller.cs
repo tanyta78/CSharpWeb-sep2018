@@ -1,5 +1,6 @@
 ﻿namespace SIS.MvcFramework
 {
+    using System;
     using System.Text;
     using HTTP.Cookies.Contracts;
     using HTTP.Enums;
@@ -27,9 +28,9 @@
 
         protected string User => GetUserData(this.Request.Cookies, this.UserCookieService);
 
-       public static string GetUserData(
-            IHttpCookieCollection cookieCollection,
-            IUserCookieService userCookieService)
+        public static string GetUserData(
+             IHttpCookieCollection cookieCollection,
+             IUserCookieService userCookieService)
         {
             if (!cookieCollection.ContainsCookie(".auth-app"))
             {
@@ -47,9 +48,9 @@
         // this.View(viewName,);
         // this.View(viewName,model,);
         protected IHttpResponse View<T>(
-            string viewName = null, 
-            T model = null, 
-            string layoutName = "_Layout") 
+            string viewName = null,
+            T model = null,
+            string layoutName = "_Layout")
             where T : class
         {
             if (viewName == null)
@@ -71,37 +72,32 @@
         {
             return this.View(null, model, layoutName);
         }
-        
+
         protected IHttpResponse View(string viewName = null, string layoutName = "_Layout")
         {
-            return this.View(viewName, (object) null, layoutName);
+            return this.View(viewName, (object)null, layoutName);
         }
-        
+
         private string GetViewContent<T>(string viewName, T model, string layoutName = "_Layout")
         {
-            var layoutCode = System.IO.File.ReadAllText($"Views/{layoutName}.html");
 
             var viewCode = System.IO.File.ReadAllText("Views/" + viewName + ".html");
             var content = this.ViewEngine.GetHtml(viewName, viewCode, model, this.User);
 
+            string navContent = this.User != null
+                ? System.IO.File.ReadAllText("Views/Navigation/loginNav.html")
+                : System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
+
+            if (layoutName == null) return content;
+            var layoutCode = System.IO.File.ReadAllText($"Views/{layoutName}.html");
 
             var allContent = layoutCode.Replace(" @RenderBody()", content);
-
-            if (this.User != null)
-            {
-                var loginNav = System.IO.File.ReadAllText("Views/Navigation/loginNav.html");
-                allContent = allContent.Replace("@RenderNav()", loginNav);
-            }
-            else
-            {
-                var logoutNav = System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
-                allContent = allContent.Replace("@RenderNav()", logoutNav);
-
-            }
+            allContent = allContent.Replace("@RenderNav()", navContent);
 
             var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model, this.User);
 
             return layoutContent;
+
         }
 
 
@@ -116,6 +112,39 @@
             this.Response.StatusCode = HttpResponseStatusCode.BadRequest;
             return this.Response;
 
+        }
+
+        protected IHttpResponse BadRequestErrorWithView(string errorMessage)
+        {
+           return this.BadRequestErrorWithView(errorMessage, (object)null);
+        }
+
+        protected IHttpResponse BadRequestErrorWithView<T>(string errorMessage, T model, string layoutName = "_Layout")
+        {
+            var errorContent = this.GetViewContent("Error", new ErrorViewModel { Error = errorMessage }, null);
+
+            var viewName = this.Request.Path.Trim('/', '\\');
+            if (string.IsNullOrWhiteSpace(viewName))
+            {
+                viewName = "Home/Index";
+            }
+
+            var viewContent = this.GetViewContent(viewName, model, null);
+            var allViewContent = errorContent + Environment.NewLine + viewContent;
+            var errorAndViewContent = this.ViewEngine.GetHtml(viewName, allViewContent, model, this.User);
+
+            var layoutFileContent = System.IO.File.ReadAllText($"Views/{layoutName}.html");
+            var allContent = layoutFileContent.Replace("@RenderBody()", errorAndViewContent);
+            string navContent = this.User != null
+                ? System.IO.File.ReadAllText("Views/Navigation/loginNav.html")
+                : System.IO.File.ReadAllText("Views/Navigation/logoutNav.html");
+            allContent = allContent.Replace("@RenderNav()", navContent);
+
+            var layoutContent = this.ViewEngine.GetHtml("_Layout", allContent, model, this.User);
+
+            this.PrepareHtmlResult(layoutContent);
+            this.Response.StatusCode = HttpResponseStatusCode.BadRequest;
+            return this.Response;
         }
 
         protected IHttpResponse ServerError(string errorMessage)
