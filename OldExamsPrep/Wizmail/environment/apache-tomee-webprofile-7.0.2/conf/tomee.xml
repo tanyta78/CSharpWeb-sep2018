@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomee>
+  <Resource id="store" type="DataSource">
+    JdbcDriver com.mysql.jdbc.Driver
+    JdbcUrl jdbc:mysql://localhost:3306/store?createDatabaseIfNotExist=true
+    UserName root
+    Password 
+    JtaManaged true
+  </Resource>
+</tomee>

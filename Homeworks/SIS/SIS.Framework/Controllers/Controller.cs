@@ -1,6 +1,5 @@
 ﻿namespace SIS.Framework.Controllers
 {
-    using System;
     using System.IO;
     using System.Runtime.CompilerServices;
     using ActionResults;
@@ -25,11 +24,11 @@
 
         private ViewEngine ViewEngine { get; } = new ViewEngine();
 
-        protected IViewable View([CallerMemberName] string viewName = "")
+        protected virtual IViewable View([CallerMemberName] string viewName = "")
         {
             var controllerName = ControllerUtilities.GetControllerName(this);
             string viewContent = null;
-         
+
             try
             {
                 viewContent = this.ViewEngine.GetViewContent(controllerName, viewName);
@@ -39,18 +38,6 @@
                 this.Model.Data["Error"] = e.Message;
                 viewContent = this.ViewEngine.GetErrorContent();
             }
-
-            if (this.IsAuthenticated())
-            {
-                this.Model.Data["LogIn"] = "block;";
-                this.Model.Data["LoggedOut"] = "none;";
-            }
-            else
-            {
-                this.Model.Data["LogIn"] = "none;";
-                this.Model.Data["LoggedOut"] = "block;";
-            }
-
 
             var renderedContent = this.ViewEngine.RenderHtml(viewContent, this.Model.Data);
 
@@ -69,7 +56,7 @@
             this.Request.Session.ClearParameters();
         }
 
-        public IIdentity Identity => (IIdentity) this.Request.Session.GetParameter("auth");
+        public IIdentity Identity => (IIdentity)this.Request.Session.GetParameter("auth");
 
         public bool IsAuthenticated()
         {

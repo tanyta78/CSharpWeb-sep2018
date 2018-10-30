@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+    <properties></properties>
+    <ejb-deployment container-id="Default Stateless Container" deployment-id="UserRepositoryImpl" ejb-name="UserRepositoryImpl"/>
+    <ejb-deployment container-id="Default Stateless Container" deployment-id="HomeController" ejb-name="HomeController"/>
+    <ejb-deployment container-id="Default Managed Container" deployment-id=".Comp2136191990" ejb-name=".Comp"/>
+</openejb-jar>

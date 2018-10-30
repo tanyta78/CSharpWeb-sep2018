@@ -166,8 +166,8 @@
             {
                 try
                 {
-                    //TODO: in this case we should have only primitive types in ViewModels. If property is collection?!?
-                    object value = this.GetParameterFromRequest(request, property.Name.ToLower());
+                    
+                    object value = this.GetParameterFromRequest(request, property.Name);
                     property.SetValue(bindingModelInstance, Convert.ChangeType(value, property.PropertyType));
                 }
                 catch
