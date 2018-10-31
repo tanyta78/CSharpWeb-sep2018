@@ -1,0 +1,55 @@
+﻿<h1 class="text-center text-torshia">Create Task</h1>
+<hr class="hr-2 bg-torshia w-50" />
+<form class="mx-auto w-50" method="post" action="/Tasks/Create">
+    <div class="row d-flex justify-content-between">
+        <div class="form-group col-md-5">
+            <label for="Title" class="text-torshia">Title</label>
+            <input type="text" class="form-control" id="Title" placeholder="Title..." name="Title">
+        </div>
+        <div class="form-group col-md-5">
+            <label for="DueDate" class="text-torshia">Due Date</label>
+            <input type="date" class="form-control" id="DueDate" placeholder="Due Date..." name="DueDate">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="Description" class="text-torshia">Description</label>
+        <textarea class="form-control" id="Description" rows="4" placeholder="Description..."
+                  name="Description"></textarea>
+    </div>
+    <div class="channel-tags-holder mt-4">
+        <div class="form-group">
+            <div class="d-flex justify-content-center">
+                <label for="Participants" class="text-torshia">Participants</label>
+            </div>
+            <input type="text" class="form-control" id="Participants" placeholder="Participant1, Participant2, Participant3..." name="Participants">
+        </div>
+    </div>
+    <h6 class="text-center text-torshia">Affected Sectors</h6>
+    <hr class="hr-2 bg-torshia w-50 mt-4" />
+    <div class="channel-type-holder mt-4 d-flex justify-content-around">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="CustomersSector" value="Customers" name="CustomersSector">
+            <label class="form-check-label" for="CustomersSector">Customers</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="MarketingSector" value="Marketing" name="MarketingSector">
+            <label class="form-check-label" for="MarketingSector">Marketing</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="FinancesSector" value="Finances" name="FinancesSector">
+            <label class="form-check-label" for="FinancesSector">Finances</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="InternalSector" value="Internal" name="InternalSector">
+            <label class="form-check-label" for="InternalSector">Internal</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="ManagementSector" value="Management" name="ManagementSector">
+            <label class="form-check-label" for="ManagementSector">Management</label>
+        </div>
+    </div>
+    <hr class="hr-2 bg-torshia w-50 mt-4" />
+    <div class="button-holder mt-2 d-flex justify-content-center">
+        <button type="submit" class="btn bg-torshia text-white">Create</button>
+    </div>
+</form>
