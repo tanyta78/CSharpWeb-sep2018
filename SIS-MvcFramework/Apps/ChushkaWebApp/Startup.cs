@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SIS.MvcFramework;
+﻿using SIS.MvcFramework;
 using SIS.MvcFramework.Services;
 
 namespace ChushkaWebApp
@@ -10,7 +7,7 @@ namespace ChushkaWebApp
     {
         public MvcFrameworkSettings Configure()
         {
-            return new MvcFrameworkSettings();
+            return new MvcFrameworkSettings() { PortNumber = 8000 };
         }
 
         public void ConfigureServices(IServiceCollection collection)

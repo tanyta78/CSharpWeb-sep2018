@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
-    <properties></properties>
-    <ejb-deployment container-id="Default Managed Container" deployment-id=".Comp1092241030" ejb-name=".Comp"/>
-</openejb-jar>
