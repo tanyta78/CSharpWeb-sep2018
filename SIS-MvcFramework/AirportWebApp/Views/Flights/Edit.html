@@ -1,0 +1,17 @@
+﻿ <h2>Edit flight</h2>
+<form action="/flights/edit" method="post">
+    <input type="hidden" value="@Model.Id" name="Id"/>
+    <label for="Destination">Destination:</label>
+    <input type="text" placeholder="Destination" id="Destination" name="Destination" value="@Model.Destination">
+    <label for="Origin">Origin:</label>
+    <input type="text" placeholder="Origin" id="Origin" name="Origin" value="@Model.Origin">
+    <label for="Date">Date:</label>
+    <input type="date" id="Date" name="Date" value="@Model.Date">
+    <label for="Time">Time:</label>
+    <input type="time" id="Time" name="Time" value="@Model.Time">
+    <label for="ImageUrl">Image:</label>
+    <input type="text" name="ImageUrl" id="ImageUrl" value="@Model.ImageUrl">
+    <label for="PublicFlag">Public:</label>
+    <input type="checkbox" name="PublicFlag" checked="@Model.PublicFlag">
+    <input type="submit" class="save-changes" value="Save Changes">
+</form>

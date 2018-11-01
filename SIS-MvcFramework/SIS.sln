@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChushkaWebApp", "Apps\Chush
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamWebApp", "ExamWebApp\ExamWebApp.csproj", "{6AFEE871-2633-475D-A567-753E9B4CC809}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AirportWebApp", "AirportWebApp\AirportWebApp.csproj", "{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{6AFEE871-2633-475D-A567-753E9B4CC809}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AFEE871-2633-475D-A567-753E9B4CC809}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AFEE871-2633-475D-A567-753E9B4CC809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +74,7 @@ Global
 		{80557D81-352B-4938-A270-53E5A6DA1BD4} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
 		{AB3DE31B-F14B-4D6E-9600-94A9F4DFDA1A} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
 		{6AFEE871-2633-475D-A567-753E9B4CC809} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
+		{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DDABD09-DCFC-4DD2-996C-EDD241D1D1F0}

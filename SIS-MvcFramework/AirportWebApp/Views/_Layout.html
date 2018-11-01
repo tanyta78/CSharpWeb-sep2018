@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Airport Ticket System</title>
+   <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        @if(User.IsLoggedIn)
+        {
+        <div class="left-container">
+            <ul>
+                <li><a href="/">Flights</a></li>
+                <li><a href="/users/profile">My Tickets</a></li>
+            </ul>
+        </div>
+        <div class="right-container">
+            <span>Welcome, @User.Username |</span>
+            <a href="/users/logout" class="log-out">Logout</a>
+            <a href="/users/cart"><img src="/img/cart.png" alt="" class="cart"></a>
+        </div>
+        }
+        @else
+        {
+        <div class="left-container">
+            <ul>
+                <li><a href="/">Flights</a></li>
+                <li><a href="/users/login">Login</a></li>
+                <li><a href="/users/register">Register</a></li>
+            </ul>
+        </div>
+        }
+    </nav>
+    <main>
+        @RenderBody()
+        <footer>SoftUni Airlines</footer>
+    </main>
+</body>
+</html>

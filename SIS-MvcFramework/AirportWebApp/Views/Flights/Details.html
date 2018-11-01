@@ -1,0 +1,45 @@
+﻿ <section class="ticket-area">
+    <div class="ticket-area-left">
+        <img src="@Model.ImageUrl" alt="">
+    </div>
+    <div class="ticket-area-right">
+        <h3>@Model.Destination</h3>
+        <div>from @Model.Origin</div>
+        <div class="data-and-time">
+            @Model.Date @Model.Time
+            @if (User.Role == "Admin")
+            {
+            <a href="/flights/edit?id=@Model.Id" class="edit-flight-detail"></a>
+            <a href="/flights/publish?id=@Model.Id" class="btn btn-info">Publish Flight</a>
+            }
+        </div>
+    </div>
+</section>
+@if (User.Role == "Admin")
+{
+<section class="seat-info">
+    <form action="/seats/create" class="seat-form" method="post">
+        <input type="hidden" name="FlightId" value="@Model.Id"/>
+        <input type="text" placeholder="Price" name="Price">
+        <input type="text" placeholder="Type" name="Class">
+        <input type="number" name="Quantity" min="1" max="999" placeholder="Tickets Counter">
+        <input type="submit" class="create-seat" value="Create Seat">
+    </form>
+</section>
+}
+@foreach (var seat in Model.AvailableFlightSeats)
+{
+<section class="flight-details">
+    <form action="/tickets/add" class="seat-form" method="post">
+        <span>@seat.Price $</span><span>@seat.Class</span>
+        <input type="hidden" name="seatId" value="@seat.Id" />
+        <input type="hidden" name="flightId" value="@seat.FlightId" />
+        <input type="number" placeholder="Add Number" name="quantity" min="1" max="999">
+        <input type="submit" class="create-seat" value="Add to Cart">
+        @if (User.Role == "Admin")
+        {
+        <a href="/seats/delete?id=@seat.Id" class="delete">X</a>
+        }
+    </form>
+</section>            
+}

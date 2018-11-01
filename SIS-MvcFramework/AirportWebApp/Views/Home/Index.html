@@ -1,0 +1,24 @@
+﻿<form action="/flights/search" method="post" class="catalog-form">
+    <label>Destination:</label>
+    <input type="text" placeholder="Destination">
+    <label>Origin:</label>
+    <input type="text" placeholder="Origin">
+    <label>Departure:</label>
+    <input type="text" placeholder="Departure">
+    <input type="submit" class="search" value="Search">
+    @if (User.Role == "Admin")
+    {
+    <a href="/flights/add" class="add-flight">Add Flight +</a>
+    }
+</form>
+<section class="added-flights">
+    @for(var i = 0; i < Model.Flights.Count(); i++)
+    {
+    { var item = Model.Flights.ToList()[i]; }
+    <a class="added-flight" href="/flights/details?id=@item.Id">
+        <img src="@item.ImageUrl" alt="fligthLine" class="picture-added-flight">
+        <h3>@item.Destination</h3>
+        <span>from @item.Origin</span><span>@item.Date</span>
+    </a>
+    }
+</section>

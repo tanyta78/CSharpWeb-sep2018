@@ -1,0 +1,27 @@
+﻿<h3>My Cart</h3>
+@foreach (var item in Model.BookedTicketDetails)
+{
+<section class="single-ticket">
+    <div class="left-ticket-container">
+        <img src="@item.ImageUrl" alt="" class="destination-img">
+        <div class="flight-parameters">
+            <span class="ticket-price">Price: @item.Price $</span>
+            <span class="ticket-class">Class: @item.Class</span>
+        </div>
+    </div>
+    <div class="right-ticket-container">
+        <h2>@item.Destination</h2>
+        <p>from @item.Origin</p>
+        <p>@item.Date</p>
+        <p>@item.Time</p>
+        <div>
+            <span class="number-of-tickets">@item.Quantity</span>
+            <a href="/tickets/delete?id=@item.Id" class="remove">REMOVE</a>
+        </div>
+    </div>
+</section>
+<section class="ticket-checkout">
+    <div class="total">Sub total: @item.Subtotal $</div>
+    <a href="/tickets/checkout?id=@item.Id" class="checkout">Checkout</a>
+</section>
+}

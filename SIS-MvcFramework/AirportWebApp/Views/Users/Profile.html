@@ -1,0 +1,18 @@
+﻿<h3>Your Flights</h3>
+@foreach (var item in Model.MyFlightTicketDetails)
+{
+<section class="purchased-ticket">
+    <div class="purchased-left">
+        <img src="@item.ImageUrl" alt="">
+    </div>
+    <div class="purchased-right">
+        <div>
+            <h3>@item.Destination</h3><span>@item.Date</span>
+        </div>
+        <div>
+            from @item.Origin <span>@item.Time</span>
+        </div>
+        <p>@item.Quantity x @item.Price $(@item.Class) </p>
+    </div>
+</section>
+}

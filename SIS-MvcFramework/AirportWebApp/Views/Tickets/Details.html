@@ -1,0 +1,23 @@
+﻿ <section class="single-ticket">
+    <div class="left-ticket-container">
+        <img src="@Model.ImageUrl" alt="" class="destination-img">
+        <div class="flight-parameters">
+            <span class="ticket-price">Price: @Model.Price $</span>
+            <span class="ticket-class">Class: @Model.Class</span>
+        </div>
+    </div>
+    <div class="right-ticket-container">
+        <h2>@Model.Destination</h2>
+        <p>from @Model.Origin</p>
+        <p>@Model.Date</p>
+        <p>@Model.Time</p>
+        <div>
+            <span class="number-of-tickets">@Model.Quantity</span>
+            <a href="/tickets/delete?id=@Model.Id" class="remove">REMOVE</a>
+        </div>
+    </div>
+</section>
+<section class="ticket-checkout">
+    <div class="total">Sub total: @Model.Subtotal $</div>
+    <a href="/tickets/checkout?id=@Model.Id" class="checkout">Checkout</a>
+</section>
