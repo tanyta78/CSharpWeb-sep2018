@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExamWebApp", "ExamWebApp\Ex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AirportWebApp", "AirportWebApp\AirportWebApp.csproj", "{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CasebookWebApp", "CasebookWebApp\CasebookWebApp.csproj", "{16AF6B8B-5D02-488D-9F82-FDC45AC99260}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CasebookWebApp", "CasebookWebApp\CasebookWebApp.csproj", "{16AF6B8B-5D02-488D-9F82-FDC45AC99260}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStoreWebApp", "GameStoreWebApp\GameStoreWebApp.csproj", "{579765BF-78E3-4846-A758-70A77DA5B2DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{16AF6B8B-5D02-488D-9F82-FDC45AC99260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16AF6B8B-5D02-488D-9F82-FDC45AC99260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16AF6B8B-5D02-488D-9F82-FDC45AC99260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{579765BF-78E3-4846-A758-70A77DA5B2DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{579765BF-78E3-4846-A758-70A77DA5B2DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{579765BF-78E3-4846-A758-70A77DA5B2DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{579765BF-78E3-4846-A758-70A77DA5B2DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{6AFEE871-2633-475D-A567-753E9B4CC809} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
 		{4345DEF6-C3D0-4AA3-AADD-8F95DB6E6922} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
 		{16AF6B8B-5D02-488D-9F82-FDC45AC99260} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
+		{579765BF-78E3-4846-A758-70A77DA5B2DF} = {18A044AE-91C4-48B0-AD7A-BCAC2FB995F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7DDABD09-DCFC-4DD2-996C-EDD241D1D1F0}
