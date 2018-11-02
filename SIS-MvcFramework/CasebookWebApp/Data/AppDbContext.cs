@@ -1,4 +1,4 @@
-﻿namespace ExamWebApp.Data
+﻿namespace CasebookWebApp.Data
 {
     using Microsoft.EntityFrameworkCore;
     using Models;
@@ -21,7 +21,7 @@
             {
                 optionsBuilder
                     .UseSqlServer(ServerConfig.ConnectionString)
-                    .UseLazyLoadingProxies();;
+                    .UseLazyLoadingProxies();
             }
         }
 

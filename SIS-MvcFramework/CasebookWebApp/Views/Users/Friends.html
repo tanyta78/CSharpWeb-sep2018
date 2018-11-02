@@ -1,0 +1,28 @@
+﻿<div class="container-fluid text-center">
+    <h2>Casebook</h2>
+    <h3>Connecting People</h3>
+</div>
+<hr class="my-3">
+<div class="container-fluid">
+    <div class="row justify-content-around mb-3">
+        <table class="align-content-center">
+            @foreach(var item in Model.Friends)
+            {
+            <tr>
+                <td>
+                    @item.Username
+                </td>
+                <td>
+                    <form method="post" action="/users/removeFriend">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="submit" class="btn btn-danger" value="Unfriend" />
+                    </form>
+                </td>
+            </tr>
+            }
+        </table>
+    </div>
+    <hr class="my-3">
+</div>
+
+
