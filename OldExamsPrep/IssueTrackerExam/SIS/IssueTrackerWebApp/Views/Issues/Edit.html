@@ -1,0 +1,50 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="jumbotron">
+            <form method="POST" action="/issues/edit?id=@Model.Id">
+                <div class="form-group">
+                    <input name="Name" type="text" class="form-control" placeholder="Enter issue name" value="@Model.Name">
+                </div>
+                <div class="form-group">
+                    <select name="Status" class="form-control" required>
+                        <optgroup label="Status">
+                            <option value="" disabled hidden>Status</option>
+                            @foreach (var item in @Model.OptionStatusValues)
+                            {
+                            {var status = @Model.Status;}
+                            <option value="@item"
+                                    @if(item.ToString() == status.ToString())
+                                    {
+                                    selected
+                                    }
+                                    >@item</option>
+                            }
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select name="Priority" class="form-control" required>
+                        <optgroup label="Priority">
+                            <option value="" disabled hidden>Priority</option>
+                            @foreach (var elem in @Model.OptionsPriorityValues)
+                            {
+                            {var priority = @Model.Priority;}
+                            <option value="@elem"
+                                    @if(elem.ToString() == priority.ToString())
+                                    {
+                                    selected
+                                    }
+                                    >@elem</option>
+                            }
+
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input class="btn btn-primary" type="submit" value="Edit">
+                    <a href="javascript:window.history.back()" class="btn btn-primary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+﻿<div class="container">
+    <form method="get" action="/issues/search">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <select name="status" class="form-control" required>
+                        <optgroup label="Status">
+                            <option value="" disabled hidden selected>Status</option>
+                            <option value="All">All</option>
+                            @foreach (var item in @Model.StatusValues)
+                            {
+                            <option value="@item">@item</option>
+                            }
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <input name="name" type="text" class="form-control" placeholder="Search">
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-default">Search</button>
+            </div>
+        </div>
+        <div class="row">
+            <a class="btn btn-success" href="/issues/add">Add Issue</a>
+        </div>
+    </form>
+    <div class="row">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Creation Date</th>
+                    <th>Author</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var issue in @Model.Issues)
+                {
+                <tr>
+                    <td>@issue.Id</td>
+                    <td>@issue.Name</td>
+                    <td>@issue.Status</td>
+                    <td>@issue.Priority</td>
+                    <td>@issue.CreationDate</td>
+                    <td>@issue.Author</td>
+                    @if(User.Username==@issue.Author || User.Role == "Admin")
+                    {
+                    <td>
+                        <a href="/issues/edit?id=@issue.Id" class="btn mini btn-primary">Edit</a>
+                    </td>
+                    <td>
+                        <a href="/issues/delete?id=@issue.Id" class="confirm-delete mini btn btn-danger">Delete</a>
+                    </td>
+                    }
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
