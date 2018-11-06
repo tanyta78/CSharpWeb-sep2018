@@ -1,0 +1,53 @@
+﻿<h1 class="text-center">Hello, @User.Username !</h1>
+<hr class="bg-panda hr-2" />
+<div class="d-flex justify-content-between">
+    <div class="col-md-3">
+        <h5 class="text-panda text-center">Pending</h5>
+        <hr class="bg-panda hr-2" />
+        <table class="border-dark">
+
+            @foreach(var item in @Model.Pending)
+            {
+
+            <tr class="row" class="justify-content-between">
+                <th scope="row" class="col-md-6 d-flex justify-content-center"><h5> @item.Description</h5></th>
+                <td class="col-md-6 d-flex justify-content-center"> <a href="/packages/details?id=@item.Id" class="btn bg-panda text-white"> Details</a></td>
+            </tr>
+
+            }
+
+        </table>
+    </div>
+    <div class="col-md-3">
+        <h5 class="text-panda text-center">Shipped</h5>
+        <div class="card">
+            <ul class="list-group list-group-flush">
+
+                @foreach(var sitem in @Model.Shipped)
+                {
+                <li class="list-group-item">
+                    @sitem.Description
+                    <a href="/packages/details?id=@sitem.Id" class="btn bg-panda text-white"> Details</a>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <h5 class="text-panda text-center">Delivered</h5>
+        <div class="card">
+            <ul class="list-group list-group-flush">
+
+                @foreach(var ditem in @Model.Delivered)
+                {
+                <li class="list-group-item">
+                    @ditem.Description
+                    <a href="/packages/acquire?id=@ditem.Id" class="btn bg-panda text-white"> Acquired</a>
+                </li>
+                }
+
+            </ul>
+        </div>
+    </div>
+</div>
+
