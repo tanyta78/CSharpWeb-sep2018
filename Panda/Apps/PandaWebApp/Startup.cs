@@ -8,7 +8,7 @@
     {
         public MvcFrameworkSettings Configure()
         {
-            return new MvcFrameworkSettings { PortNumber = 80 };
+            return new MvcFrameworkSettings { PortNumber = 1337 };
         }
 
         public void ConfigureServices(IServiceCollection collection)
