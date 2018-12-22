@@ -1,28 +1,36 @@
 ﻿namespace ExamWebApp.Controllers
 {
+    using System.Linq;
+    using ExamWebApp.ViewModels.Home;
     using SIS.HTTP.Responses;
 
     public class HomeController : BaseController
     {
         public IHttpResponse Index()
         {
-            //if (this.User.IsLoggedIn)
-            //{
-            //    var products = this.Db.Products.Select(
-            //        x => new ProductViewModel
-            //        {
-            //            Id = x.Id,
-            //            Name = x.Name,
-            //            Price = x.Price,
-            //            Description = x.Description,
-            //        }).ToList();
-            //    var model = new IndexViewModel
-            //    {
-            //        Products = products,
-            //    };
+            if (this.User.IsLoggedIn)
+            {
+                var packages = this.Db.Packages.ToList();
+                if (this.User.Role!="Admin")
+                {
+                    packages = packages.Where(p => p.RecipientId == int.Parse(this.User.Info)).ToList();
+                }
 
-            //    return this.View("Home/IndexLoggedIn", model);
-            //}
+
+                var pending = packages.Where(p => p.Status.ToString() == "Pending").ToList();
+                var shipped = packages.Where(p => p.Status.ToString() == "Shipped").ToList();
+                var delivered = packages.Where(p => p.Status.ToString() == "Delivered").ToList();
+               
+
+                var model = new HomeIndexViewModel()
+                {
+                    Pending = pending,
+                    Shipped = shipped,
+                    Delivered = delivered
+                };
+
+                return this.View("Home/IndexLoggedIn", model);
+            }
 
             return this.View();
         }

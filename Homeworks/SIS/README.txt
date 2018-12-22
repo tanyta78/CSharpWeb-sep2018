@@ -1,0 +1,1 @@
+SIS.Framework е изпълнен според изискванията. IRunesWebApp е рефактуран като са добавени Services и dependеncyContainer, но не е довършен за да работи.

@@ -2,8 +2,7 @@
 {
    public class ServerConfig
     {
-        public static string ConnectionString => "Server=DESKTOP-LAHCAG9\\SQLEXPRESS;Database=ExamWebApp;Integrated Security=True;";
-
-      
+        public static string ConnectionString => "Server=DESKTOP-LAHCAG9\\SQLEXPRESS;Database=PandaWebApp;Integrated Security=True;";
+     
     }
 }

@@ -27,9 +27,9 @@
 
         public DbSet<User> Users { get; set; }
 
-        //public DbSet<Channel> Channels { get; set; }
+        public DbSet<Receipt> Receipts { get; set; }
 
-        //public DbSet<Tag> Tags { get; set; }
+        public DbSet<Package> Packages { get; set; }
 
         //public DbSet<ChannelTag> ChannelTags { get; set; }
 

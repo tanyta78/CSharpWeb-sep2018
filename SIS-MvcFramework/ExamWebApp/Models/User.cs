@@ -1,20 +1,23 @@
-﻿namespace ExamWebApp.Models
+﻿using System.Collections.Generic;
+
+namespace ExamWebApp.Models
 {
-   
+
     public class User
     {
-       public int Id { get; set; }
+        public int Id { get; set; }
 
         public string Username { get; set; }
 
         public string Password { get; set; }
 
-        public string FullName { get; set; }
-
         public string Email { get; set; }
 
         public UserRole Role { get; set; }
 
-        //public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Receipt> Receipts { get; set; }
+
+        public virtual ICollection<Package> Packages { get; set; }
+
     }
 }

@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="ViewModels\Home\" />
-    <Folder Include="Views\Home\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -28,6 +26,27 @@
 
   <ItemGroup>
     <None Update="Views\Error.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Home\IndexLoggedIn.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Home\Index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Packages\Delivered.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Packages\Shipped.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Packages\Pending.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Packages\Details.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Views\Packages\Create.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Views\Users\Login.html">

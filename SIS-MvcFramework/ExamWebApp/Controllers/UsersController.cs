@@ -56,13 +56,15 @@
                 return this.BadRequestErrorWithView("Invalid username or password.");
             }
 
-            //TODO Change with other profile info if needed
+
             var mvcUser = new MvcUserInfo
             {
                 Username = user.Username,
                 Role = user.Role.ToString(),
-                Info = user.FullName,
+                Info = user.Id.ToString()
+
             };
+
             var cookieContent = this.UserCookieService.GetUserCookie(mvcUser);
 
             var cookie = new HttpCookie(".auth-cakes", cookieContent, 7) { HttpOnly = true };
@@ -99,9 +101,9 @@
                 return this.BadRequestErrorWithView("User with the same name already exists.");
             }
 
-            if (string.IsNullOrWhiteSpace(model.Password) || model.Password.Length < 6)
+            if (string.IsNullOrWhiteSpace(model.Password))
             {
-                return this.BadRequestErrorWithView("Please provide password of length 6 or more.");
+                return this.BadRequestErrorWithView("Please provide password .");
             }
 
             if (model.Password != model.ConfirmPassword)
@@ -124,9 +126,9 @@
                 Username = model.Username.Trim(),
                 Email = model.Email.Trim(),
                 Password = hashedPassword,
-                Role = role,
-                FullName = model.FullName,
+                Role = role
             };
+
             this.Db.Users.Add(user);
 
             try
@@ -135,7 +137,7 @@
             }
             catch (Exception e)
             {
-               
+
                 return this.BadRequestErrorWithView(e.Message);
             }
 
